@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Adam Al-Noor Books</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f5f6fa;
+    color: #222;
+}
+
+header {
+    background: #171717;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #c9a227;
+}
+
+nav button {
+    border: none;
+    padding: 10px 15px;
+    margin: 3px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #333;
+    color: white;
+}
+
+nav button:hover {
+    background: #c9a227;
+}
+
+.hero {
+    background: linear-gradient(135deg, #171717, #45360b);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    opacity: .9;
+}
+
+.container {
+    max-width: 1150px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.search {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    margin: 25px 0 15px;
+}
+
+.categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.category {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.category:hover {
+    background: #c9a227;
+    color: white;
+}
+
+.books {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.book {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    padding-bottom: 15px;
+}
+
+.cover {
+    height: 250px;
+    background: linear-gradient(135deg, #222, #c9a227);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 55px;
+}
+
+.book-content {
+    padding: 15px;
+}
+
+.book h3 {
+    margin: 5px 0 10px;
+}
+
+.author {
+    color: #777;
+    font-size: 14px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 12px 0;
+}
+
+.book button {
+    width: 100%;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    background: #171717;
+    color: white;
+    cursor: pointer;
+}
+
+.book button:hover {
+    background: #c9a227;
+}
+
+footer {
+    margin-top: 50px;
+    background: #171717;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+Adam Al-Noor <span>Books</span>
+</div>
+
+<nav>
+<button onclick="showHome()">الرئيسية</button>
+<button onclick="showLibrary()">مكتبتي</button>
+<button onclick="showCart()">السلة 🛒</button>
+<button onclick="showAccount()">حسابي</button>
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h1>مرحبًا بك في Adam Al-Noor Books</h1>
+
+<p>
+متجر الكتب الإلكترونية — اكتشف المعرفة واقرأ ما تحب
+</p>
+
+</section>
+
+
+<main class="container">
+
+<input
+class="search"
+id="search"
+type="text"
+placeholder="🔎 ابحث عن كتاب..."
+oninput="searchBooks()"
+>
+
+
+<h2 class="section-title">التصنيفات</h2>
+
+<div class="categories">
+
+<button class="category" onclick="filterCategory('all')">
+الكل
+</button>
+
+<button class="category" onclick="filterCategory('التاريخ')">
+التاريخ
+</button>
+
+<button class="category" onclick="filterCategory('الحضارات')">
+الحضارات
+</button>
+
+<button class="category" onclick="filterCategory('الروايات')">
+الروايات
+</button>
+
+</div>
+
+
+<h2 class="section-title">كتبنا</h2>
+
+<div id="books" class="books"></div>
+
+
+<div id="library" style="display:none">
+
+<h2>📚 مكتبتي</h2>
+
+<div class="empty">
+ستظهر الكتب التي اشتريتها هنا بعد ربط نظام المشتريات.
+</div>
+
+</div>
+
+
+<div id="cart" style="display:none">
+
+<h2>🛒 سلة المشتريات</h2>
+
+<div id="cartItems" class="empty">
+السلة فارغة حاليًا.
+</div>
+
+</div>
+
+
+<div id="account" style="display:none">
+
+<h2>👤 حسابي</h2>
+
+<div class="empty">
+سيتم ربط تسجيل الدخول بحساب Supabase في الخطوة التالية.
+</div>
+
+</div>
+
+</main>
+
+
+<footer>
+
+© 2026 Adam Al-Noor Books
+
+</footer>
+
+
+<script>
+
+const books = [
+
+{
+title: "أعظم شخصيات تاريخية",
+author: "Adam Al-Noor",
+category: "التاريخ",
+price: 5
+},
+
+{
+title: "تاريخ الحضارات والأمم",
+author: "Adam Al-Noor",
+category: "الحضارات",
+price: 6
+},
+
+{
+title: "آخر ملوك الجان",
+author: "Adam Al-Noor",
+category: "الروايات",
+price: 7
+}
+
+];
+
+
+let currentBooks = [...books];
+
+let cart = [];
+
+
+function renderBooks(list = currentBooks) {
+
+const container = document.getElementById("books");
+
+if(list.length === 0) {
+
+container.innerHTML =
+'<div class="empty">لم يتم العثور على كتب.</div>';
+
+return;
+
+}
+
+container.innerHTML = list.map((book,index) => `
+
+<div class="book">
+
+<div class="cover">
+📖
+</div>
+
+<div class="book-content">
+
+<h3>${book.title}</h3>
+
+<div class="author">
+المؤلف: ${book.author}
+</div>
+
+<div class="price">
+${book.price} $
+</div>
+
+<button onclick="addToCart(${index})">
+إضافة إلى السلة 🛒
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+function searchBooks() {
+
+const value =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+currentBooks = books.filter(book =>
+book.title.toLowerCase().includes(value) ||
+book.author.toLowerCase().includes(value)
+);
+
+renderBooks();
+
+}
+
+
+function filterCategory(category) {
+
+if(category === "all") {
+
+currentBooks = [...books];
+
+} else {
+
+currentBooks =
+books.filter(book => book.category === category);
+
+}
+
+renderBooks();
+
+}
+
+
+function addToCart(index) {
+
+const book = currentBooks[index];
+
+cart.push(book);
+
+alert(
+"تمت إضافة الكتاب إلى السلة 🛒"
+);
+
+}
+
+
+function hideAll() {
+
+document.getElementById("books").style.display = "none";
+
+document.getElementById("library").style.display = "none";
+
+document.getElementById("cart").style.display = "none";
+
+document.getElementById("account").style.display = "none";
+
+}
+
+
+function showHome() {
+
+hideAll();
+
+document.getElementById("books").style.display = "grid";
+
+}
+
+
+function showLibrary() {
+
+hideAll();
+
+document.getElementById("library").style.display = "block";
+
+}
+
+
+function showCart() {
+
+hideAll();
+
+document.getElementById("cart").style.display = "block";
+
+const container =
+document.getElementById("cartItems");
+
+if(cart.length === 0) {
+
+container.innerHTML =
+"السلة فارغة حاليًا.";
+
+return;
+
+}
+
+container.innerHTML =
+cart.map(book =>
+`<p>${book.title} — ${book.price} $</p>`
+).join("");
+
+}
+
+
+function showAccount() {
+
+hideAll();
+
+document.getElementById("account").style.display = "block";
+
+}
+
+
+renderBooks();
+
+</script>
+
+</body>
+  </html>
