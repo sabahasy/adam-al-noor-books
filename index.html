@@ -293,33 +293,36 @@ oninput="searchBooks()"
 
 <script>
 
-const books = [
+let books = [];
+let currentBooks = [];
 
-{
-title: "أعظم شخصيات تاريخية",
-author: "Adam Al-Noor",
-category: "التاريخ",
-price: 5
-},
+async function loadBooks() {
+  const SUPABASE_URL = "https://smsqjmgbrkgxyhkaitao.supabase.co";
+  const SUPABASE_KEY = "ضع هنا Publishable Key";
 
-{
-title: "تاريخ الحضارات والأمم",
-author: "Adam Al-Noor",
-category: "الحضارات",
-price: 6
-},
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/books?select=*`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
 
-{
-title: "آخر ملوك الجان",
-author: "Adam Al-Noor",
-category: "الروايات",
-price: 7
-}
+    if (!response.ok) {
+      throw new Error("لم يتم تحميل الكتب");
+    }
 
-];
+    books = await response.json();
+    currentBooks = [...books];
+    renderBooks();
 
-
-let currentBooks = [...books];
+  } catch (error) {
+    console.error(error);
+  }
+}    
 
 let cart = [];
 
