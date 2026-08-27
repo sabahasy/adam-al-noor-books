@@ -20,10 +20,6 @@ body {
     color: #222;
 }
 
-/* =========================
-   HEADER
-========================= */
-
 header {
     background: #171717;
     color: white;
@@ -65,10 +61,6 @@ nav button:hover {
     background: #c9a227;
 }
 
-/* =========================
-   HERO
-========================= */
-
 .hero {
     background: linear-gradient(135deg, #171717, #45360b);
     color: white;
@@ -86,19 +78,11 @@ nav button:hover {
     opacity: .9;
 }
 
-/* =========================
-   CONTAINER
-========================= */
-
 .container {
     max-width: 1150px;
     margin: auto;
     padding: 30px 20px;
 }
-
-/* =========================
-   SEARCH
-========================= */
 
 .search {
     width: 100%;
@@ -109,17 +93,9 @@ nav button:hover {
     margin-bottom: 25px;
 }
 
-/* =========================
-   TITLES
-========================= */
-
 .section-title {
     margin: 25px 0 15px;
 }
-
-/* =========================
-   CATEGORIES
-========================= */
 
 .categories {
     display: flex;
@@ -140,10 +116,6 @@ nav button:hover {
     background: #c9a227;
     color: white;
 }
-
-/* =========================
-   BOOKS
-========================= */
 
 .books {
     display: grid;
@@ -214,10 +186,6 @@ nav button:hover {
     background: #c9a227;
 }
 
-/* =========================
-   SECOND BUTTON
-========================= */
-
 .buy-button {
     background: #c9a227 !important;
     color: #171717 !important;
@@ -228,10 +196,6 @@ nav button:hover {
     color: white !important;
 }
 
-/* =========================
-   PAGES
-========================= */
-
 .page {
     display: none;
 }
@@ -240,10 +204,6 @@ nav button:hover {
     display: block;
 }
 
-/* =========================
-   BOX
-========================= */
-
 .box {
     background: white;
     padding: 25px;
@@ -251,10 +211,6 @@ nav button:hover {
     box-shadow: 0 4px 15px rgba(0,0,0,.06);
     margin-top: 20px;
 }
-
-/* =========================
-   FORMS
-========================= */
 
 .form-group {
     margin-bottom: 15px;
@@ -296,10 +252,6 @@ nav button:hover {
     color: #8b6c00;
     cursor: pointer;
 }
-
-/* =========================
-   CART
-========================= */
 
 .cart-item {
     display: flex;
@@ -343,9 +295,10 @@ nav button:hover {
     font-weight: bold;
 }
 
-/* =========================
-   ACCOUNT
-========================= */
+.checkout-button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
 
 .account-email {
     font-size: 18px;
@@ -361,19 +314,11 @@ nav button:hover {
     cursor: pointer;
 }
 
-/* =========================
-   EMPTY
-========================= */
-
 .empty {
     text-align: center;
     padding: 40px;
     color: #777;
 }
-
-/* =========================
-   STATUS
-========================= */
 
 .status {
     margin-top: 15px;
@@ -383,10 +328,6 @@ nav button:hover {
     display: none;
 }
 
-/* =========================
-   FOOTER
-========================= */
-
 footer {
     margin-top: 50px;
     background: #171717;
@@ -394,10 +335,6 @@ footer {
     text-align: center;
     padding: 30px;
 }
-
-/* =========================
-   MOBILE
-========================= */
 
 @media (max-width: 600px) {
 
@@ -426,10 +363,6 @@ footer {
 </head>
 
 <body>
-
-<!-- =========================
-     HEADER
-========================= -->
 
 <header>
 
@@ -460,10 +393,6 @@ Adam Al-Noor <span>Books</span>
 </header>
 
 
-<!-- =========================
-     HOME
-========================= -->
-
 <section id="home" class="page active">
 
 <section class="hero">
@@ -478,7 +407,6 @@ Adam Al-Noor <span>Books</span>
 
 </section>
 
-
 <main class="container">
 
 <input
@@ -488,7 +416,6 @@ type="text"
 placeholder="🔎 ابحث عن كتاب..."
 oninput="searchBooks()"
 >
-
 
 <h2 class="section-title">
 التصنيفات
@@ -518,7 +445,6 @@ onclick="filterCategory('الروايات')">
 
 </div>
 
-
 <h2 class="section-title">
 كتبنا
 </h2>
@@ -529,10 +455,6 @@ onclick="filterCategory('الروايات')">
 
 </section>
 
-
-<!-- =========================
-     LIBRARY
-========================= -->
 
 <section id="library" class="page">
 
@@ -559,10 +481,6 @@ onclick="filterCategory('الروايات')">
 </section>
 
 
-<!-- =========================
-     CART
-========================= -->
-
 <section id="cart" class="page">
 
 <main class="container">
@@ -578,10 +496,16 @@ onclick="filterCategory('الروايات')">
 <div id="cartTotal"></div>
 
 <button
+id="checkoutButton"
 class="checkout-button"
 onclick="checkout()">
 إتمام الشراء
 </button>
+
+<div
+id="checkoutStatus"
+class="status">
+</div>
 
 </div>
 
@@ -589,10 +513,6 @@ onclick="checkout()">
 
 </section>
 
-
-<!-- =========================
-     ACCOUNT
-========================= -->
 
 <section id="account" class="page">
 
@@ -602,12 +522,7 @@ onclick="checkout()">
 👤 حسابي
 </h2>
 
-
-<!-- LOGIN -->
-
-<div
-id="loginBox"
-class="box">
+<div id="loginBox" class="box">
 
 <h3>
 تسجيل الدخول
@@ -627,7 +542,6 @@ placeholder="example@email.com"
 
 </div>
 
-
 <div class="form-group">
 
 <label>
@@ -642,20 +556,17 @@ placeholder="كلمة المرور"
 
 </div>
 
-
 <button
 class="form-button"
 onclick="loginUser()">
 تسجيل الدخول
 </button>
 
-
 <button
 class="switch-button"
 onclick="showSignup()">
 إنشاء حساب جديد
 </button>
-
 
 <div
 id="loginStatus"
@@ -664,8 +575,6 @@ class="status">
 
 </div>
 
-
-<!-- SIGNUP -->
 
 <div
 id="signupBox"
@@ -690,7 +599,6 @@ placeholder="example@email.com"
 
 </div>
 
-
 <div class="form-group">
 
 <label>
@@ -705,20 +613,17 @@ placeholder="كلمة المرور"
 
 </div>
 
-
 <button
 class="form-button"
 onclick="signupUser()">
 إنشاء حساب
 </button>
 
-
 <button
 class="switch-button"
 onclick="showLogin()">
 العودة إلى تسجيل الدخول
 </button>
-
 
 <div
 id="signupStatus"
@@ -727,8 +632,6 @@ class="status">
 
 </div>
 
-
-<!-- USER ACCOUNT -->
 
 <div
 id="userBox"
@@ -757,10 +660,6 @@ onclick="logoutUser()">
 </section>
 
 
-<!-- =========================
-     FOOTER
-========================= -->
-
 <footer>
 
 © 2026 Adam Al-Noor Books
@@ -779,6 +678,24 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
+
+
+/* =====================================================
+   إعدادات المتجر
+===================================================== */
+
+/*
+   Wayl يقبل IQD فقط.
+
+   الأسعار الظاهرة للعميل بالدولار.
+   نستخدم هذا الرقم لتحويل الدولار إلى الدينار
+   قبل إرسال الطلب إلى Wayl.
+
+   مثال:
+   5 USD × 1310 = 6550 IQD
+*/
+
+const USD_TO_IQD = 1310;
 
 
 /* =====================================================
@@ -847,7 +764,6 @@ container.innerHTML =
 
 return;
 }
-
 
 container.innerHTML = list.map((book) => {
 
@@ -929,7 +845,6 @@ headers: {
 }
 );
 
-
 if (!response.ok) {
 
 throw new Error(
@@ -938,16 +853,13 @@ throw new Error(
 
 }
 
-
 const data =
 await response.json();
-
 
 console.log(
 "Supabase books:",
 data
 );
-
 
 if (
 Array.isArray(data) &&
@@ -961,7 +873,6 @@ books = data;
 books = [...defaultBooks];
 
 }
-
 
 currentBooks = [...books];
 
@@ -999,17 +910,14 @@ document.getElementById("search");
 const value =
 input.value.trim().toLowerCase();
 
-
 currentBooks =
 books.filter(book => {
 
 const title =
-String(book.title || "")
-.toLowerCase();
+String(book.title || "").toLowerCase();
 
 const author =
-String(book.author || "")
-.toLowerCase();
+String(book.author || "").toLowerCase();
 
 return (
 title.includes(value) ||
@@ -1017,7 +925,6 @@ author.includes(value)
 );
 
 });
-
 
 renderBooks();
 
@@ -1078,13 +985,11 @@ if (!book) {
 return;
 }
 
-
 const exists =
 cart.some(
 item =>
 String(item.id) === String(book.id)
 );
-
 
 if (exists) {
 
@@ -1095,7 +1000,6 @@ alert(
 return;
 }
 
-
 cart.push(book);
 
 saveCart();
@@ -1103,6 +1007,8 @@ saveCart();
 alert(
 "تمت إضافة الكتاب إلى السلة 🛒"
 );
+
+renderCart();
 
 }
 
@@ -1120,13 +1026,11 @@ if (!book) {
 return;
 }
 
-
 const exists =
 cart.some(
 item =>
 String(item.id) === String(book.id)
 );
-
 
 if (!exists) {
 
@@ -1135,7 +1039,6 @@ cart.push(book);
 saveCart();
 
 }
-
 
 showPage("cart");
 
@@ -1154,11 +1057,9 @@ document.getElementById("cartItems");
 const totalContainer =
 document.getElementById("cartTotal");
 
-
 if (!container) {
 return;
 }
-
 
 if (cart.length === 0) {
 
@@ -1170,7 +1071,6 @@ totalContainer.innerHTML = "";
 return;
 
 }
-
 
 container.innerHTML =
 cart.map((book, index) => `
@@ -1201,7 +1101,6 @@ onclick="removeFromCart(${index})">
 
 `).join("");
 
-
 const total =
 cart.reduce(
 (sum, book) =>
@@ -1209,11 +1108,17 @@ sum + Number(book.price || 0),
 0
 );
 
+const totalIQD =
+Math.round(total * USD_TO_IQD);
 
 totalContainer.innerHTML = `
 
 <div class="cart-total">
 الإجمالي: ${total.toFixed(2)} $
+<br>
+<span style="font-size:14px;color:#777;">
+ما يعادل تقريبًا ${totalIQD.toLocaleString("en-US")} IQD
+</span>
 </div>
 
 `;
@@ -1269,7 +1174,6 @@ page.classList.remove("active");
 
 });
 
-
 const page =
 document.getElementById(pageId);
 
@@ -1279,12 +1183,10 @@ page.classList.add("active");
 
 }
 
-
 window.scrollTo({
 top: 0,
 behavior: "smooth"
 });
-
 
 if (pageId === "cart") {
 
@@ -1313,6 +1215,17 @@ checkUser();
 
 async function checkUser() {
 
+const token =
+getAccessToken();
+
+if (!token) {
+
+showLogin();
+
+return;
+
+}
+
 try {
 
 const response =
@@ -1322,11 +1235,10 @@ await fetch(
 headers: {
 "apikey": SUPABASE_KEY,
 "Authorization":
-`Bearer ${getAccessToken()}`
+`Bearer ${token}`
 }
 }
 );
-
 
 if (!response.ok) {
 
@@ -1336,10 +1248,8 @@ return;
 
 }
 
-
 const user =
 await response.json();
-
 
 if (user && user.email) {
 
@@ -1362,7 +1272,7 @@ showLogin();
 
 
 /* =====================================================
-   الحصول على Access Token
+   Access Token
 ===================================================== */
 
 function getAccessToken() {
@@ -1391,11 +1301,9 @@ document
 .getElementById("loginPassword")
 .value;
 
-
 const status =
 document
 .getElementById("loginStatus");
-
 
 if (!email || !password) {
 
@@ -1407,7 +1315,6 @@ status,
 return;
 
 }
-
 
 try {
 
@@ -1431,10 +1338,8 @@ password: password
 }
 );
 
-
 const data =
 await response.json();
-
 
 if (!response.ok) {
 
@@ -1446,7 +1351,6 @@ data.msg ||
 
 }
 
-
 localStorage.setItem(
 "supabase_access_token",
 data.access_token
@@ -1457,11 +1361,9 @@ localStorage.setItem(
 data.refresh_token || ""
 );
 
-
 showLoggedUser(
 data.user || { email: email }
 );
-
 
 alert(
 "تم تسجيل الدخول بنجاح ✅"
@@ -1497,11 +1399,9 @@ document
 .getElementById("signupPassword")
 .value;
 
-
 const status =
 document
 .getElementById("signupStatus");
-
 
 if (!email || !password) {
 
@@ -1514,7 +1414,6 @@ return;
 
 }
 
-
 if (password.length < 6) {
 
 showStatus(
@@ -1525,7 +1424,6 @@ status,
 return;
 
 }
-
 
 try {
 
@@ -1549,10 +1447,8 @@ password: password
 }
 );
 
-
 const data =
 await response.json();
-
 
 if (!response.ok) {
 
@@ -1563,7 +1459,6 @@ data.error_description ||
 );
 
 }
-
 
 if (data.access_token) {
 
@@ -1625,7 +1520,6 @@ document.getElementById(
 "userBox"
 ).style.display = "block";
 
-
 document.getElementById(
 "userEmail"
 ).textContent =
@@ -1659,7 +1553,6 @@ headers: {
 }
 catch {}
 
-
 localStorage.removeItem(
 "supabase_access_token"
 );
@@ -1667,7 +1560,6 @@ localStorage.removeItem(
 localStorage.removeItem(
 "supabase_refresh_token"
 );
-
 
 showLogin();
 
@@ -1746,10 +1638,8 @@ document.getElementById(
 "libraryItems"
 );
 
-
 const token =
 getAccessToken();
-
 
 if (!token) {
 
@@ -1758,6 +1648,7 @@ container.innerHTML =
 <div class="empty">
 
 🔐 يجب تسجيل الدخول أولًا
+
 <br><br>
 
 <button
@@ -1773,7 +1664,6 @@ return;
 
 }
 
-
 container.innerHTML =
 `
 <div class="empty">
@@ -1782,7 +1672,7 @@ container.innerHTML =
 
 <br><br>
 
-بعد ربط نظام الدفع والمشتريات،
+بعد تأكيد الدفع وربط نظام المشتريات،
 ستظهر الكتب التي اشتريتها هنا.
 
 </div>
@@ -1792,10 +1682,10 @@ container.innerHTML =
 
 
 /* =====================================================
-   الدفع - تجهيز مبدئي
+   الدفع عبر Wayl
 ===================================================== */
 
-function checkout() {
+async function checkout() {
 
 if (cart.length === 0) {
 
@@ -1807,10 +1697,162 @@ return;
 
 }
 
-
-alert(
-"سيتم ربط بوابة الدفع الإلكتروني في الخطوة التالية."
+const checkoutButton =
+document.getElementById(
+"checkoutButton"
 );
+
+const status =
+document.getElementById(
+"checkoutStatus"
+);
+
+
+/*
+   حساب المجموع بالدولار
+*/
+
+const totalUSD =
+cart.reduce(
+(sum, book) =>
+sum + Number(book.price || 0),
+0
+);
+
+
+/*
+   تحويل المبلغ إلى IQD
+*/
+
+const totalIQD =
+Math.round(
+totalUSD * USD_TO_IQD
+);
+
+
+if (!Number.isInteger(totalIQD) || totalIQD <= 0) {
+
+showStatus(
+status,
+"تعذر حساب مبلغ الدفع."
+);
+
+return;
+
+}
+
+
+/*
+   منع الضغط المتكرر
+*/
+
+checkoutButton.disabled = true;
+
+checkoutButton.textContent =
+"جاري إنشاء رابط الدفع...";
+
+status.style.display = "none";
+
+
+try {
+
+const response =
+await fetch(
+"/api/create-payment",
+{
+method: "POST",
+
+headers: {
+"Content-Type":
+"application/json"
+},
+
+body: JSON.stringify({
+
+items: cart.map(book => ({
+id: book.id,
+title: book.title,
+price: Number(book.price || 0)
+})),
+
+totalUSD: totalUSD,
+
+totalIQD: totalIQD
+
+})
+
+}
+);
+
+
+const data =
+await response.json();
+
+
+if (!response.ok) {
+
+throw new Error(
+data.error ||
+"فشل إنشاء رابط الدفع."
+);
+
+}
+
+
+if (
+!data.paymentUrl
+) {
+
+throw new Error(
+"لم يتم استلام رابط الدفع من Wayl."
+);
+
+}
+
+
+/*
+   حفظ الطلب مؤقتًا
+*/
+
+localStorage.setItem(
+"adamAlNoorPendingOrder",
+JSON.stringify({
+referenceId: data.referenceId,
+items: cart,
+totalUSD: totalUSD,
+totalIQD: totalIQD,
+createdAt: new Date().toISOString()
+})
+);
+
+
+/*
+   الانتقال إلى صفحة Wayl
+*/
+
+window.location.href =
+data.paymentUrl;
+
+}
+catch (error) {
+
+console.error(
+"Checkout error:",
+error
+);
+
+showStatus(
+status,
+error.message ||
+"حدث خطأ أثناء تجهيز الدفع."
+);
+
+checkoutButton.disabled = false;
+
+checkoutButton.textContent =
+"إتمام الشراء";
+
+}
 
 }
 
@@ -1850,5 +1892,3 @@ checkUser();
 </body>
 
 </html>
-
-<!-- Adam Al-Noor Books -->
