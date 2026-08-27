@@ -1,7 +1,12 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Adam Al-Noor Books</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Adam Al-Noor Books</title>
+
+<style>
 * {
     box-sizing: border-box;
 }
@@ -173,41 +178,229 @@ footer {
     padding: 40px;
     color: #777;
 }
-</style></head><body><header><div class="logo">
+
+.account-box {
+    background: white;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.account-box input {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.account-box button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #171717;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.account-box button:hover {
+    background: #c9a227;
+}
+
+.message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #f5f6fa;
+    text-align: center;
+}
+
+.user-info {
+    text-align: center;
+}
+
+.logout {
+    background: #8b0000 !important;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
 Adam Al-Noor <span>Books</span>
-</div><nav>
+</div>
+
+<nav>
 <button onclick="showHome()">الرئيسية</button>
 <button onclick="showLibrary()">مكتبتي</button>
 <button onclick="showCart()">السلة 🛒</button>
 <button onclick="showAccount()">حسابي</button>
-</nav></header><section class="hero"><h1>مرحبًا بك في Adam Al-Noor Books</h1><p>
+</nav>
+
+</header>
+
+<section class="hero">
+
+<h1>مرحبًا بك في Adam Al-Noor Books</h1>
+
+<p>
 متجر الكتب الإلكترونية — اكتشف المعرفة واقرأ ما تحب
-</p></section><main class="container"><input
+</p>
+
+</section>
+
+<main class="container">
+
+<input
 class="search"
 id="search"
 type="text"
 placeholder="🔎 ابحث عن كتاب..."
 oninput="searchBooks()"
+>
 
-«»
+<h2 class="section-title">التصنيفات</h2>
 
-<h2 class="section-title">التصنيفات</h2><div class="categories"><button class="category" onclick="filterCategory('all')">
+<div class="categories">
+
+<button class="category" onclick="filterCategory('all')">
 الكل
-</button><button class="category" onclick="filterCategory('التاريخ')">
-التاريخ
-</button><button class="category" onclick="filterCategory('الحضارات')">
-الحضارات
-</button><button class="category" onclick="filterCategory('الروايات')">
-الروايات
-</button></div><h2 class="section-title">كتبنا</h2><div id="books" class="books"></div><div id="library" style="display:none"><h2>📚 مكتبتي</h2><div class="empty">
-ستظهر الكتب التي اشتريتها هنا بعد ربط نظام المشتريات.
-</div></div><div id="cart" style="display:none"><h2>🛒 سلة المشتريات</h2><div id="cartItems" class="empty">
-السلة فارغة حاليًا.
-</div></div><div id="account" style="display:none"><h2>👤 حسابي</h2><div class="empty">
-سيتم ربط تسجيل الدخول بحساب Supabase في الخطوة التالية.
-</div></div></main><footer>© 2026 Adam Al-Noor Books
+</button>
 
-</footer><script>
+<button class="category" onclick="filterCategory('التاريخ')">
+التاريخ
+</button>
+
+<button class="category" onclick="filterCategory('الحضارات')">
+الحضارات
+</button>
+
+<button class="category" onclick="filterCategory('الروايات')">
+الروايات
+</button>
+
+</div>
+
+<h2 class="section-title">كتبنا</h2>
+
+<div id="books" class="books"></div>
+
+<div id="library" style="display:none">
+
+<h2>📚 مكتبتي</h2>
+
+<div class="empty">
+ستظهر الكتب التي اشتريتها هنا بعد ربط نظام المشتريات.
+</div>
+
+</div>
+
+<div id="cart" style="display:none">
+
+<h2>🛒 سلة المشتريات</h2>
+
+<div id="cartItems" class="empty">
+السلة فارغة حاليًا.
+</div>
+
+</div>
+
+<div id="account" style="display:none">
+
+<h2>👤 حسابي</h2>
+
+<div class="account-box">
+
+<div id="loginForm">
+
+<h3>تسجيل الدخول</h3>
+
+<input
+id="loginEmail"
+type="email"
+placeholder="البريد الإلكتروني"
+>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="كلمة المرور"
+>
+
+<button onclick="loginUser()">
+تسجيل الدخول
+</button>
+
+<hr>
+
+<h3>إنشاء حساب جديد</h3>
+
+<input
+id="signupEmail"
+type="email"
+placeholder="البريد الإلكتروني"
+>
+
+<input
+id="signupPassword"
+type="password"
+placeholder="كلمة المرور"
+>
+
+<button onclick="signupUser()">
+إنشاء حساب
+</button>
+
+<div id="authMessage" class="message">
+</div>
+
+</div>
+
+<div id="userInfo" class="user-info" style="display:none">
+
+<h3>مرحبًا بك 👋</h3>
+
+<p id="userEmail"></p>
+
+<button class="logout" onclick="logoutUser()">
+تسجيل الخروج
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<footer>
+
+© 2026 Adam Al-Noor Books
+
+</footer>
+
+<script>
+
+/* =========================
+   إعداد Supabase
+========================= */
+
+const SUPABASE_URL =
+"https://smsqjmgbrkgxyhkaitao.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
+
 
 /* =========================
    الكتب الأساسية
@@ -239,12 +432,10 @@ price: 7
 ];
 
 
-/* =========================
-   متغيرات الموقع
-========================= */
-
 let books = [...defaultBooks];
+
 let currentBooks = [...books];
+
 let cart = [];
 
 
@@ -254,128 +445,123 @@ let cart = [];
 
 function renderBooks(list = currentBooks) {
 
-    const container = document.getElementById("books");
+const container =
+document.getElementById("books");
 
-    if (!container) {
-        return;
-    }
+if (!container) return;
 
-    if (!list || list.length === 0) {
+if (!list || list.length === 0) {
 
-        container.innerHTML =
-        '<div class="empty">لم يتم العثور على كتب.</div>';
+container.innerHTML =
+'<div class="empty">لم يتم العثور على كتب.</div>';
 
-        return;
-    }
+return;
 
-    container.innerHTML = list.map((book, index) => `
+}
 
-        <div class="book">
+container.innerHTML =
+list.map((book,index) => `
 
-            <div class="cover">
-                📖
-            </div>
+<div class="book">
 
-            <div class="book-content">
+<div class="cover">
+📖
+</div>
 
-                <h3>${book.title || "كتاب"}</h3>
+<div class="book-content">
 
-                <div class="author">
-                    المؤلف: ${book.author || "Adam Al-Noor"}
-                </div>
+<h3>${book.title || "كتاب"}</h3>
 
-                <div class="price">
-                    ${book.price || 0} $
-                </div>
+<div class="author">
+المؤلف: ${book.author || "Adam Al-Noor"}
+</div>
 
-                <button onclick="addToCart(${index})">
-                    إضافة إلى السلة 🛒
-                </button>
+<div class="price">
+${book.price || 0} $
+</div>
 
-            </div>
+<button onclick="addToCart(${index})">
+إضافة إلى السلة 🛒
+</button>
 
-        </div>
+</div>
 
-    `).join("");
+</div>
+
+`).join("");
+
 }
 
 
 /* =========================
-   تحميل الكتب من Supabase
+   تحميل الكتب
 ========================= */
 
 async function loadBooks() {
 
-    const SUPABASE_URL =
-    "https://smsqjmgbrkgxyhkaitao.supabase.co";
+try {
 
-    const SUPABASE_KEY =
-    "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
+const response = await fetch(
+`${SUPABASE_URL}/rest/v1/books?select=*`,
+{
+method: "GET",
 
-    try {
+headers: {
+"apikey": SUPABASE_KEY,
+"Authorization": `Bearer ${SUPABASE_KEY}`,
+"Content-Type": "application/json"
+}
 
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/books?select=*`,
-            {
-                method: "GET",
+}
+);
 
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": `Bearer ${SUPABASE_KEY}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+if (!response.ok) {
 
-        if (!response.ok) {
-            throw new Error(
-                "Supabase response: " + response.status
-            );
-        }
+throw new Error(
+"Supabase response: " + response.status
+);
 
-        const data = await response.json();
+}
 
-        console.log("Supabase books:", data);
+const data =
+await response.json();
 
-        /*
-          إذا كانت قاعدة البيانات تحتوي كتبًا،
-          نعرضها.
-          
-          وإذا كانت فارغة، نحتفظ بالكتب الأساسية.
-        */
+console.log(
+"Supabase books:",
+data
+);
 
-        if (Array.isArray(data) && data.length > 0) {
+if (
+Array.isArray(data)
+&&
+data.length > 0
+) {
 
-            books = data;
-            currentBooks = [...books];
+books = data;
 
-        } else {
+currentBooks = [...books];
 
-            books = [...defaultBooks];
-            currentBooks = [...books];
+}
 
-        }
+renderBooks();
 
-        renderBooks();
+}
 
-    } catch (error) {
+catch(error) {
 
-        console.error(
-            "Supabase error:",
-            error
-        );
+console.error(
+"Supabase error:",
+error
+);
 
-        /*
-          في حالة فشل Supabase،
-          لا نجعل المتجر فارغًا.
-          نعرض الكتب الثلاثة مباشرة.
-        */
+books = [...defaultBooks];
 
-        books = [...defaultBooks];
-        currentBooks = [...books];
+currentBooks = [...books];
 
-        renderBooks();
-    }
+renderBooks();
+
+}
+
 }
 
 
@@ -385,27 +571,33 @@ async function loadBooks() {
 
 function searchBooks() {
 
-    const input =
-    document.getElementById("search");
+const value =
+document
+.getElementById("search")
+.value
+.trim()
+.toLowerCase();
 
-    const value =
-    input.value.trim().toLowerCase();
+currentBooks =
+books.filter(book => {
 
-    currentBooks = books.filter(book => {
+const title =
+String(book.title || "")
+.toLowerCase();
 
-        const title =
-        String(book.title || "").toLowerCase();
+const author =
+String(book.author || "")
+.toLowerCase();
 
-        const author =
-        String(book.author || "").toLowerCase();
+return (
+title.includes(value) ||
+author.includes(value)
+);
 
-        return (
-            title.includes(value) ||
-            author.includes(value)
-        );
-    });
+});
 
-    renderBooks();
+renderBooks();
+
 }
 
 
@@ -415,81 +607,23 @@ function searchBooks() {
 
 function filterCategory(category) {
 
-    if (category === "all") {
+if (category === "all") {
 
-        currentBooks = [...books];
+currentBooks = [...books];
 
-    } else {
-
-        currentBooks = books.filter(book =>
-            String(book.category || "") === category
-        );
-
-    }
-
-    renderBooks();
 }
 
+else {
 
-/* =========================
-   إضافة إلى السلة
-========================= */
+currentBooks =
+books.filter(book =>
+String(book.category || "") === category
+);
 
-function addToCart(index) {
-
-    const book = currentBooks[index];
-
-    if (!book) {
-        return;
-    }
-
-    cart.push(book);
-
-    alert(
-        "تمت إضافة الكتاب إلى السلة 🛒"
-    );
 }
 
+renderBooks();
 
-/* =========================
-   إخفاء الأقسام
-========================= */
-
-function hideAll() {
-
-    document.getElementById("books").style.display = "none";
-
-    document.getElementById("library").style.display = "none";
-
-    document.getElementById("cart").style.display = "none";
-
-    document.getElementById("account").style.display = "none";
-}
-
-
-/* =========================
-   الرئيسية
-========================= */
-
-function showHome() {
-
-    hideAll();
-
-    document.getElementById("books").style.display = "grid";
-
-    renderBooks();
-}
-
-
-/* =========================
-   مكتبتي
-========================= */
-
-function showLibrary() {
-
-    hideAll();
-
-    document.getElementById("library").style.display = "block";
 }
 
 
@@ -497,43 +631,408 @@ function showLibrary() {
    السلة
 ========================= */
 
+function addToCart(index) {
+
+const book =
+currentBooks[index];
+
+if (!book) return;
+
+cart.push(book);
+
+alert(
+"تمت إضافة الكتاب إلى السلة 🛒"
+);
+
+}
+
+
 function showCart() {
 
-    hideAll();
+hideAll();
 
-    document.getElementById("cart").style.display = "block";
+document
+.getElementById("cart")
+.style.display = "block";
 
-    const container =
-    document.getElementById("cartItems");
+const container =
+document.getElementById("cartItems");
 
-    if (cart.length === 0) {
+if (cart.length === 0) {
 
-        container.innerHTML =
-        "السلة فارغة حاليًا.";
+container.innerHTML =
+"السلة فارغة حاليًا.";
 
-        return;
-    }
+return;
 
-    container.innerHTML =
-    cart.map(book =>
+}
 
-        `<p>
-            ${book.title} — ${book.price} $
-        </p>`
+container.innerHTML =
+cart.map(book =>
 
-    ).join("");
+`<p>
+${book.title} — ${book.price} $
+</p>`
+
+).join("");
+
 }
 
 
 /* =========================
-   الحساب
+   التنقل
 ========================= */
+
+function hideAll() {
+
+document
+.getElementById("books")
+.style.display = "none";
+
+document
+.getElementById("library")
+.style.display = "none";
+
+document
+.getElementById("cart")
+.style.display = "none";
+
+document
+.getElementById("account")
+.style.display = "none";
+
+}
+
+
+function showHome() {
+
+hideAll();
+
+document
+.getElementById("books")
+.style.display = "grid";
+
+renderBooks();
+
+}
+
+
+function showLibrary() {
+
+hideAll();
+
+document
+.getElementById("library")
+.style.display = "block";
+
+}
+
 
 function showAccount() {
 
-    hideAll();
+hideAll();
 
-    document.getElementById("account").style.display = "block";
+document
+.getElementById("account")
+.style.display = "block";
+
+checkCurrentUser();
+
+}
+
+
+/* =========================
+   إنشاء حساب
+========================= */
+
+async function signupUser() {
+
+const email =
+document
+.getElementById("signupEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("signupPassword")
+.value;
+
+const message =
+document.getElementById("authMessage");
+
+if (!email || !password) {
+
+message.innerText =
+"يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+
+return;
+
+}
+
+if (password.length < 6) {
+
+message.innerText =
+"كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+
+return;
+
+}
+
+message.innerText =
+"جاري إنشاء الحساب...";
+
+try {
+
+const response =
+await fetch(
+`${SUPABASE_URL}/auth/v1/signup`,
+{
+method: "POST",
+
+headers: {
+"apikey": SUPABASE_KEY,
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+email: email,
+password: password
+})
+}
+);
+
+const data =
+await response.json();
+
+if (!response.ok) {
+
+throw new Error(
+data.msg ||
+data.message ||
+"تعذر إنشاء الحساب."
+);
+
+}
+
+message.innerText =
+"تم إنشاء الحساب بنجاح ✅";
+
+if (data.access_token) {
+
+localStorage.setItem(
+"supabase_access_token",
+data.access_token
+);
+
+localStorage.setItem(
+"supabase_user",
+JSON.stringify(data.user)
+);
+
+}
+
+checkCurrentUser();
+
+}
+
+catch(error) {
+
+console.error(error);
+
+message.innerText =
+error.message ||
+"حدث خطأ أثناء إنشاء الحساب.";
+
+}
+
+}
+
+
+/* =========================
+   تسجيل الدخول
+========================= */
+
+async function loginUser() {
+
+const email =
+document
+.getElementById("loginEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("loginPassword")
+.value;
+
+const message =
+document.getElementById("authMessage");
+
+if (!email || !password) {
+
+message.innerText =
+"يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+
+return;
+
+}
+
+message.innerText =
+"جاري تسجيل الدخول...";
+
+try {
+
+const response =
+await fetch(
+`${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+{
+method: "POST",
+
+headers: {
+"apikey": SUPABASE_KEY,
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+email: email,
+password: password
+})
+}
+);
+
+const data =
+await response.json();
+
+if (!response.ok) {
+
+throw new Error(
+data.error_description ||
+data.msg ||
+"بيانات تسجيل الدخول غير صحيحة."
+);
+
+}
+
+localStorage.setItem(
+"supabase_access_token",
+data.access_token
+);
+
+localStorage.setItem(
+"supabase_refresh_token",
+data.refresh_token || ""
+);
+
+localStorage.setItem(
+"supabase_user",
+JSON.stringify(data.user)
+);
+
+message.innerText =
+"تم تسجيل الدخول بنجاح ✅";
+
+checkCurrentUser();
+
+}
+
+catch(error) {
+
+console.error(error);
+
+message.innerText =
+error.message ||
+"حدث خطأ أثناء تسجيل الدخول.";
+
+}
+
+}
+
+
+/* =========================
+   التحقق من المستخدم
+========================= */
+
+function checkCurrentUser() {
+
+const userData =
+localStorage.getItem(
+"supabase_user"
+);
+
+const loginForm =
+document.getElementById("loginForm");
+
+const userInfo =
+document.getElementById("userInfo");
+
+const userEmail =
+document.getElementById("userEmail");
+
+if (userData) {
+
+try {
+
+const user =
+JSON.parse(userData);
+
+loginForm.style.display =
+"none";
+
+userInfo.style.display =
+"block";
+
+userEmail.innerText =
+"البريد الإلكتروني: " +
+(user.email || "");
+
+}
+
+catch(error) {
+
+console.error(error);
+
+}
+
+}
+
+else {
+
+loginForm.style.display =
+"block";
+
+userInfo.style.display =
+"none";
+
+}
+
+}
+
+
+/* =========================
+   تسجيل الخروج
+========================= */
+
+function logoutUser() {
+
+localStorage.removeItem(
+"supabase_access_token"
+);
+
+localStorage.removeItem(
+"supabase_refresh_token"
+);
+
+localStorage.removeItem(
+"supabase_user"
+);
+
+alert(
+"تم تسجيل الخروج بنجاح."
+);
+
+checkCurrentUser();
+
 }
 
 
@@ -541,14 +1040,13 @@ function showAccount() {
    تشغيل الموقع
 ========================= */
 
-/*
-  نعرض الكتب الثلاثة فورًا،
-  ثم نحاول تحميل كتب Supabase.
-*/
-
 renderBooks();
 
 loadBooks();
 
-</script></body>
-</html><!-- Adam Al-Noor Books -->
+</script>
+
+</body>
+</html>
+
+<!-- Adam Al-Noor Books -->
