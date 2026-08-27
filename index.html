@@ -18,15 +18,23 @@ body {
     color: #222;
 }
 
+button,
+input {
+    font-family: inherit;
+}
+
 header {
     background: #171717;
     color: white;
-    padding: 18px 25px;
+    padding: 16px 22px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo {
@@ -38,35 +46,52 @@ header {
     color: #c9a227;
 }
 
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
 nav button {
     border: none;
-    padding: 10px 15px;
-    margin: 3px;
+    padding: 10px 14px;
     border-radius: 8px;
     cursor: pointer;
     background: #333;
     color: white;
+    transition: .2s;
 }
 
-nav button:hover {
+nav button:hover,
+nav button.active {
     background: #c9a227;
+}
+
+.cart-count {
+    background: #c9a227;
+    color: #111;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 .hero {
     background: linear-gradient(135deg, #171717, #45360b);
     color: white;
-    padding: 60px 20px;
+    padding: 65px 20px;
     text-align: center;
 }
 
 .hero h1 {
-    font-size: 36px;
-    margin-bottom: 15px;
+    font-size: 38px;
+    margin: 0 0 15px;
 }
 
 .hero p {
     font-size: 18px;
     opacity: .9;
+    margin: 0;
 }
 
 .container {
@@ -77,11 +102,18 @@ nav button:hover {
 
 .search {
     width: 100%;
-    padding: 15px;
+    padding: 15px 18px;
     border: 1px solid #ddd;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 16px;
     margin-bottom: 25px;
+    outline: none;
+    background: white;
+}
+
+.search:focus {
+    border-color: #c9a227;
+    box-shadow: 0 0 0 3px rgba(201,162,39,.12);
 }
 
 .section-title {
@@ -92,7 +124,7 @@ nav button:hover {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .category {
@@ -101,25 +133,33 @@ nav button:hover {
     padding: 10px 18px;
     border-radius: 20px;
     cursor: pointer;
+    transition: .2s;
 }
 
-.category:hover {
+.category:hover,
+.category.active {
     background: #c9a227;
     color: white;
+    border-color: #c9a227;
 }
 
 .books {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
 }
 
 .book {
     background: white;
-    border-radius: 15px;
+    border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,.08);
-    padding-bottom: 15px;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.book:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.12);
 }
 
 .cover {
@@ -129,15 +169,16 @@ nav button:hover {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 55px;
+    font-size: 60px;
 }
 
 .book-content {
-    padding: 15px;
+    padding: 17px;
 }
 
 .book h3 {
     margin: 5px 0 10px;
+    line-height: 1.5;
 }
 
 .author {
@@ -145,24 +186,283 @@ nav button:hover {
     font-size: 14px;
 }
 
-.price {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 12px 0;
+.category-label {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 5px 9px;
+    border-radius: 15px;
+    background: #f3ead0;
+    color: #725b12;
+    font-size: 12px;
 }
 
-.book button {
+.price {
+    font-size: 21px;
+    font-weight: bold;
+    margin: 14px 0;
+}
+
+.book button,
+.primary-btn {
     width: 100%;
     border: none;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 9px;
     background: #171717;
     color: white;
     cursor: pointer;
+    transition: .2s;
 }
 
-.book button:hover {
+.book button:hover,
+.primary-btn:hover {
     background: #c9a227;
+}
+
+.secondary-btn {
+    border: 1px solid #ddd;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
+
+.secondary-btn:hover {
+    border-color: #c9a227;
+}
+
+.page-section {
+    display: none;
+}
+
+.page-section.active {
+    display: block;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #777;
+    background: white;
+    border-radius: 14px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #777;
+}
+
+.message {
+    padding: 12px 15px;
+    border-radius: 9px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.message.show {
+    display: block;
+}
+
+.message.success {
+    background: #e8f7ed;
+    color: #176b36;
+}
+
+.message.error {
+    background: #fdeaea;
+    color: #9b2222;
+}
+
+.message.info {
+    background: #eaf2fd;
+    color: #245b96;
+}
+
+/* السلة */
+
+.cart-box {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-info h3 {
+    margin: 0 0 6px;
+}
+
+.cart-info p {
+    margin: 4px 0;
+    color: #777;
+}
+
+.quantity-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quantity-box button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    background: #171717;
+    color: white;
+}
+
+.remove-btn {
+    border: none;
+    background: transparent;
+    color: #b00020;
+    cursor: pointer;
+}
+
+.cart-total {
+    border-top: 2px solid #eee;
+    margin-top: 15px;
+    padding-top: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkout-btn {
+    margin-top: 18px;
+    width: 100%;
+    border: none;
+    padding: 14px;
+    border-radius: 9px;
+    background: #c9a227;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.checkout-btn:hover {
+    background: #b28d1d;
+}
+
+/* الحساب */
+
+.account-card {
+    background: white;
+    max-width: 550px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #c9a227;
+}
+
+.account-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.user-info {
+    text-align: center;
+}
+
+.user-email {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* المكتبة */
+
+.library-item {
+    background: white;
+    padding: 18px;
+    border-radius: 13px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* نافذة الدفع */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    border: none;
+    background: #eee;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
 }
 
 footer {
@@ -173,60 +473,50 @@ footer {
     padding: 30px;
 }
 
-.empty {
+.status {
     text-align: center;
-    padding: 40px;
+    font-size: 13px;
     color: #777;
-}
-
-.account-box {
-    background: white;
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,.08);
-}
-
-.account-box input {
-    width: 100%;
-    padding: 13px;
-    margin: 8px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
-.account-box button {
-    width: 100%;
-    padding: 13px;
     margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #171717;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
 }
 
-.account-box button:hover {
-    background: #c9a227;
-}
+@media (max-width: 650px) {
 
-.message {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    background: #f5f6fa;
-    text-align: center;
-}
+    header {
+        justify-content: center;
+    }
 
-.user-info {
-    text-align: center;
-}
+    .logo {
+        width: 100%;
+        text-align: center;
+    }
 
-.logout {
-    background: #8b0000 !important;
+    nav {
+        justify-content: center;
+    }
+
+    nav button {
+        padding: 9px 10px;
+        font-size: 13px;
+    }
+
+    .hero {
+        padding: 45px 15px;
+    }
+
+    .hero h1 {
+        font-size: 29px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .cart-item,
+    .library-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 </style>
 </head>
@@ -240,13 +530,28 @@ Adam Al-Noor <span>Books</span>
 </div>
 
 <nav>
-<button onclick="showHome()">الرئيسية</button>
-<button onclick="showLibrary()">مكتبتي</button>
-<button onclick="showCart()">السلة 🛒</button>
-<button onclick="showAccount()">حسابي</button>
+
+<button id="homeBtn" class="active" onclick="showHome()">
+الرئيسية
+</button>
+
+<button onclick="showLibrary()">
+مكتبتي
+</button>
+
+<button onclick="showCart()">
+السلة 🛒
+<span id="cartCount" class="cart-count">0</span>
+</button>
+
+<button onclick="showAccount()">
+حسابي
+</button>
+
 </nav>
 
 </header>
+
 
 <section class="hero">
 
@@ -258,7 +563,15 @@ Adam Al-Noor <span>Books</span>
 
 </section>
 
+
 <main class="container">
+
+<div id="message" class="message"></div>
+
+
+<!-- الرئيسية -->
+
+<section id="homeSection" class="page-section active">
 
 <input
 class="search"
@@ -268,110 +581,146 @@ placeholder="🔎 ابحث عن كتاب..."
 oninput="searchBooks()"
 >
 
-<h2 class="section-title">التصنيفات</h2>
+<h2 class="section-title">
+التصنيفات
+</h2>
 
 <div class="categories">
 
-<button class="category" onclick="filterCategory('all')">
+<button class="category active"
+onclick="filterCategory('all', this)">
 الكل
 </button>
 
-<button class="category" onclick="filterCategory('التاريخ')">
+<button class="category"
+onclick="filterCategory('التاريخ', this)">
 التاريخ
 </button>
 
-<button class="category" onclick="filterCategory('الحضارات')">
+<button class="category"
+onclick="filterCategory('الحضارات', this)">
 الحضارات
 </button>
 
-<button class="category" onclick="filterCategory('الروايات')">
+<button class="category"
+onclick="filterCategory('الروايات', this)">
 الروايات
 </button>
 
 </div>
 
-<h2 class="section-title">كتبنا</h2>
+<h2 class="section-title">
+كتبنا
+</h2>
 
-<div id="books" class="books"></div>
+<div id="books" class="books">
+<div class="loading">
+جاري تحميل الكتب...
+</div>
+</div>
 
-<div id="library" style="display:none">
+<div id="booksStatus" class="status"></div>
+
+</section>
+
+
+<!-- المكتبة -->
+
+<section id="librarySection" class="page-section">
 
 <h2>📚 مكتبتي</h2>
 
+<div id="libraryContent">
+
 <div class="empty">
-ستظهر الكتب التي اشتريتها هنا بعد ربط نظام المشتريات.
+سجّل الدخول لرؤية الكتب التي اشتريتها.
 </div>
 
 </div>
 
-<div id="cart" style="display:none">
+</section>
+
+
+<!-- السلة -->
+
+<section id="cartSection" class="page-section">
 
 <h2>🛒 سلة المشتريات</h2>
 
-<div id="cartItems" class="empty">
-السلة فارغة حاليًا.
-</div>
+<div id="cartContent"></div>
 
-</div>
+</section>
 
-<div id="account" style="display:none">
+
+<!-- الحساب -->
+
+<section id="accountSection" class="page-section">
 
 <h2>👤 حسابي</h2>
 
-<div class="account-box">
+<div class="account-card">
 
-<div id="loginForm">
+<div id="loggedOut">
 
 <h3>تسجيل الدخول</h3>
+
+<div class="form-group">
+
+<label>
+البريد الإلكتروني
+</label>
 
 <input
 id="loginEmail"
 type="email"
-placeholder="البريد الإلكتروني"
+placeholder="example@email.com"
 >
+
+</div>
+
+<div class="form-group">
+
+<label>
+كلمة المرور
+</label>
 
 <input
 id="loginPassword"
 type="password"
-placeholder="كلمة المرور"
+placeholder="••••••••"
 >
 
-<button onclick="loginUser()">
+</div>
+
+<div class="account-actions">
+
+<button class="primary-btn"
+onclick="loginUser()">
 تسجيل الدخول
 </button>
 
-<hr>
-
-<h3>إنشاء حساب جديد</h3>
-
-<input
-id="signupEmail"
-type="email"
-placeholder="البريد الإلكتروني"
->
-
-<input
-id="signupPassword"
-type="password"
-placeholder="كلمة المرور"
->
-
-<button onclick="signupUser()">
-إنشاء حساب
+<button class="secondary-btn"
+onclick="signupUser()">
+إنشاء حساب جديد
 </button>
 
-<div id="authMessage" class="message">
 </div>
 
 </div>
 
-<div id="userInfo" class="user-info" style="display:none">
 
-<h3>مرحبًا بك 👋</h3>
+<div id="loggedIn" style="display:none">
 
-<p id="userEmail"></p>
+<div class="user-info">
 
-<button class="logout" onclick="logoutUser()">
+<h3>
+مرحبًا بك 👋
+</h3>
+
+<p id="userEmail" class="user-email"></p>
+
+<button class="primary-btn"
+onclick="logoutUser()">
 تسجيل الخروج
 </button>
 
@@ -381,7 +730,73 @@ placeholder="كلمة المرور"
 
 </div>
 
+</section>
+
 </main>
+
+
+<!-- نافذة إتمام الطلب -->
+
+<div id="checkoutModal" class="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h2>
+إتمام الطلب
+</h2>
+
+<button class="close-btn"
+onclick="closeCheckout()">
+×
+</button>
+
+</div>
+
+<div id="checkoutSummary"></div>
+
+<div class="form-group">
+
+<label>
+الاسم
+</label>
+
+<input
+id="checkoutName"
+type="text"
+placeholder="اسم المشتري"
+>
+
+</div>
+
+<div class="form-group">
+
+<label>
+البريد الإلكتروني
+</label>
+
+<input
+id="checkoutEmail"
+type="email"
+placeholder="البريد الإلكتروني"
+>
+
+</div>
+
+<button class="checkout-btn"
+onclick="createOrder()">
+متابعة إلى الدفع 💳
+</button>
+
+<p class="status">
+سيتم ربط بوابة الدفع في الخطوة التالية.
+</p>
+
+</div>
+
+</div>
+
 
 <footer>
 
@@ -389,11 +804,12 @@ placeholder="كلمة المرور"
 
 </footer>
 
+
 <script>
 
-/* =========================
+/* =====================================================
    إعداد Supabase
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://smsqjmgbrkgxyhkaitao.supabase.co";
@@ -402,13 +818,14 @@ const SUPABASE_KEY =
 "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
 
 
-/* =========================
-   الكتب الأساسية
-========================= */
+/* =====================================================
+   الكتب الاحتياطية
+===================================================== */
 
 const defaultBooks = [
 
 {
+id: "default-1",
 title: "أعظم شخصيات تاريخية",
 author: "Adam Al-Noor",
 category: "التاريخ",
@@ -416,6 +833,7 @@ price: 5
 },
 
 {
+id: "default-2",
 title: "تاريخ الحضارات والأمم",
 author: "Adam Al-Noor",
 category: "الحضارات",
@@ -423,6 +841,7 @@ price: 6
 },
 
 {
+id: "default-3",
 title: "آخر ملوك الجان",
 author: "Adam Al-Noor",
 category: "الروايات",
@@ -432,23 +851,210 @@ price: 7
 ];
 
 
+/* =====================================================
+   متغيرات الموقع
+===================================================== */
+
 let books = [...defaultBooks];
 
 let currentBooks = [...books];
 
 let cart = [];
 
+let currentUser = null;
 
-/* =========================
+
+/* =====================================================
+   رسائل الموقع
+===================================================== */
+
+function showMessage(text, type = "info") {
+
+const message =
+document.getElementById("message");
+
+message.textContent = text;
+
+message.className =
+"message show " + type;
+
+setTimeout(() => {
+
+message.className = "message";
+
+}, 3500);
+
+}
+
+
+/* =====================================================
+   تحميل السلة من الجهاز
+===================================================== */
+
+function loadCart() {
+
+try {
+
+const saved =
+localStorage.getItem("adam_alnoor_cart");
+
+if (saved) {
+
+cart = JSON.parse(saved);
+
+}
+
+} catch (error) {
+
+cart = [];
+
+}
+
+updateCartCount();
+
+}
+
+
+/* =====================================================
+   حفظ السلة
+===================================================== */
+
+function saveCart() {
+
+localStorage.setItem(
+"adam_alnoor_cart",
+JSON.stringify(cart)
+);
+
+updateCartCount();
+
+}
+
+
+/* =====================================================
+   عداد السلة
+===================================================== */
+
+function updateCartCount() {
+
+const count =
+cart.reduce(
+(total, item) => total + item.quantity,
+0
+);
+
+document.getElementById("cartCount")
+.textContent = count;
+
+}
+
+
+/* =====================================================
+   تحميل الكتب
+===================================================== */
+
+async function loadBooks() {
+
+try {
+
+const response =
+await fetch(
+`${SUPABASE_URL}/rest/v1/books?select=*`,
+{
+method: "GET",
+
+headers: {
+
+"apikey": SUPABASE_KEY,
+
+"Authorization":
+`Bearer ${SUPABASE_KEY}`,
+
+"Content-Type":
+"application/json"
+
+}
+
+}
+);
+
+
+if (!response.ok) {
+
+throw new Error(
+"Supabase HTTP " +
+response.status
+);
+
+}
+
+
+const data =
+await response.json();
+
+
+if (
+Array.isArray(data) &&
+data.length > 0
+) {
+
+books = data;
+
+currentBooks = [...books];
+
+document.getElementById("booksStatus")
+.textContent =
+"تم تحميل الكتب من قاعدة البيانات.";
+
+} else {
+
+books = [...defaultBooks];
+
+currentBooks = [...books];
+
+document.getElementById("booksStatus")
+.textContent =
+"تم عرض الكتب الأساسية.";
+
+}
+
+
+renderBooks();
+
+
+} catch (error) {
+
+console.error(
+"Supabase books error:",
+error
+);
+
+books = [...defaultBooks];
+
+currentBooks = [...books];
+
+document.getElementById("booksStatus")
+.textContent =
+"تم عرض الكتب الأساسية.";
+
+renderBooks();
+
+}
+
+}
+
+
+/* =====================================================
    عرض الكتب
-========================= */
+===================================================== */
 
-function renderBooks(list = currentBooks) {
+function renderBooks(
+list = currentBooks
+) {
 
 const container =
 document.getElementById("books");
 
-if (!container) return;
 
 if (!list || list.length === 0) {
 
@@ -459,8 +1065,20 @@ return;
 
 }
 
+
 container.innerHTML =
-list.map((book,index) => `
+list.map((book) => {
+
+const realIndex =
+books.findIndex(
+item =>
+String(item.id) === String(book.id)
+);
+
+const safeIndex =
+realIndex >= 0 ? realIndex : 0;
+
+return `
 
 <div class="book">
 
@@ -470,17 +1088,25 @@ list.map((book,index) => `
 
 <div class="book-content">
 
-<h3>${book.title || "كتاب"}</h3>
+<h3>
+${escapeHTML(book.title || "كتاب")}
+</h3>
 
 <div class="author">
-المؤلف: ${book.author || "Adam Al-Noor"}
+المؤلف:
+${escapeHTML(book.author || "Adam Al-Noor")}
+</div>
+
+<div class="category-label">
+${escapeHTML(book.category || "كتب")}
 </div>
 
 <div class="price">
-${book.price || 0} $
+${Number(book.price || 0)} $
 </div>
 
-<button onclick="addToCart(${index})">
+<button
+onclick="addToCart(${safeIndex})">
 إضافة إلى السلة 🛒
 </button>
 
@@ -488,86 +1114,309 @@ ${book.price || 0} $
 
 </div>
 
-`).join("");
+`;
+
+}).join("");
 
 }
 
 
-/* =========================
-   تحميل الكتب
-========================= */
+/* =====================================================
+   إضافة إلى السلة
+===================================================== */
 
-async function loadBooks() {
+function addToCart(index) {
 
-try {
+const book = books[index];
 
-const response = await fetch(
-`${SUPABASE_URL}/rest/v1/books?select=*`,
-{
-method: "GET",
+if (!book) {
 
-headers: {
-"apikey": SUPABASE_KEY,
-"Authorization": `Bearer ${SUPABASE_KEY}`,
-"Content-Type": "application/json"
-}
-
-}
+showMessage(
+"لم يتم العثور على الكتاب.",
+"error"
 );
 
-if (!response.ok) {
+return;
 
-throw new Error(
-"Supabase response: " + response.status
+}
+
+
+const bookId =
+String(
+book.id ||
+book.title
+);
+
+
+const existing =
+cart.find(
+item =>
+String(item.id) === bookId
+);
+
+
+if (existing) {
+
+existing.quantity += 1;
+
+showMessage(
+"تمت زيادة كمية الكتاب في السلة.",
+"success"
+);
+
+} else {
+
+cart.push({
+
+id: bookId,
+
+title: book.title,
+
+author: book.author,
+
+category: book.category,
+
+price: Number(book.price || 0),
+
+quantity: 1
+
+});
+
+showMessage(
+"تمت إضافة الكتاب إلى السلة 🛒",
+"success"
 );
 
 }
 
-const data =
-await response.json();
 
-console.log(
-"Supabase books:",
-data
+saveCart();
+
+}
+
+
+/* =====================================================
+   زيادة الكمية
+===================================================== */
+
+function increaseQuantity(id) {
+
+const item =
+cart.find(
+book =>
+String(book.id) === String(id)
 );
 
-if (
-Array.isArray(data)
-&&
-data.length > 0
-) {
+if (item) {
 
-books = data;
+item.quantity += 1;
 
-currentBooks = [...books];
+saveCart();
+
+renderCart();
 
 }
 
-renderBooks();
-
 }
 
-catch(error) {
 
-console.error(
-"Supabase error:",
-error
+/* =====================================================
+   إنقاص الكمية
+===================================================== */
+
+function decreaseQuantity(id) {
+
+const item =
+cart.find(
+book =>
+String(book.id) === String(id)
 );
 
-books = [...defaultBooks];
+if (!item) return;
 
-currentBooks = [...books];
 
-renderBooks();
+if (item.quantity > 1) {
+
+item.quantity -= 1;
+
+} else {
+
+cart =
+cart.filter(
+book =>
+String(book.id) !== String(id)
+);
 
 }
 
+
+saveCart();
+
+renderCart();
+
 }
 
 
-/* =========================
+/* =====================================================
+   حذف من السلة
+===================================================== */
+
+function removeFromCart(id) {
+
+cart =
+cart.filter(
+book =>
+String(book.id) !== String(id)
+);
+
+saveCart();
+
+renderCart();
+
+showMessage(
+"تم حذف الكتاب من السلة.",
+"success"
+);
+
+}
+
+
+/* =====================================================
+   عرض السلة
+===================================================== */
+
+function renderCart() {
+
+const container =
+document.getElementById("cartContent");
+
+
+if (cart.length === 0) {
+
+container.innerHTML = `
+
+<div class="empty">
+
+<h3>
+🛒 السلة فارغة حاليًا
+</h3>
+
+<p>
+أضف كتابًا من المتجر للبدء.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+let total = 0;
+
+
+const itemsHTML =
+cart.map(item => {
+
+const subtotal =
+Number(item.price) *
+Number(item.quantity);
+
+
+total += subtotal;
+
+
+return `
+
+<div class="cart-box">
+
+<div class="cart-item">
+
+<div class="cart-info">
+
+<h3>
+${escapeHTML(item.title)}
+</h3>
+
+<p>
+${escapeHTML(item.author || "Adam Al-Noor")}
+</p>
+
+<p>
+السعر: ${Number(item.price)} $
+</p>
+
+</div>
+
+<div class="quantity-box">
+
+<button
+onclick="decreaseQuantity('${escapeAttribute(item.id)}')">
+−
+</button>
+
+<strong>
+${item.quantity}
+</strong>
+
+<button
+onclick="increaseQuantity('${escapeAttribute(item.id)}')">
++
+</button>
+
+</div>
+
+<button
+class="remove-btn"
+onclick="removeFromCart('${escapeAttribute(item.id)}')">
+حذف
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+
+container.innerHTML = `
+
+${itemsHTML}
+
+<div class="cart-box">
+
+<div class="cart-total">
+
+<span>
+الإجمالي
+</span>
+
+<span>
+${total.toFixed(2)} $
+</span>
+
+</div>
+
+<button
+class="checkout-btn"
+onclick="openCheckout()">
+إتمام الطلب 💳
+</button>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================================
    البحث
-========================= */
+===================================================== */
 
 function searchBooks() {
 
@@ -577,6 +1426,7 @@ document
 .value
 .trim()
 .toLowerCase();
+
 
 currentBooks =
 books.filter(book => {
@@ -596,191 +1446,179 @@ author.includes(value)
 
 });
 
+
 renderBooks();
 
 }
 
 
-/* =========================
+/* =====================================================
    التصنيفات
-========================= */
+===================================================== */
 
-function filterCategory(category) {
+function filterCategory(
+category,
+button
+) {
 
-if (category === "all") {
+document
+.querySelectorAll(".category")
+.forEach(btn => {
 
-currentBooks = [...books];
+btn.classList.remove("active");
+
+});
+
+
+if (button) {
+
+button.classList.add("active");
 
 }
 
-else {
+
+if (category === "all") {
 
 currentBooks =
-books.filter(book =>
+[...books];
+
+} else {
+
+currentBooks =
+books.filter(
+book =>
 String(book.category || "") === category
 );
 
 }
 
+
 renderBooks();
 
 }
 
 
-/* =========================
-   السلة
-========================= */
+/* =====================================================
+   إخفاء الصفحات
+===================================================== */
 
-function addToCart(index) {
+function hideAllSections() {
 
-const book =
-currentBooks[index];
+document
+.querySelectorAll(".page-section")
+.forEach(section => {
 
-if (!book) return;
+section.classList.remove("active");
 
-cart.push(book);
-
-alert(
-"تمت إضافة الكتاب إلى السلة 🛒"
-);
+});
 
 }
 
 
-function showCart() {
-
-hideAll();
-
-document
-.getElementById("cart")
-.style.display = "block";
-
-const container =
-document.getElementById("cartItems");
-
-if (cart.length === 0) {
-
-container.innerHTML =
-"السلة فارغة حاليًا.";
-
-return;
-
-}
-
-container.innerHTML =
-cart.map(book =>
-
-`<p>
-${book.title} — ${book.price} $
-</p>`
-
-).join("");
-
-}
-
-
-/* =========================
-   التنقل
-========================= */
-
-function hideAll() {
-
-document
-.getElementById("books")
-.style.display = "none";
-
-document
-.getElementById("library")
-.style.display = "none";
-
-document
-.getElementById("cart")
-.style.display = "none";
-
-document
-.getElementById("account")
-.style.display = "none";
-
-}
-
+/* =====================================================
+   الرئيسية
+===================================================== */
 
 function showHome() {
 
-hideAll();
+hideAllSections();
 
 document
-.getElementById("books")
-.style.display = "grid";
-
-renderBooks();
+.getElementById("homeSection")
+.classList.add("active");
 
 }
 
 
-function showLibrary() {
+/* =====================================================
+   المكتبة
+===================================================== */
 
-hideAll();
+async function showLibrary() {
+
+hideAllSections();
 
 document
-.getElementById("library")
-.style.display = "block";
+.getElementById("librarySection")
+.classList.add("active");
+
+await loadLibrary();
 
 }
 
+
+/* =====================================================
+   السلة
+===================================================== */
+
+function showCart() {
+
+hideAllSections();
+
+document
+.getElementById("cartSection")
+.classList.add("active");
+
+renderCart();
+
+}
+
+
+/* =====================================================
+   الحساب
+===================================================== */
 
 function showAccount() {
 
-hideAll();
+hideAllSections();
 
 document
-.getElementById("account")
-.style.display = "block";
+.getElementById("accountSection")
+.classList.add("active");
 
-checkCurrentUser();
+updateAccountUI();
 
 }
 
 
-/* =========================
-   إنشاء حساب
-========================= */
+/* =====================================================
+   Supabase Auth
+===================================================== */
 
 async function signupUser() {
 
 const email =
-document
-.getElementById("signupEmail")
-.value
-.trim();
+document.getElementById("loginEmail")
+.value.trim();
 
 const password =
-document
-.getElementById("signupPassword")
+document.getElementById("loginPassword")
 .value;
 
-const message =
-document.getElementById("authMessage");
 
 if (!email || !password) {
 
-message.innerText =
-"يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+showMessage(
+"أدخل البريد الإلكتروني وكلمة المرور.",
+"error"
+);
 
 return;
 
 }
+
 
 if (password.length < 6) {
 
-message.innerText =
-"كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+showMessage(
+"كلمة المرور يجب أن تكون 6 أحرف على الأقل.",
+"error"
+);
 
 return;
 
 }
 
-message.innerText =
-"جاري إنشاء الحساب...";
 
 try {
 
@@ -791,67 +1629,65 @@ await fetch(
 method: "POST",
 
 headers: {
+
 "apikey": SUPABASE_KEY,
-"Content-Type": "application/json"
+
+"Content-Type":
+"application/json"
+
 },
 
 body: JSON.stringify({
+
 email: email,
+
 password: password
+
 })
+
 }
 );
 
+
 const data =
 await response.json();
+
 
 if (!response.ok) {
 
 throw new Error(
 data.msg ||
 data.message ||
-"تعذر إنشاء الحساب."
+data.error_description ||
+"فشل إنشاء الحساب."
 );
 
 }
 
-message.innerText =
-"تم إنشاء الحساب بنجاح ✅";
 
-if (data.access_token) {
-
-localStorage.setItem(
-"supabase_access_token",
-data.access_token
+showMessage(
+"تم إنشاء الحساب بنجاح. تحقق من بريدك الإلكتروني إذا طلب منك ذلك.",
+"success"
 );
 
-localStorage.setItem(
-"supabase_user",
-JSON.stringify(data.user)
-);
 
-}
-
-checkCurrentUser();
-
-}
-
-catch(error) {
+} catch (error) {
 
 console.error(error);
 
-message.innerText =
-error.message ||
-"حدث خطأ أثناء إنشاء الحساب.";
+showMessage(
+error.message,
+"error"
+);
 
 }
 
 }
 
 
-/* =========================
+/* =====================================================
    تسجيل الدخول
-========================= */
+===================================================== */
 
 async function loginUser() {
 
@@ -866,20 +1702,18 @@ document
 .getElementById("loginPassword")
 .value;
 
-const message =
-document.getElementById("authMessage");
 
 if (!email || !password) {
 
-message.innerText =
-"يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+showMessage(
+"أدخل البريد الإلكتروني وكلمة المرور.",
+"error"
+);
 
 return;
 
 }
 
-message.innerText =
-"جاري تسجيل الدخول...";
 
 try {
 
@@ -890,118 +1724,170 @@ await fetch(
 method: "POST",
 
 headers: {
+
 "apikey": SUPABASE_KEY,
-"Content-Type": "application/json"
+
+"Content-Type":
+"application/json"
+
 },
 
 body: JSON.stringify({
+
 email: email,
+
 password: password
+
 })
+
 }
 );
 
+
 const data =
 await response.json();
+
 
 if (!response.ok) {
 
 throw new Error(
 data.error_description ||
 data.msg ||
-"بيانات تسجيل الدخول غير صحيحة."
+data.message ||
+"فشل تسجيل الدخول."
 );
 
 }
 
-localStorage.setItem(
-"supabase_access_token",
-data.access_token
-);
+
+currentUser =
+data.user;
+
 
 localStorage.setItem(
-"supabase_refresh_token",
-data.refresh_token || ""
+"adam_alnoor_session",
+JSON.stringify(data)
 );
 
-localStorage.setItem(
-"supabase_user",
-JSON.stringify(data.user)
+
+updateAccountUI();
+
+showMessage(
+"تم تسجيل الدخول بنجاح.",
+"success"
 );
 
-message.innerText =
-"تم تسجيل الدخول بنجاح ✅";
 
-checkCurrentUser();
-
-}
-
-catch(error) {
+} catch (error) {
 
 console.error(error);
 
-message.innerText =
-error.message ||
-"حدث خطأ أثناء تسجيل الدخول.";
-
-}
-
-}
-
-
-/* =========================
-   التحقق من المستخدم
-========================= */
-
-function checkCurrentUser() {
-
-const userData =
-localStorage.getItem(
-"supabase_user"
+showMessage(
+error.message,
+"error"
 );
 
-const loginForm =
-document.getElementById("loginForm");
+}
 
-const userInfo =
-document.getElementById("userInfo");
+}
+
+
+/* =====================================================
+   تسجيل الخروج
+===================================================== */
+
+function logoutUser() {
+
+currentUser = null;
+
+localStorage.removeItem(
+"adam_alnoor_session"
+);
+
+updateAccountUI();
+
+showMessage(
+"تم تسجيل الخروج.",
+"success"
+);
+
+}
+
+
+/* =====================================================
+   استعادة الجلسة
+===================================================== */
+
+function restoreSession() {
+
+try {
+
+const saved =
+localStorage.getItem(
+"adam_alnoor_session"
+);
+
+
+if (!saved) {
+
+return;
+
+}
+
+
+const session =
+JSON.parse(saved);
+
+
+if (session && session.user) {
+
+currentUser =
+session.user;
+
+}
+
+} catch (error) {
+
+console.error(error);
+
+}
+
+}
+
+
+/* =====================================================
+   واجهة الحساب
+===================================================== */
+
+function updateAccountUI() {
+
+const loggedOut =
+document.getElementById("loggedOut");
+
+const loggedIn =
+document.getElementById("loggedIn");
 
 const userEmail =
 document.getElementById("userEmail");
 
-if (userData) {
 
-try {
+if (currentUser) {
 
-const user =
-JSON.parse(userData);
-
-loginForm.style.display =
+loggedOut.style.display =
 "none";
 
-userInfo.style.display =
+loggedIn.style.display =
 "block";
 
-userEmail.innerText =
-"البريد الإلكتروني: " +
-(user.email || "");
+userEmail.textContent =
+currentUser.email || "";
 
-}
+} else {
 
-catch(error) {
-
-console.error(error);
-
-}
-
-}
-
-else {
-
-loginForm.style.display =
+loggedOut.style.display =
 "block";
 
-userInfo.style.display =
+loggedIn.style.display =
 "none";
 
 }
@@ -1009,36 +1895,344 @@ userInfo.style.display =
 }
 
 
-/* =========================
-   تسجيل الخروج
-========================= */
+/* =====================================================
+   المكتبة
+===================================================== */
 
-function logoutUser() {
+async function loadLibrary() {
 
-localStorage.removeItem(
-"supabase_access_token"
-);
+const container =
+document.getElementById("libraryContent");
 
-localStorage.removeItem(
-"supabase_refresh_token"
-);
 
-localStorage.removeItem(
-"supabase_user"
-);
+if (!currentUser) {
 
-alert(
-"تم تسجيل الخروج بنجاح."
-);
+container.innerHTML = `
 
-checkCurrentUser();
+<div class="empty">
+
+<h3>
+🔐 سجّل الدخول أولًا
+</h3>
+
+<p>
+يجب تسجيل الدخول لرؤية الكتب التي اشتريتها.
+</p>
+
+<button
+class="primary-btn"
+onclick="showAccount()">
+الذهاب إلى حسابي
+</button>
+
+</div>
+
+`;
+
+return;
 
 }
 
 
-/* =========================
+/*
+   سيتم هنا لاحقًا جلب الكتب التي اشتراها
+   المستخدم من جدول المشتريات في Supabase.
+*/
+
+container.innerHTML = `
+
+<div class="empty">
+
+<h3>
+📚 مكتبتك الرقمية
+</h3>
+
+<p>
+تم تسجيل الدخول بنجاح.
+</p>
+
+<p>
+ستظهر الكتب المشتراة هنا بعد ربط جدول المشتريات والدفع.
+</p>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================================
+   فتح نافذة الدفع
+===================================================== */
+
+function openCheckout() {
+
+if (cart.length === 0) {
+
+showMessage(
+"السلة فارغة.",
+"error"
+);
+
+return;
+
+}
+
+
+if (!currentUser) {
+
+showMessage(
+"يجب تسجيل الدخول قبل إتمام الطلب.",
+"error"
+);
+
+showAccount();
+
+return;
+
+}
+
+
+let total = 0;
+
+
+const html =
+cart.map(item => {
+
+const subtotal =
+Number(item.price) *
+Number(item.quantity);
+
+
+total += subtotal;
+
+
+return `
+
+<p>
+${escapeHTML(item.title)}
+× ${item.quantity}
+— ${subtotal.toFixed(2)} $
+</p>
+
+`;
+
+}).join("");
+
+
+document.getElementById(
+"checkoutSummary"
+).innerHTML = `
+
+<div style="
+background:#f5f6fa;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+">
+
+${html}
+
+<hr>
+
+<strong>
+الإجمالي:
+${total.toFixed(2)} $
+</strong>
+
+</div>
+
+`;
+
+
+document.getElementById(
+"checkoutEmail"
+).value =
+currentUser.email || "";
+
+
+document
+.getElementById("checkoutModal")
+.classList.add("show");
+
+}
+
+
+/* =====================================================
+   إغلاق نافذة الدفع
+===================================================== */
+
+function closeCheckout() {
+
+document
+.getElementById("checkoutModal")
+.classList.remove("show");
+
+}
+
+
+/* =====================================================
+   إنشاء الطلب
+===================================================== */
+
+async function createOrder() {
+
+if (!currentUser) {
+
+showMessage(
+"يجب تسجيل الدخول.",
+"error"
+);
+
+return;
+
+}
+
+
+if (cart.length === 0) {
+
+showMessage(
+"السلة فارغة.",
+"error"
+);
+
+return;
+
+}
+
+
+const name =
+document
+.getElementById("checkoutName")
+.value
+.trim();
+
+const email =
+document
+.getElementById("checkoutEmail")
+.value
+.trim();
+
+
+if (!name || !email) {
+
+showMessage(
+"أدخل الاسم والبريد الإلكتروني.",
+"error"
+);
+
+return;
+
+}
+
+
+let total = 0;
+
+
+cart.forEach(item => {
+
+total +=
+Number(item.price) *
+Number(item.quantity);
+
+});
+
+
+/*
+   تجهيز بيانات الطلب.
+
+   لن نرسل Secret Key من المتصفح.
+   ربط بوابة الدفع الفعلية سيتم لاحقًا
+   من خلال Server/Edge Function آمنة.
+*/
+
+
+const orderData = {
+
+user_id:
+currentUser.id,
+
+customer_name:
+name,
+
+customer_email:
+email,
+
+total:
+Number(total.toFixed(2)),
+
+items:
+cart.map(item => ({
+
+book_id:
+item.id,
+
+title:
+item.title,
+
+price:
+item.price,
+
+quantity:
+item.quantity
+
+}))
+
+};
+
+
+console.log(
+"Order prepared:",
+orderData
+);
+
+
+showMessage(
+"تم تجهيز الطلب. بوابة الدفع سيتم ربطها في الخطوة التالية.",
+"info"
+);
+
+closeCheckout();
+
+}
+
+
+/* =====================================================
+   حماية عرض النصوص
+===================================================== */
+
+function escapeHTML(value) {
+
+return String(value)
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#039;");
+
+}
+
+
+function escapeAttribute(value) {
+
+return String(value)
+.replace(/\\/g, "\\\\")
+.replace(/'/g, "\\'")
+.replace(/"/g, "&quot;");
+
+}
+
+
+/* =====================================================
    تشغيل الموقع
-========================= */
+===================================================== */
+
+restoreSession();
+
+loadCart();
+
+updateAccountUI();
 
 renderBooks();
 
