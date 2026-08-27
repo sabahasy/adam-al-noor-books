@@ -1,21 +1,15 @@
-const WAYL_API_URL = "https://api.thewayl.com/api/v1/links";
-const USD_TO_IQD = 1310;
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
+  }
 
-module.exports = async function handler(req, res) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({
-        success: false,
-        error: "Method not allowed"
-      });
-    }
-
-    const body = req.body || {};
-    const items = body.items;
+    const { items } = req.body || {};
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
-        success: false,
         error: "السلة فارغة"
       });
     }
@@ -24,41 +18,37 @@ module.exports = async function handler(req, res) {
 
     if (!WAYL_API_KEY) {
       return res.status(500).json({
-        success: false,
-        error: "مفتاح Wayl غير موجود في Vercel. تأكد من اسم المتغير WAYL_API_KEY."
+        error: "WAYL_API_KEY غير موجود في Vercel"
       });
     }
 
-    const lineItem = [];
+    const USD_TO_IQD = 1310;
 
-    for (const book of items) {
+    const lineItem = items.map((book) => {
       const priceUSD = Number(book.price);
 
       if (!Number.isFinite(priceUSD) || priceUSD <= 0) {
-        return res.status(400).json({
-          success: false,
-          error: "يوجد كتاب بسعر غير صحيح."
-        });
+        throw new Error(
+          `سعر الكتاب غير صحيح: ${book.title || "كتاب"}`
+        );
       }
 
-      const amountIQD = Math.round(priceUSD * USD_TO_IQD);
-
-      lineItem.push({
+      return {
         label: String(book.title || "كتاب"),
-        amount: amountIQD,
+        amount: Math.round(priceUSD * USD_TO_IQD),
         type: "increase"
-      });
-    }
+      };
+    });
 
     const totalIQD = lineItem.reduce(
-      (total, item) => total + item.amount,
+      (sum, item) => sum + item.amount,
       0
     );
 
     if (!Number.isInteger(totalIQD) || totalIQD <= 0) {
       return res.status(400).json({
-        success: false,
-        error: "إجمالي الطلب غير صحيح."
+        error: "إجمالي الطلب غير صحيح",
+        totalIQD
       });
     }
 
@@ -66,14 +56,16 @@ module.exports = async function handler(req, res) {
       "adam-" +
       Date.now() +
       "-" +
-      Math.random().toString(36).substring(2, 8);
+      Math.random()
+        .toString(36)
+        .substring(2, 10);
 
     const siteUrl =
       process.env.VERCEL_URL
-        ? "https://" + process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
         : "https://project-akmpg.vercel.app";
 
-    const paymentBody = {
+    const requestBody = {
       env: "test",
       referenceId: referenceId,
       total: totalIQD,
@@ -83,15 +75,13 @@ module.exports = async function handler(req, res) {
       redirectionUrl: siteUrl
     };
 
-    console.log("WAYL REQUEST:", {
-      referenceId: referenceId,
-      total: totalIQD,
-      currency: "IQD",
-      items: lineItem.length
-    });
+    console.log(
+      "WAYL REQUEST:",
+      JSON.stringify(requestBody)
+    );
 
-    const waylResponse = await fetch(
-      WAYL_API_URL,
+    const response = await fetch(
+      "https://api.thewayl.com/api/v1/links",
       {
         method: "POST",
 
@@ -100,54 +90,62 @@ module.exports = async function handler(req, res) {
           "X-WAYL-AUTHENTICATION": WAYL_API_KEY
         },
 
-        body: JSON.stringify(paymentBody)
+        body: JSON.stringify(requestBody)
       }
     );
 
-    const responseText = await waylResponse.text();
-
-    let waylData;
-
-    try {
-      waylData = responseText
-        ? JSON.parse(responseText)
-        : {};
-    } catch {
-      waylData = {
-        rawResponse: responseText
-      };
-    }
+    const rawText = await response.text();
 
     console.log(
       "WAYL STATUS:",
-      waylResponse.status
+      response.status
     );
 
     console.log(
       "WAYL RESPONSE:",
-      waylData
+      rawText
     );
 
-    // إظهار رد Wayl الحقيقي لنا
-    if (!waylResponse.ok) {
+    let waylData = null;
+
+    try {
+      waylData = JSON.parse(rawText);
+    } catch {
+      waylData = {
+        raw: rawText
+      };
+    }
+
+    if (!response.ok) {
       return res.status(400).json({
-        success: false,
-        error: "Wayl رفض طلب الدفع.",
-        waylStatus: waylResponse.status,
-        waylResponse: waylData
+        error: "Wayl رفض طلب الدفع",
+        waylStatus: response.status,
+
+        message:
+          waylData?.message ||
+          waylData?.error ||
+          "لم يرسل Wayl رسالة واضحة",
+
+        errors:
+          waylData?.errors ||
+          null,
+
+        details: waylData
       });
     }
 
     const paymentUrl =
-      waylData &&
-      waylData.data &&
-      waylData.data.url;
+      waylData?.data?.url;
 
     if (!paymentUrl) {
       return res.status(502).json({
-        success: false,
-        error: "تم الاتصال بـ Wayl، لكن لم يتم استلام رابط الدفع.",
-        waylResponse: waylData
+        error: "Wayl لم يُرجع رابط الدفع",
+
+        message:
+          waylData?.message ||
+          "الرابط غير موجود في data.url",
+
+        details: waylData
       });
     }
 
@@ -160,17 +158,17 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
+
     console.error(
       "CREATE PAYMENT ERROR:",
       error
     );
 
     return res.status(500).json({
-      success: false,
-      error: "حدث خطأ داخل خادم الدفع.",
-      message: error && error.message
-        ? error.message
-        : "Unknown server error"
+      error: "حدث خطأ في خادم الدفع",
+      message:
+        error?.message ||
+        "Unknown error"
     });
   }
-};
+}
