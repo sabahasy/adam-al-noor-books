@@ -9,9 +9,9 @@ export const config = {
 
 export default async function handler(req, res) {
 
-  /* =====================================================
-     Wayl Webhook
-  ===================================================== */
+  // =====================================================
+  // POST فقط
+  // =====================================================
 
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -21,9 +21,9 @@ export default async function handler(req, res) {
 
   try {
 
-    /* =====================================================
-       مفاتيح Supabase
-    ===================================================== */
+    // =====================================================
+    // SUPABASE
+    // =====================================================
 
     const SUPABASE_URL =
       process.env.SUPABASE_URL ||
@@ -33,7 +33,6 @@ export default async function handler(req, res) {
       process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!SUPABASE_SERVICE_ROLE_KEY) {
-
       console.error(
         "WAYL WEBHOOK: SUPABASE_SERVICE_ROLE_KEY missing"
       );
@@ -49,15 +48,14 @@ export default async function handler(req, res) {
         SUPABASE_SERVICE_ROLE_KEY
       );
 
-    /* =====================================================
-       Wayl Secret
-    ===================================================== */
+    // =====================================================
+    // WAYL WEBHOOK SECRET
+    // =====================================================
 
     const secret =
       process.env.WAYL_WEBHOOK_SECRET;
 
     if (!secret) {
-
       console.error(
         "WAYL WEBHOOK: WAYL_WEBHOOK_SECRET missing"
       );
@@ -67,28 +65,26 @@ export default async function handler(req, res) {
       });
     }
 
-    /* =====================================================
-       قراءة RAW BODY
-    ===================================================== */
+    // =====================================================
+    // قراءة RAW BODY
+    // =====================================================
 
     const chunks = [];
 
     for await (const chunk of req) {
-
       chunks.push(
         Buffer.isBuffer(chunk)
           ? chunk
           : Buffer.from(chunk)
       );
-
     }
 
     const rawBody =
       Buffer.concat(chunks);
 
-    /* =====================================================
-       قراءة توقيع Wayl
-    ===================================================== */
+    // =====================================================
+    // قراءة توقيع Wayl
+    // =====================================================
 
     const signatureHeader =
       req.headers["x-wayl-signature-256"];
@@ -100,15 +96,19 @@ export default async function handler(req, res) {
       );
 
       return res.status(401).json({
-        error: "Webhook signature missing",
+        error:
+          "Webhook signature missing",
       });
-
     }
 
     const receivedSignature =
       String(signatureHeader)
         .trim()
         .replace(/^sha256=/i, "");
+
+    // =====================================================
+    // حساب التوقيع المتوقع
+    // =====================================================
 
     const expectedSignature =
       crypto
@@ -119,17 +119,35 @@ export default async function handler(req, res) {
         .update(rawBody)
         .digest("hex");
 
-    const receivedBuffer =
-      Buffer.from(
-        receivedSignature,
-        "hex"
-      );
+    let receivedBuffer;
+    let expectedBuffer;
 
-    const expectedBuffer =
-      Buffer.from(
-        expectedSignature,
-        "hex"
-      );
+    try {
+
+      receivedBuffer =
+        Buffer.from(
+          receivedSignature,
+          "hex"
+        );
+
+      expectedBuffer =
+        Buffer.from(
+          expectedSignature,
+          "hex"
+        );
+
+    } catch {
+
+      return res.status(401).json({
+        error:
+          "Invalid webhook signature",
+      });
+
+    }
+
+    // =====================================================
+    // التحقق الآمن من التوقيع
+    // =====================================================
 
     if (
       receivedBuffer.length !==
@@ -141,9 +159,9 @@ export default async function handler(req, res) {
       );
 
       return res.status(401).json({
-        error: "Invalid webhook signature",
+        error:
+          "Invalid webhook signature",
       });
-
     }
 
     const valid =
@@ -159,14 +177,14 @@ export default async function handler(req, res) {
       );
 
       return res.status(401).json({
-        error: "Invalid webhook signature",
+        error:
+          "Invalid webhook signature",
       });
-
     }
 
-    /* =====================================================
-       تحليل JSON
-    ===================================================== */
+    // =====================================================
+    // تحليل JSON
+    // =====================================================
 
     let data;
 
@@ -185,62 +203,74 @@ export default async function handler(req, res) {
       );
 
       return res.status(400).json({
-        error: "Invalid JSON",
+        error:
+          "Invalid JSON",
       });
-
     }
 
-    /* =====================================================
-       تسجيل إشعار Wayl
-    ===================================================== */
+    // =====================================================
+    // تسجيل Webhook
+    // =====================================================
 
     console.log(
       "WAYL WEBHOOK RECEIVED:",
       JSON.stringify(data)
     );
 
-    /* =====================================================
-       بيانات الدفع
-    ===================================================== */
+    // =====================================================
+    // استخراج بيانات Wayl
+    // =====================================================
 
     const referenceId =
       data?.referenceId ||
+      data?.data?.referenceId ||
       null;
 
     const customParameter =
       data?.customParameter ||
+      data?.data?.customParameter ||
       null;
 
     const paymentStatus =
       data?.paymentStatus ||
+      data?.data?.paymentStatus ||
       null;
 
     const paymentMethod =
       data?.paymentMethod ||
+      data?.data?.paymentMethod ||
       null;
 
     const paymentProcessor =
       data?.paymentProcessor ||
+      data?.data?.paymentProcessor ||
       null;
 
     const total =
       data?.total ||
+      data?.data?.total ||
       null;
 
     const code =
       data?.code ||
+      data?.data?.code ||
       null;
 
     const paymentId =
       data?.id ||
+      data?.data?.id ||
+      data?.paymentId ||
+      data?.data?.paymentId ||
       null;
 
     const event =
       data?.event ||
+      data?.data?.event ||
       null;
 
     const webhookEvent =
       data?.webhookEvent ||
+      data?.data?.webhookEvent ||
       null;
 
     console.log(
@@ -259,42 +289,50 @@ export default async function handler(req, res) {
       }
     );
 
-    /* =====================================================
-       التأكد من نجاح الدفع
-    ===================================================== */
+    // =====================================================
+    // تحديد حالة الدفع
+    // =====================================================
+
+    const normalizedStatus =
+      String(
+        paymentStatus || ""
+      ).toLowerCase();
+
+    const normalizedWebhookEvent =
+      String(
+        webhookEvent || ""
+      ).toLowerCase();
+
+    const normalizedEvent =
+      String(
+        event || ""
+      ).toLowerCase();
 
     const paymentIsSuccessful =
-      paymentStatus === "Paid" &&
       (
-        webhookEvent === "payment.success" ||
-        event === "order.created"
+        normalizedStatus === "paid" ||
+        normalizedStatus === "success" ||
+        normalizedStatus === "successful" ||
+        normalizedStatus === "completed"
+      ) &&
+      (
+        normalizedWebhookEvent ===
+          "payment.success" ||
+        normalizedWebhookEvent ===
+          "payment.paid" ||
+        normalizedWebhookEvent ===
+          "payment.completed" ||
+        normalizedEvent ===
+          "order.created" ||
+        normalizedEvent ===
+          "payment.success" ||
+        normalizedEvent ===
+          "payment.paid"
       );
 
-    if (!paymentIsSuccessful) {
-
-      console.log(
-        "WAYL PAYMENT NOT SUCCESSFUL:",
-        {
-          paymentStatus,
-          webhookEvent,
-          event,
-        }
-      );
-
-      return res.status(200).json({
-        success: true,
-        received: true,
-        paymentSuccessful: false,
-      });
-
-    }
-
-    /* =====================================================
-       استخراج رقم الطلب
-       
-       create-payment.js يرسل:
-       customParameter = order.id
-    ===================================================== */
+    // =====================================================
+    // استخراج رقم الطلب
+    // =====================================================
 
     const orderId =
       Number(customParameter);
@@ -310,14 +348,14 @@ export default async function handler(req, res) {
       );
 
       return res.status(400).json({
-        error: "Invalid order ID",
+        error:
+          "Invalid order ID",
       });
-
     }
 
-    /* =====================================================
-       البحث عن الطلب
-    ===================================================== */
+    // =====================================================
+    // البحث عن الطلب
+    // =====================================================
 
     const {
       data: order,
@@ -326,25 +364,32 @@ export default async function handler(req, res) {
       await supabaseAdmin
         .from("orders")
         .select(
-          "id,user_id,total_amount,status"
+          "id,user_id,total_amount,status,payment_status,wayl_reference_id,wayl_payment_id"
         )
-        .eq("id", orderId)
+        .eq(
+          "id",
+          orderId
+        )
         .single();
 
-    if (orderFindError || !order) {
+    if (
+      orderFindError ||
+      !order
+    ) {
 
       console.error(
         "WAYL WEBHOOK: ORDER NOT FOUND",
         {
           orderId,
-          error: orderFindError,
+          error:
+            orderFindError,
         }
       );
 
       return res.status(404).json({
-        error: "Order not found",
+        error:
+          "Order not found",
       });
-
     }
 
     console.log(
@@ -352,12 +397,91 @@ export default async function handler(req, res) {
       order
     );
 
-    /* =====================================================
-       منع التكرار
-       
-       إذا كان الطلب مكتملًا بالفعل،
-       لا ننشئ كتبًا في المكتبة مرة ثانية.
-    ===================================================== */
+    // =====================================================
+    // التحقق من Reference ID
+    // =====================================================
+
+    if (
+      referenceId &&
+      order.wayl_reference_id &&
+      String(referenceId) !==
+        String(order.wayl_reference_id)
+    ) {
+
+      console.error(
+        "WAYL WEBHOOK: REFERENCE ID MISMATCH",
+        {
+          received:
+            referenceId,
+          expected:
+            order.wayl_reference_id,
+          orderId:
+            order.id
+        }
+      );
+
+      return res.status(400).json({
+        error:
+          "Payment reference does not match order",
+      });
+    }
+
+    // =====================================================
+    // إذا لم يكن الدفع ناجحًا
+    // =====================================================
+
+    if (!paymentIsSuccessful) {
+
+      console.log(
+        "WAYL PAYMENT NOT SUCCESSFUL:",
+        {
+          orderId:
+            order.id,
+          paymentStatus,
+          webhookEvent,
+          event
+        }
+      );
+
+      // نحفظ معلومات الدفع حتى لو لم ينجح
+      await supabaseAdmin
+        .from("orders")
+        .update({
+
+          payment_status:
+            paymentStatus
+              ? String(paymentStatus)
+              : "pending",
+
+          wayl_reference_id:
+            referenceId ||
+            order.wayl_reference_id,
+
+          wayl_payment_id:
+            paymentId ||
+            order.wayl_payment_id
+
+        })
+        .eq(
+          "id",
+          order.id
+        );
+
+      return res.status(200).json({
+        success:
+          true,
+
+        received:
+          true,
+
+        paymentSuccessful:
+          false
+      });
+    }
+
+    // =====================================================
+    // منع تكرار معالجة الدفع
+    // =====================================================
 
     if (
       order.status === "paid" ||
@@ -369,27 +493,135 @@ export default async function handler(req, res) {
         order.id
       );
 
-      return res.status(200).json({
-        success: true,
-        received: true,
-        alreadyProcessed: true,
-      });
+      // تحديث بيانات Wayl فقط
+      await supabaseAdmin
+        .from("orders")
+        .update({
 
+          payment_status:
+            "paid",
+
+          wayl_reference_id:
+            referenceId ||
+            order.wayl_reference_id,
+
+          wayl_payment_id:
+            paymentId ||
+            order.wayl_payment_id,
+
+          payment_method:
+            paymentMethod,
+
+          payment_processor:
+            paymentProcessor,
+
+          paid_at:
+            new Date().toISOString()
+
+        })
+        .eq(
+          "id",
+          order.id
+        );
+
+      return res.status(200).json({
+        success:
+          true,
+
+        received:
+          true,
+
+        alreadyProcessed:
+          true
+      });
     }
 
-    /* =====================================================
-       تحديث الطلب إلى Paid
-    ===================================================== */
+    // =====================================================
+    // التحقق من مبلغ الدفع
+    // =====================================================
+
+    if (
+      total !== null &&
+      total !== undefined
+    ) {
+
+      const receivedTotal =
+        Number(total);
+
+      const orderTotal =
+        Number(order.total_amount);
+
+      if (
+        Number.isFinite(receivedTotal) &&
+        Number.isFinite(orderTotal) &&
+        receivedTotal !== orderTotal
+      ) {
+
+        console.error(
+          "WAYL WEBHOOK: AMOUNT MISMATCH",
+          {
+            orderId:
+              order.id,
+
+            orderTotal:
+              orderTotal,
+
+            receivedTotal:
+              receivedTotal
+          }
+        );
+
+        return res.status(400).json({
+          error:
+            "Payment amount does not match order",
+        });
+      }
+    }
+
+    // =====================================================
+    // تحديث الطلب إلى Paid
+    // =====================================================
 
     const {
+      data: updatedOrder,
       error: orderUpdateError
     } =
       await supabaseAdmin
         .from("orders")
         .update({
-          status: "paid",
+
+          status:
+            "paid",
+
+          payment_status:
+            "paid",
+
+          wayl_reference_id:
+            referenceId ||
+            order.wayl_reference_id,
+
+          wayl_payment_id:
+            paymentId ||
+            order.wayl_payment_id,
+
+          payment_method:
+            paymentMethod,
+
+          payment_processor:
+            paymentProcessor,
+
+          paid_at:
+            new Date().toISOString()
+
         })
-        .eq("id", order.id);
+        .eq(
+          "id",
+          order.id
+        )
+        .select(
+          "id,user_id,total_amount,status,payment_status,wayl_reference_id,wayl_payment_id,payment_method,payment_processor,paid_at"
+        )
+        .single();
 
     if (orderUpdateError) {
 
@@ -399,14 +631,19 @@ export default async function handler(req, res) {
       );
 
       return res.status(500).json({
-        error: "Could not update order",
+        error:
+          "Could not update order",
       });
-
     }
 
-    /* =====================================================
-       جلب كتب الطلب
-    ===================================================== */
+    console.log(
+      "WAYL ORDER UPDATED:",
+      updatedOrder
+    );
+
+    // =====================================================
+    // جلب كتب الطلب
+    // =====================================================
 
     const {
       data: orderItems,
@@ -430,9 +667,9 @@ export default async function handler(req, res) {
       );
 
       return res.status(500).json({
-        error: "Could not load order items",
+        error:
+          "Could not load order items",
       });
-
     }
 
     if (
@@ -446,38 +683,22 @@ export default async function handler(req, res) {
       );
 
       return res.status(500).json({
-        error: "Order has no items",
+        error:
+          "Order has no items",
       });
-
     }
 
-    /* =====================================================
-       إنشاء عناصر المكتبة
-    ===================================================== */
+    // =====================================================
+    // إضافة الكتب إلى المكتبة
+    // =====================================================
 
-    const libraryItems =
-      orderItems.map(item => ({
-        user_id:
-          order.user_id,
+    for (
+      const item of orderItems
+    ) {
 
-        book_id:
-          item.book_id,
-
-        order_id:
-          order.id,
-
-        purchased_at:
-          new Date().toISOString(),
-      }));
-
-    /* =====================================================
-       إدخال الكتب في Library
-       
-       نحاول منع التكرار عن طريق فحص الكتب
-       الموجودة للمستخدم في نفس الطلب.
-    ===================================================== */
-
-    for (const item of libraryItems) {
+      // ---------------------------------------------------
+      // التحقق من وجود الكتاب مسبقًا في نفس الطلب
+      // ---------------------------------------------------
 
       const {
         data: existingLibraryItem,
@@ -485,10 +706,12 @@ export default async function handler(req, res) {
       } =
         await supabaseAdmin
           .from("library")
-          .select("id")
+          .select(
+            "id"
+          )
           .eq(
             "user_id",
-            item.user_id
+            order.user_id
           )
           .eq(
             "book_id",
@@ -496,7 +719,7 @@ export default async function handler(req, res) {
           )
           .eq(
             "order_id",
-            item.order_id
+            order.id
           )
           .limit(1);
 
@@ -508,10 +731,14 @@ export default async function handler(req, res) {
         );
 
         return res.status(500).json({
-          error: "Could not check library",
+          error:
+            "Could not check library",
         });
-
       }
+
+      // ---------------------------------------------------
+      // موجود بالفعل
+      // ---------------------------------------------------
 
       if (
         existingLibraryItem &&
@@ -520,19 +747,42 @@ export default async function handler(req, res) {
 
         console.log(
           "WAYL LIBRARY ITEM ALREADY EXISTS:",
-          item
+          {
+            orderId:
+              order.id,
+
+            bookId:
+              item.book_id
+          }
         );
 
         continue;
-
       }
+
+      // ---------------------------------------------------
+      // إضافة الكتاب
+      // ---------------------------------------------------
 
       const {
         error: libraryInsertError
       } =
         await supabaseAdmin
           .from("library")
-          .insert(item);
+          .insert({
+
+            user_id:
+              order.user_id,
+
+            book_id:
+              item.book_id,
+
+            order_id:
+              order.id,
+
+            purchased_at:
+              new Date().toISOString()
+
+          });
 
       if (libraryInsertError) {
 
@@ -542,38 +792,66 @@ export default async function handler(req, res) {
         );
 
         return res.status(500).json({
-          error: "Could not add book to library",
+          error:
+            "Could not add book to library",
         });
-
       }
 
       console.log(
         "WAYL LIBRARY BOOK ADDED:",
-        item
-      );
+        {
+          userId:
+            order.user_id,
 
+          bookId:
+            item.book_id,
+
+          orderId:
+            order.id
+        }
+      );
     }
 
-    /* =====================================================
-       نجاح العملية
-    ===================================================== */
+    // =====================================================
+    // النجاح النهائي
+    // =====================================================
 
     console.log(
       "WAYL PAYMENT COMPLETED SUCCESSFULLY:",
       {
-        orderId: order.id,
-        userId: order.user_id,
-        paymentId,
-        referenceId,
-        total,
+        orderId:
+          order.id,
+
+        userId:
+          order.user_id,
+
+        paymentId:
+          paymentId,
+
+        referenceId:
+          referenceId,
+
+        total:
+          total,
+
+        code:
+          code
       }
     );
 
     return res.status(200).json({
-      success: true,
-      received: true,
-      paymentSuccessful: true,
-      orderId: order.id,
+
+      success:
+        true,
+
+      received:
+        true,
+
+      paymentSuccessful:
+        true,
+
+      orderId:
+        order.id
     });
 
   } catch (error) {
@@ -584,8 +862,12 @@ export default async function handler(req, res) {
     );
 
     return res.status(500).json({
-      error: "Webhook server error",
-    });
+      error:
+        "Webhook server error",
 
+      message:
+        error?.message ||
+        "Unknown error"
+    });
   }
 }
