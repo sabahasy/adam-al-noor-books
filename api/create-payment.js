@@ -61,7 +61,6 @@ export default async function handler(req, res) {
         error:
           "يجب تسجيل الدخول أولًا."
       });
-
     }
 
     const {
@@ -87,7 +86,6 @@ export default async function handler(req, res) {
         error:
           "جلسة تسجيل الدخول غير صالحة. سجّل الدخول مرة أخرى."
       });
-
     }
 
     const user =
@@ -111,11 +109,10 @@ export default async function handler(req, res) {
         error:
           "السلة فارغة."
       });
-
     }
 
     // =====================================================
-    // استخراج IDs الحقيقية فقط
+    // استخراج IDs الحقيقية
     // =====================================================
 
     const bookIds = [];
@@ -125,7 +122,6 @@ export default async function handler(req, res) {
       const rawId =
         item?.id;
 
-      // منع default-1 / default-2 / أي ID نصي
       if (
         rawId === undefined ||
         rawId === null ||
@@ -136,7 +132,6 @@ export default async function handler(req, res) {
           error:
             "يوجد كتاب بدون معرّف."
         });
-
       }
 
       const id =
@@ -158,7 +153,6 @@ export default async function handler(req, res) {
           bookId:
             String(rawId)
         });
-
       }
 
       bookIds.push(id);
@@ -180,7 +174,6 @@ export default async function handler(req, res) {
         error:
           "يوجد كتاب مكرر في السلة."
       });
-
     }
 
     // =====================================================
@@ -199,7 +192,6 @@ export default async function handler(req, res) {
         error:
           "WAYL_API_KEY غير موجود في Vercel."
       });
-
     }
 
     if (!WAYL_WEBHOOK_SECRET) {
@@ -208,14 +200,14 @@ export default async function handler(req, res) {
         error:
           "WAYL_WEBHOOK_SECRET غير موجود في Vercel."
       });
-
     }
 
     // =====================================================
     // إعدادات المتجر
     // =====================================================
 
-    const USD_TO_IQD = 1310;
+    const USD_TO_IQD =
+      1310;
 
     const webhookUrl =
       "https://project-akmpg.vercel.app/api/wayl-webhook";
@@ -254,11 +246,10 @@ export default async function handler(req, res) {
         details:
           booksError.message
       });
-
     }
 
     // =====================================================
-    // التأكد أن جميع الكتب موجودة
+    // التأكد من وجود جميع الكتب
     // =====================================================
 
     if (
@@ -280,11 +271,10 @@ export default async function handler(req, res) {
         error:
           "يوجد كتاب غير موجود في قاعدة البيانات."
       });
-
     }
 
     // =====================================================
-    // ترتيب الكتب بنفس ترتيب السلة
+    // ترتيب الكتب
     // =====================================================
 
     const orderedBooks =
@@ -296,10 +286,6 @@ export default async function handler(req, res) {
         )
       );
 
-    // =====================================================
-    // التأكد من وجود كل كتاب
-    // =====================================================
-
     if (
       orderedBooks.some(
         book => !book
@@ -310,11 +296,10 @@ export default async function handler(req, res) {
         error:
           "تعذر مطابقة الكتب مع قاعدة البيانات."
       });
-
     }
 
     // =====================================================
-    // التحقق من توفر الكتب والأسعار
+    // التحقق من الكتب والأسعار
     // =====================================================
 
     for (
@@ -327,11 +312,8 @@ export default async function handler(req, res) {
 
         return res.status(400).json({
           error:
-            `الكتاب غير متاح حاليًا: ${
-              book.title_ar
-            }`
+            `الكتاب غير متاح حاليًا: ${book.title_ar}`
         });
-
       }
 
       const price =
@@ -344,13 +326,9 @@ export default async function handler(req, res) {
 
         return res.status(400).json({
           error:
-            `سعر الكتاب غير صحيح: ${
-              book.title_ar
-            }`
+            `سعر الكتاب غير صحيح: ${book.title_ar}`
         });
-
       }
-
     }
 
     // =====================================================
@@ -382,9 +360,7 @@ export default async function handler(req, res) {
 
           type:
             "increase"
-
         };
-
       });
 
     // =====================================================
@@ -417,11 +393,10 @@ export default async function handler(req, res) {
           "إجمالي الطلب غير صحيح.",
         totalIQD
       });
-
     }
 
     // =====================================================
-    // Reference ID
+    // إنشاء Reference ID
     // =====================================================
 
     const referenceId =
@@ -451,11 +426,17 @@ export default async function handler(req, res) {
             totalIQD,
 
           status:
-            "pending"
+            "pending",
+
+          payment_status:
+            "pending",
+
+          wayl_reference_id:
+            referenceId
 
         })
         .select(
-          "id,user_id,total_amount,status,created_at"
+          "id,user_id,total_amount,status,payment_status,wayl_reference_id,created_at"
         )
         .single();
 
@@ -472,7 +453,6 @@ export default async function handler(req, res) {
         details:
           orderError.message
       });
-
     }
 
     // =====================================================
@@ -494,7 +474,6 @@ export default async function handler(req, res) {
 
           quantity:
             1
-
         })
       );
 
@@ -529,7 +508,6 @@ export default async function handler(req, res) {
         details:
           orderItemsError.message
       });
-
     }
 
     // =====================================================
@@ -564,7 +542,6 @@ export default async function handler(req, res) {
 
       redirectionUrl:
         redirectionUrl
-
     };
 
     console.log(
@@ -595,14 +572,12 @@ export default async function handler(req, res) {
 
             "X-WAYL-AUTHENTICATION":
               WAYL_API_KEY
-
           },
 
           body:
             JSON.stringify(
               waylRequest
             )
-
         }
       );
 
@@ -634,7 +609,6 @@ export default async function handler(req, res) {
         raw:
           rawText
       };
-
     }
 
     // =====================================================
@@ -654,8 +628,13 @@ export default async function handler(req, res) {
       await supabaseAdmin
         .from("orders")
         .update({
+
           status:
+            "failed",
+
+          payment_status:
             "failed"
+
         })
         .eq(
           "id",
@@ -680,9 +659,7 @@ export default async function handler(req, res) {
         errors:
           waylData?.errors ||
           null
-
       });
-
     }
 
     // =====================================================
@@ -711,8 +688,13 @@ export default async function handler(req, res) {
       await supabaseAdmin
         .from("orders")
         .update({
+
           status:
+            "failed",
+
+          payment_status:
             "failed"
+
         })
         .eq(
           "id",
@@ -730,21 +712,90 @@ export default async function handler(req, res) {
 
         details:
           waylData
-
       });
-
     }
 
     // =====================================================
-    // نجاح
+    // استخراج Wayl Payment ID إن وجد
     // =====================================================
 
-    console.log(
-      "PAYMENT CREATED:",
-      {
+    const waylPaymentId =
+      waylData?.data?.id ||
+      waylData?.id ||
+      waylData?.data?.paymentId ||
+      waylData?.paymentId ||
+      null;
+
+    // =====================================================
+    // تحديث Order ببيانات Wayl
+    // =====================================================
+
+    const {
+      data: updatedOrder,
+      error: updateOrderError
+    } =
+      await supabaseAdmin
+        .from("orders")
+        .update({
+
+          wayl_reference_id:
+            referenceId,
+
+          wayl_payment_id:
+            waylPaymentId,
+
+          payment_status:
+            "pending"
+
+        })
+        .eq(
+          "id",
+          order.id
+        )
+        .select(
+          "id,user_id,total_amount,status,payment_status,wayl_reference_id,wayl_payment_id,created_at"
+        )
+        .single();
+
+    if (updateOrderError) {
+
+      console.error(
+        "ORDER WAYL UPDATE ERROR:",
+        updateOrderError
+      );
+
+      // لا نحذف الطلب هنا،
+      // لأن رابط الدفع تم إنشاؤه بالفعل.
+
+      return res.status(500).json({
+
+        error:
+          "تم إنشاء رابط الدفع ولكن تعذر حفظ بيانات Wayl في الطلب.",
+
+        details:
+          updateOrderError.message,
+
+        paymentUrl:
+          paymentUrl,
 
         orderId:
           order.id,
+
+        referenceId:
+          referenceId
+      });
+    }
+
+    // =====================================================
+    // نجاح العملية
+    // =====================================================
+
+    console.log(
+      "PAYMENT CREATED SUCCESSFULLY:",
+      {
+
+        orderId:
+          updatedOrder.id,
 
         userId:
           user.id,
@@ -752,12 +803,14 @@ export default async function handler(req, res) {
         referenceId:
           referenceId,
 
+        waylPaymentId:
+          waylPaymentId,
+
         totalUSD:
           totalUSD,
 
         totalIQD:
           totalIQD
-
       }
     );
 
@@ -767,10 +820,13 @@ export default async function handler(req, res) {
         true,
 
       orderId:
-        order.id,
+        updatedOrder.id,
 
       referenceId:
         referenceId,
+
+      waylPaymentId:
+        waylPaymentId,
 
       total:
         totalIQD,
@@ -783,7 +839,6 @@ export default async function handler(req, res) {
 
       paymentUrl:
         paymentUrl
-
     });
 
   } catch (error) {
@@ -801,9 +856,6 @@ export default async function handler(req, res) {
       message:
         error?.message ||
         "Unknown error"
-
     });
-
   }
-
 }
