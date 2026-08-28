@@ -2649,174 +2649,92 @@ async function renderLibrary() {
          إنشاء Signed URL من Supabase Storage
       =============================================== */
 
-      if (filePath) {
+   if (filePath) {
 
-        try {
+  try {
 
-          const cleanPath =
-            filePath
-              .replace(/^\/+/, "")
-              .replace(/^books\//i, "");
+    const pdfResponse =
+      await fetch(
+        "/api/library-pdf",
+        {
+          method: "POST",
 
-          console.log(
-            "PDF FILE PATH:",
-            cleanPath
-          );
+          headers: {
+            "Content-Type":
+              "application/json",
 
-          const signResponse =
-            await fetch(
-              `${SUPABASE_URL}/storage/v1/object/sign/books/${encodeURIComponent(cleanPath)}`,
-              {
-                method: "POST",
+            "Authorization":
+              `Bearer ${token}`
+          },
 
-                headers: {
-
-                  "apikey":
-                    SUPABASE_KEY,
-
-                  "Authorization":
-                    `Bearer ${token}`,
-
-                  "Content-Type":
-                    "application/json"
-
-                },
-
-                body: JSON.stringify({
-                  expiresIn: 3600
-                })
-              }
-            );
-
-          const signText =
-            await signResponse.text();
-
-          console.log(
-            "PDF SIGN STATUS:",
-            signResponse.status
-          );
-
-          console.log(
-            "PDF SIGN RESPONSE:",
-            signText
-          );
-
-          if (!signResponse.ok) {
-
-            throw new Error(
-              `Storage HTTP ${signResponse.status}: ${signText}`
-            );
-
-          }
-
-          let signData;
-
-          try {
-
-            signData =
-              JSON.parse(signText);
-
-          } catch {
-
-            throw new Error(
-              "Storage أعاد ردًا غير صالح."
-            );
-
-          }
-
-          const signedPath =
-            signData?.signedURL ||
-            signData?.signedUrl ||
-            signData?.signed_url;
-
-          if (!signedPath) {
-
-            throw new Error(
-              "Supabase لم يُرجع Signed URL."
-            );
-
-          }
-
-          const finalUrl =
-            signedPath.startsWith("http")
-              ? signedPath
-              : `${SUPABASE_URL}/storage/v1${signedPath}`;
-
-          readButton = `
-            <button
-              onclick="openPDF('${escapeHTML(finalUrl)}')"
-            >
-              📖 قراءة الكتاب
-            </button>
-          `;
-
+          body: JSON.stringify({
+            filePath: filePath
+          })
         }
-        catch (pdfError) {
+      );
 
-          console.error(
-            "PDF STORAGE ERROR:",
-            pdfError
-          );
+    const pdfText =
+      await pdfResponse.text();
 
-          readButton = `
-            <div
-              style="
-                margin-top:10px;
-                color:#b3261e;
-              "
-            >
-              تعذر تجهيز ملف الكتاب.
-            </div>
-          `;
+    console.log(
+      "PDF API RESPONSE:",
+      pdfText
+    );
 
-        }
+    if (!pdfResponse.ok) {
 
-      }
-      else {
-
-        readButton = `
-          <div
-            style="
-              margin-top:10px;
-              color:#b3261e;
-            "
-          >
-            ملف الكتاب غير متوفر حاليًا.
-          </div>
-        `;
-
-      }
-
-      html += `
-
-        <div class="library-book">
-
-          <strong>
-            ${escapeHTML(title)}
-          </strong>
-
-          <br>
-
-          <small>
-            المؤلف:
-            ${escapeHTML(author)}
-          </small>
-
-          <br>
-
-          ${readButton}
-
-        </div>
-
-      `;
+      throw new Error(
+        `PDF API HTTP ${pdfResponse.status}: ${pdfText}`
+      );
 
     }
 
-    container.innerHTML =
-      html;
+    const pdfData =
+      JSON.parse(pdfText);
+
+    const finalUrl =
+      pdfData?.url;
+
+    if (!finalUrl) {
+
+      throw new Error(
+        "لم يتم الحصول على رابط الكتاب."
+      );
+
+    }
+
+    readButton = `
+      <button
+        type="button"
+        onclick="openPDF('${escapeHTML(finalUrl)}')"
+      >
+        📖 قراءة الكتاب
+      </button>
+    `;
 
   }
-  catch (error) {
+  catch (pdfError) {
+
+    console.error(
+      "PDF API ERROR:",
+      pdfError
+    );
+
+    readButton = `
+      <div
+        style="
+          margin-top:10px;
+          color:#b3261e;
+        "
+      >
+        تعذر تجهيز ملف الكتاب.
+      </div>
+    `;
+
+  }
+
+  }   
+
 
     console.error(
       "LIBRARY ERROR:",
