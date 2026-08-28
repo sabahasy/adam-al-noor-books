@@ -2508,6 +2508,7 @@ function showStatus(
 /* =====================================================
    المكتبة
 ===================================================== */
+
 async function renderLibrary() {
 
   const container =
@@ -2524,18 +2525,14 @@ async function renderLibrary() {
 
     container.innerHTML = `
       <div class="empty">
-
         🔐 يجب تسجيل الدخول أولًا.
-
         <br><br>
-
         <button
           class="form-button"
           onclick="showPage('account')"
         >
           تسجيل الدخول
         </button>
-
       </div>
     `;
 
@@ -2550,9 +2547,9 @@ async function renderLibrary() {
 
   try {
 
-    /* =========================================
-       جلب كتب المستخدم من المكتبة
-    ========================================= */
+    /* =================================================
+       جلب كتب المستخدم من Library
+    ================================================= */
 
     const response =
       await fetch(
@@ -2575,6 +2572,16 @@ async function renderLibrary() {
     const rawText =
       await response.text();
 
+    console.log(
+      "LIBRARY STATUS:",
+      response.status
+    );
+
+    console.log(
+      "LIBRARY RESPONSE:",
+      rawText
+    );
+
     if (!response.ok) {
 
       throw new Error(
@@ -2593,7 +2600,7 @@ async function renderLibrary() {
     } catch {
 
       throw new Error(
-        "تعذر قراءة بيانات المكتبة."
+        "بيانات المكتبة غير صالحة."
       );
 
     }
@@ -2612,191 +2619,201 @@ async function renderLibrary() {
       return;
     }
 
-    /* =========================================
+    /* =================================================
        عرض الكتب
-    ========================================= */
+    ================================================= */
 
-    container.innerHTML = "";
+    let html = "";
 
     for (const item of data) {
 
       const book =
         item.books || {};
 
+      const title =
+        book.title_ar ||
+        "كتاب";
+
+      const author =
+        book.author_ar ||
+        "Adam Al-Noor";
+
       const filePath =
-        String(book.pdf_url || "").trim();
+        String(
+          book.pdf_url || ""
+        ).trim();
 
-      const bookElement =
-        document.createElement("div");
+      let readButton = "";
 
-      bookElement.className =
-        "library-book";
+      /* ===============================================
+         إنشاء Signed URL من Supabase Storage
+      =============================================== */
 
-      bookElement.innerHTML = `
+      if (filePath) {
 
-        <strong>
-          ${escapeHTML(
-            book.title_ar || "كتاب"
-          )}
-        </strong>
+        try {
 
-        <br>
+          const cleanPath =
+            filePath
+              .replace(/^\/+/, "")
+              .replace(/^books\//i, "");
 
-        <small>
-          المؤلف:
-          ${escapeHTML(
-            book.author_ar || "Adam Al-Noor"
-          )}
-        </small>
+          console.log(
+            "PDF FILE PATH:",
+            cleanPath
+          );
 
-        <br>
+          const signResponse =
+            await fetch(
+              `${SUPABASE_URL}/storage/v1/object/sign/books/${encodeURIComponent(cleanPath)}`,
+              {
+                method: "POST",
 
-        <div
-          class="library-status"
-          style="margin-top:10px;color:#777;"
-        >
-          جاري تجهيز ملف الكتاب...
+                headers: {
+
+                  "apikey":
+                    SUPABASE_KEY,
+
+                  "Authorization":
+                    `Bearer ${token}`,
+
+                  "Content-Type":
+                    "application/json"
+
+                },
+
+                body: JSON.stringify({
+                  expiresIn: 3600
+                })
+              }
+            );
+
+          const signText =
+            await signResponse.text();
+
+          console.log(
+            "PDF SIGN STATUS:",
+            signResponse.status
+          );
+
+          console.log(
+            "PDF SIGN RESPONSE:",
+            signText
+          );
+
+          if (!signResponse.ok) {
+
+            throw new Error(
+              `Storage HTTP ${signResponse.status}: ${signText}`
+            );
+
+          }
+
+          let signData;
+
+          try {
+
+            signData =
+              JSON.parse(signText);
+
+          } catch {
+
+            throw new Error(
+              "Storage أعاد ردًا غير صالح."
+            );
+
+          }
+
+          const signedPath =
+            signData?.signedURL ||
+            signData?.signedUrl ||
+            signData?.signed_url;
+
+          if (!signedPath) {
+
+            throw new Error(
+              "Supabase لم يُرجع Signed URL."
+            );
+
+          }
+
+          const finalUrl =
+            signedPath.startsWith("http")
+              ? signedPath
+              : `${SUPABASE_URL}/storage/v1${signedPath}`;
+
+          readButton = `
+            <button
+              onclick="openPDF('${escapeHTML(finalUrl)}')"
+            >
+              📖 قراءة الكتاب
+            </button>
+          `;
+
+        }
+        catch (pdfError) {
+
+          console.error(
+            "PDF STORAGE ERROR:",
+            pdfError
+          );
+
+          readButton = `
+            <div
+              style="
+                margin-top:10px;
+                color:#b3261e;
+              "
+            >
+              تعذر تجهيز ملف الكتاب.
+            </div>
+          `;
+
+        }
+
+      }
+      else {
+
+        readButton = `
+          <div
+            style="
+              margin-top:10px;
+              color:#b3261e;
+            "
+          >
+            ملف الكتاب غير متوفر حاليًا.
+          </div>
+        `;
+
+      }
+
+      html += `
+
+        <div class="library-book">
+
+          <strong>
+            ${escapeHTML(title)}
+          </strong>
+
+          <br>
+
+          <small>
+            المؤلف:
+            ${escapeHTML(author)}
+          </small>
+
+          <br>
+
+          ${readButton}
+
         </div>
 
       `;
 
-      container.appendChild(
-        bookElement
-      );
-
-      /* =========================================
-         التأكد من وجود مسار PDF
-      ========================================= */
-
-      if (!filePath) {
-
-        const status =
-          bookElement.querySelector(
-            ".library-status"
-          );
-
-        status.textContent =
-          "ملف الكتاب غير متوفر حاليًا.";
-
-        status.style.color =
-          "#b3261e";
-
-        continue;
-      }
-
-      try {
-
-        /* =======================================
-           إنشاء رابط مؤقت من Storage
-        ======================================= */
-
-        const storageResponse =
-          await fetch(
-            `${SUPABASE_URL}/storage/v1/object/sign/books/${encodeURIComponent(filePath)}`,
-            {
-              method: "POST",
-
-              headers: {
-                "apikey":
-                  SUPABASE_KEY,
-
-                "Authorization":
-                  `Bearer ${token}`,
-
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-                  expiresIn: 3600
-                })
-            }
-          );
-
-        const storageText =
-          await storageResponse.text();
-
-        if (!storageResponse.ok) {
-
-          throw new Error(
-            `Storage HTTP ${storageResponse.status}: ${storageText}`
-          );
-
-        }
-
-        let storageData;
-
-        try {
-
-          storageData =
-            JSON.parse(storageText);
-
-        } catch {
-
-          throw new Error(
-            "Storage أعاد ردًا غير صالح."
-          );
-
-        }
-
-        const signedPath =
-          storageData?.signedURL ||
-          storageData?.signedUrl ||
-          storageData?.path ||
-          "";
-
-        if (!signedPath) {
-
-          throw new Error(
-            "لم يتم الحصول على رابط الكتاب."
-          );
-
-        }
-
-        const pdfUrl =
-          signedPath.startsWith("http")
-            ? signedPath
-            : `${SUPABASE_URL}/storage/v1${signedPath}`;
-
-        const status =
-          bookElement.querySelector(
-            ".library-status"
-          );
-
-        status.innerHTML = `
-
-          <button
-            type="button"
-            onclick="openPDF('${encodeURIComponent(pdfUrl)}')"
-          >
-            📖 قراءة الكتاب
-          </button>
-
-        `;
-
-      }
-      catch (storageError) {
-
-        console.error(
-          "PDF STORAGE ERROR:",
-          storageError
-        );
-
-        const status =
-          bookElement.querySelector(
-            ".library-status"
-          );
-
-        status.textContent =
-          "تعذر تجهيز ملف الكتاب.";
-
-        status.style.color =
-          "#b3261e";
-
-      }
-
     }
+
+    container.innerHTML =
+      html;
 
   }
   catch (error) {
@@ -2828,7 +2845,6 @@ async function renderLibrary() {
   }
 
 }
-
 /* =====================================================
    فتح PDF
 ===================================================== */
