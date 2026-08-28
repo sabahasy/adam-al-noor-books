@@ -380,28 +380,32 @@ class="search"
 id="search"
 type="text"
 placeholder="🔎 ابحث عن كتاب..."
-oninput="searchBooks()"
+oninput="searchBooks"
 
 «»
 
 <h2 class="section-title">
 التصنيفات
-</h2><div class="categories"><button class="category"
+</h2><div class="categories"><button
+class="category"
 onclick="filterCategory('all')">
 الكل
 </button>
 
-<button class="category"
+<button
+class="category"
 onclick="filterCategory('التاريخ')">
 التاريخ
 </button>
 
-<button class="category"
+<button
+class="category"
 onclick="filterCategory('الحضارات')">
 الحضارات
 </button>
 
-<button class="category"
+<button
+class="category"
 onclick="filterCategory('الروايات')">
 الروايات
 </button>
@@ -953,9 +957,12 @@ totalContainer.innerHTML = `
 <div class="cart-total">
 الإجمالي: ${total.toFixed(2)} $
 <br>
+
 <span style="font-size:14px;color:#777;">
-ما يعادل تقريبًا ${totalIQD.toLocaleString("en-US")} IQD
+ما يعادل تقريبًا
+${totalIQD.toLocaleString("en-US")} IQD
 </span>
+
 </div>
 
 `;
@@ -1026,21 +1033,15 @@ behavior: "smooth"
 });
 
 if (pageId === "cart") {
-
 renderCart();
-
 }
 
 if (pageId === "library") {
-
 renderLibrary();
-
 }
 
 if (pageId === "account") {
-
 checkUser();
-
 }
 
 }
@@ -1060,7 +1061,6 @@ if (!token) {
 showLogin();
 
 return;
-
 }
 
 try {
@@ -1082,7 +1082,6 @@ if (!response.ok) {
 showLogin();
 
 return;
-
 }
 
 const user =
@@ -1145,7 +1144,8 @@ if (!email || !password) {
 
 showStatus(
 status,
-"أدخل البريد الإلكتروني وكلمة المرور."
+"أدخل البريد الإلكتروني وكلمة المرور.",
+"error"
 );
 
 return;
@@ -1210,7 +1210,8 @@ catch (error) {
 
 showStatus(
 status,
-error.message
+error.message,
+"error"
 );
 
 }
@@ -1242,7 +1243,8 @@ if (!email || !password) {
 
 showStatus(
 status,
-"أدخل البريد الإلكتروني وكلمة المرور."
+"أدخل البريد الإلكتروني وكلمة المرور.",
+"error"
 );
 
 return;
@@ -1253,7 +1255,8 @@ if (password.length < 6) {
 
 showStatus(
 status,
-"يجب أن تكون كلمة المرور 6 أحرف على الأقل."
+"يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+"error"
 );
 
 return;
@@ -1319,7 +1322,8 @@ alert(
 
 showStatus(
 status,
-"تم إنشاء الحساب. تحقق من بريدك الإلكتروني ثم سجّل الدخول."
+"تم إنشاء الحساب. تحقق من بريدك الإلكتروني ثم سجّل الدخول.",
+"success"
 );
 
 }
@@ -1329,7 +1333,8 @@ catch (error) {
 
 showStatus(
 status,
-error.message
+error.message,
+"error"
 );
 
 }
@@ -1381,7 +1386,6 @@ headers: {
 "Authorization":
 `Bearer ${getAccessToken()}`
 }
-
 }
 );
 
@@ -1451,7 +1455,11 @@ document.getElementById(
    الرسائل
 ===================================================== */
 
-function showStatus(element, message, type = "") {
+function showStatus(
+element,
+message,
+type = ""
+) {
 
 if (!element) {
 return;
@@ -1529,11 +1537,9 @@ container.innerHTML =
 
 async function checkout() {
 
-if (cart.length === 0) {
+if (!cart || cart.length === 0) {
 
-alert(
-"السلة فارغة."
-);
+alert("السلة فارغة.");
 
 return;
 
@@ -1552,12 +1558,17 @@ document.getElementById(
 
 /* منع الضغط المتكرر */
 
-if (checkoutButton.disabled) {
+if (
+checkoutButton &&
+checkoutButton.disabled
+) {
+
 return;
+
 }
 
 
-/* حساب المجموع */
+/* حساب المجموع بالدولار */
 
 const totalUSD =
 cart.reduce(
@@ -1593,28 +1604,47 @@ return;
 
 /* حالة الانتظار */
 
-checkoutButton.disabled = true;
+if (checkoutButton) {
+
+checkoutButton.disabled =
+true;
 
 checkoutButton.textContent =
 "جاري إنشاء رابط الدفع...";
 
+}
+
+if (status) {
+
 status.style.display =
 "none";
 
+}
 
-/* إنشاء طلب */
+
+/* البيانات المرسلة إلى API */
 
 const requestBody = {
 
-items: cart.map(book => ({
-id: book.id,
-title: book.title,
-price: Number(book.price || 0)
+items:
+cart.map(book => ({
+
+id:
+book.id,
+
+title:
+book.title,
+
+price:
+Number(book.price || 0)
+
 })),
 
-totalUSD: totalUSD,
+totalUSD:
+totalUSD,
 
-totalIQD: totalIQD
+totalIQD:
+totalIQD
 
 };
 
@@ -1627,7 +1657,7 @@ requestBody
 try {
 
 /*
-   مهلة قصوى 20 ثانية
+   مهلة 20 ثانية
 */
 
 const controller =
@@ -1641,7 +1671,7 @@ setTimeout(
 
 
 /*
-   الاتصال بـ API
+   إنشاء رابط الدفع
 */
 
 const response =
@@ -1653,6 +1683,7 @@ method: "POST",
 headers: {
 "Content-Type":
 "application/json",
+
 "Accept":
 "application/json"
 },
@@ -1662,18 +1693,14 @@ JSON.stringify(requestBody),
 
 signal:
 controller.signal
-
 }
 );
-
 
 clearTimeout(timeout);
 
 
 /*
    نقرأ الرد كنص أولًا.
-   هذا يمنع مشكلة:
-   Unexpected token 'A'
 */
 
 const rawText =
@@ -1691,10 +1718,10 @@ rawText
 
 
 /*
-   محاولة تحويل الرد إلى JSON
+   تحويل JSON
 */
 
-let data = null;
+let data;
 
 try {
 
@@ -1711,7 +1738,7 @@ jsonError
 
 throw new Error(
 rawText
-? `خادم الدفع أعاد ردًا غير صالح: ${rawText.substring(0, 200)}`
+? "خادم الدفع أعاد ردًا غير صالح."
 : "خادم الدفع لم يُرجع أي بيانات."
 );
 
@@ -1719,7 +1746,7 @@ rawText
 
 
 /*
-   إذا كان API أعاد خطأ
+   فحص HTTP
 */
 
 if (!response.ok) {
@@ -1734,7 +1761,7 @@ data?.message ||
 
 
 /*
-   التأكد من وجود الرابط
+   استخراج رابط Wayl
 */
 
 const paymentUrl =
@@ -1744,9 +1771,13 @@ data?.url ||
 data?.data?.url;
 
 
+/*
+   التأكد من الرابط
+*/
+
 if (
 typeof paymentUrl !== "string" ||
-!paymentUrl.startsWith("http")
+!/^https?:\/\//i.test(paymentUrl)
 ) {
 
 console.error(
@@ -1770,7 +1801,7 @@ localStorage.setItem(
 JSON.stringify({
 
 referenceId:
-data.referenceId ||
+data?.referenceId ||
 data?.data?.referenceId ||
 "",
 
@@ -1794,17 +1825,12 @@ new Date().toISOString()
 
 
 /*
-   نجاح
+   عرض رسالة نجاح
 */
-
-console.log(
-"WAYL PAYMENT URL:",
-paymentUrl
-);
 
 showStatus(
 status,
-"تم إنشاء رابط الدفع. جارٍ تحويلك إلى Wayl...",
+"تم إنشاء الرابط ✓ جارٍ تحويلك إلى صفحة الدفع...",
 "success"
 );
 
@@ -1813,23 +1839,67 @@ status,
    تغيير الزر
 */
 
+if (checkoutButton) {
+
 checkoutButton.textContent =
 "تم إنشاء الرابط ✓";
+
+}
 
 
 /*
    الانتقال إلى Wayl
 */
 
-setTimeout(
-() => {
+console.log(
+"REDIRECTING TO WAYL:",
+paymentUrl
+);
 
-window.location.assign(
+
+/*
+   نستخدم location.replace
+   بدل assign حتى لا تبقى صفحة الدفع
+   في سجل الرجوع بشكل غير ضروري.
+*/
+
+setTimeout(
+function() {
+
+window.location.replace(
 paymentUrl
 );
 
 },
 300
+);
+
+
+/*
+   حماية إضافية:
+   إذا لم ينفذ المتصفح التحويل خلال 2 ثانية،
+   نحاول مرة أخرى.
+*/
+
+setTimeout(
+function() {
+
+if (
+document.visibilityState === "visible"
+) {
+
+console.log(
+"WAYL REDIRECT RETRY:",
+paymentUrl
+);
+
+window.location.href =
+paymentUrl;
+
+}
+
+},
+2000
 );
 
 }
@@ -1839,7 +1909,6 @@ console.error(
 "CHECKOUT ERROR:",
 error
 );
-
 
 if (
 error?.name === "AbortError"
@@ -1863,16 +1932,15 @@ error?.message ||
 
 }
 
-
-/*
-   إعادة الزر للعمل
-*/
+if (checkoutButton) {
 
 checkoutButton.disabled =
 false;
 
 checkoutButton.textContent =
 "إتمام الشراء";
+
+}
 
 }
 
@@ -1909,4 +1977,5 @@ loadBooks();
 
 checkUser();
 
-</script></body></html>
+</script></body>
+</html>
