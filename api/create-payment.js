@@ -23,7 +23,8 @@ export default async function handler(req, res) {
 
     if (!SUPABASE_SERVICE_ROLE_KEY) {
       return res.status(500).json({
-        error: "SUPABASE_SERVICE_ROLE_KEY غير موجود."
+        error:
+          "SUPABASE_SERVICE_ROLE_KEY غير موجود في Vercel."
       });
     }
 
@@ -34,7 +35,7 @@ export default async function handler(req, res) {
       );
 
     // =====================================================
-    // تسجيل الدخول
+    // التحقق من المستخدم
     // =====================================================
 
     const authHeader =
@@ -47,7 +48,8 @@ export default async function handler(req, res) {
 
     if (!accessToken) {
       return res.status(401).json({
-        error: "يجب تسجيل الدخول أولًا."
+        error:
+          "يجب تسجيل الدخول أولًا."
       });
     }
 
@@ -64,8 +66,15 @@ export default async function handler(req, res) {
       !userData ||
       !userData.user
     ) {
+
+      console.error(
+        "USER ERROR:",
+        userError
+      );
+
       return res.status(401).json({
-        error: "جلسة تسجيل الدخول غير صالحة."
+        error:
+          "جلسة تسجيل الدخول غير صالحة."
       });
     }
 
@@ -86,17 +95,19 @@ export default async function handler(req, res) {
 
     if (items.length === 0) {
       return res.status(400).json({
-        error: "السلة فارغة."
+        error:
+          "السلة فارغة."
       });
     }
 
     // =====================================================
-    // IDs
+    // استخراج IDs
     // =====================================================
 
     const bookIds =
-      items.map(item =>
-        Number(item?.id)
+      items.map(
+        item =>
+          Number(item?.id)
       );
 
     if (
@@ -106,8 +117,10 @@ export default async function handler(req, res) {
           id <= 0
       )
     ) {
+
       return res.status(400).json({
-        error: "يوجد كتاب بمعرّف غير صحيح."
+        error:
+          "يوجد كتاب بمعرّف غير صحيح."
       });
     }
 
@@ -118,8 +131,10 @@ export default async function handler(req, res) {
       uniqueBookIds.length !==
       bookIds.length
     ) {
+
       return res.status(400).json({
-        error: "يوجد كتاب مكرر في السلة."
+        error:
+          "يوجد كتاب مكرر في السلة."
       });
     }
 
@@ -135,18 +150,20 @@ export default async function handler(req, res) {
 
     if (!WAYL_API_KEY) {
       return res.status(500).json({
-        error: "WAYL_API_KEY غير موجود في Vercel."
+        error:
+          "WAYL_API_KEY غير موجود في Vercel."
       });
     }
 
     if (!WAYL_WEBHOOK_SECRET) {
       return res.status(500).json({
-        error: "WAYL_WEBHOOK_SECRET غير موجود في Vercel."
+        error:
+          "WAYL_WEBHOOK_SECRET غير موجود في Vercel."
       });
     }
 
     // =====================================================
-    // الإعدادات
+    // إعدادات
     // =====================================================
 
     const USD_TO_IQD = 1310;
@@ -158,7 +175,7 @@ export default async function handler(req, res) {
       "https://project-akmpg.vercel.app";
 
     // =====================================================
-    // الكتب
+    // قراءة الكتب
     // =====================================================
 
     const {
@@ -176,4 +193,606 @@ export default async function handler(req, res) {
         );
 
     if (booksError) {
+
       console.error(
+        "BOOKS ERROR:",
+        booksError
+      );
+
+      return res.status(500).json({
+        error:
+          "تعذر قراءة الكتب من قاعدة البيانات.",
+        details:
+          booksError.message
+      });
+    }
+
+    if (
+      !Array.isArray(books) ||
+      books.length !== uniqueBookIds.length
+    ) {
+
+      return res.status(400).json({
+        error:
+          "يوجد كتاب غير موجود في قاعدة البيانات."
+      });
+    }
+
+    // =====================================================
+    // ترتيب الكتب
+    // =====================================================
+
+    const orderedBooks =
+      uniqueBookIds.map(
+        id =>
+          books.find(
+            book =>
+              Number(book.id) ===
+              Number(id)
+          )
+      );
+
+    if (
+      orderedBooks.some(
+        book => !book
+      )
+    ) {
+
+      return res.status(400).json({
+        error:
+          "تعذر مطابقة الكتب مع قاعدة البيانات."
+      });
+    }
+
+    // =====================================================
+    // التحقق من الكتب
+    // =====================================================
+
+    for (
+      const book of orderedBooks
+    ) {
+
+      if (
+        book.is_available === false
+      ) {
+
+        return res.status(400).json({
+          error:
+            `الكتاب غير متاح حاليًا: ${book.title_ar}`
+        });
+      }
+
+      const price =
+        Number(book.price);
+
+      if (
+        !Number.isFinite(price) ||
+        price <= 0
+      ) {
+
+        return res.status(400).json({
+          error:
+            `سعر الكتاب غير صحيح: ${book.title_ar}`
+        });
+      }
+    }
+
+    // =====================================================
+    // عناصر Wayl
+    // =====================================================
+
+    const lineItem =
+      orderedBooks.map(
+        book => {
+
+          const priceUSD =
+            Number(book.price);
+
+          const amountIQD =
+            Math.round(
+              priceUSD *
+              USD_TO_IQD
+            );
+
+          return {
+
+            label:
+              String(
+                book.title_ar ||
+                "كتاب"
+              ),
+
+            amount:
+              amountIQD,
+
+            type:
+              "increase"
+
+          };
+        }
+      );
+
+    // =====================================================
+    // الإجمالي
+    // =====================================================
+
+    const totalIQD =
+      lineItem.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.amount),
+        0
+      );
+
+    const totalUSD =
+      orderedBooks.reduce(
+        (sum, book) =>
+          sum +
+          Number(book.price),
+        0
+      );
+
+    if (
+      !Number.isInteger(totalIQD) ||
+      totalIQD <= 0
+    ) {
+
+      return res.status(400).json({
+        error:
+          "إجمالي الطلب غير صحيح."
+      });
+    }
+
+    // =====================================================
+    // Reference ID
+    // =====================================================
+
+    const referenceId =
+      "adam-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2, 10);
+
+    // =====================================================
+    // إنشاء الطلب
+    // =====================================================
+
+    const {
+      data: order,
+      error: orderError
+    } =
+      await supabaseAdmin
+        .from("orders")
+        .insert({
+
+          user_id:
+            user.id,
+
+          total_amount:
+            totalIQD,
+
+          status:
+            "pending",
+
+          payment_status:
+            "pending",
+
+          wayl_reference_id:
+            referenceId
+
+        })
+        .select(
+          "id,user_id,total_amount,status,payment_status,wayl_reference_id,created_at"
+        )
+        .single();
+
+    if (orderError) {
+
+      console.error(
+        "ORDER INSERT ERROR:",
+        orderError
+      );
+
+      return res.status(500).json({
+        error:
+          "تعذر إنشاء الطلب.",
+        details:
+          orderError.message
+      });
+    }
+
+    // =====================================================
+    // Order Items
+    // =====================================================
+
+    const orderItems =
+      orderedBooks.map(
+        book => ({
+
+          order_id:
+            order.id,
+
+          book_id:
+            Number(book.id),
+
+          price:
+            Number(book.price),
+
+          quantity:
+            1
+
+        })
+      );
+
+    const {
+      error:
+        orderItemsError
+    } =
+      await supabaseAdmin
+        .from("order_items")
+        .insert(
+          orderItems
+        );
+
+    if (orderItemsError) {
+
+      console.error(
+        "ORDER ITEMS ERROR:",
+        orderItemsError
+      );
+
+      await supabaseAdmin
+        .from("orders")
+        .delete()
+        .eq(
+          "id",
+          order.id
+        );
+
+      return res.status(500).json({
+        error:
+          "تعذر حفظ كتب الطلب.",
+        details:
+          orderItemsError.message
+      });
+    }
+
+    // =====================================================
+    // طلب Wayl
+    // =====================================================
+
+    const waylRequest = {
+
+      env:
+        "test",
+
+      referenceId:
+        referenceId,
+
+      total:
+        totalIQD,
+
+      currency:
+        "IQD",
+
+      customParameter:
+        String(order.id),
+
+      lineItem:
+        lineItem,
+
+      webhookUrl:
+        webhookUrl,
+
+      webhookSecret:
+        WAYL_WEBHOOK_SECRET,
+
+      redirectionUrl:
+        redirectionUrl
+
+    };
+
+    console.log(
+      "WAYL REQUEST:",
+      JSON.stringify({
+        ...waylRequest,
+        webhookSecret:
+          "[HIDDEN]"
+      })
+    );
+
+    // =====================================================
+    // الاتصال بـ Wayl
+    // =====================================================
+
+    const waylResponse =
+      await fetch(
+        "https://api.thewayl.com/api/v1/links",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "X-WAYL-AUTHENTICATION":
+              WAYL_API_KEY
+
+          },
+
+          body:
+            JSON.stringify(
+              waylRequest
+            )
+
+        }
+      );
+
+    const rawText =
+      await waylResponse.text();
+
+    console.log(
+      "WAYL STATUS:",
+      waylResponse.status
+    );
+
+    console.log(
+      "WAYL RESPONSE:",
+      rawText
+    );
+
+    let waylData;
+
+    try {
+
+      waylData =
+        JSON.parse(
+          rawText
+        );
+
+    } catch {
+
+      waylData = {
+        raw:
+          rawText
+      };
+
+    }
+
+    // =====================================================
+    // Wayl رفض
+    // =====================================================
+
+    if (
+      !waylResponse.ok
+    ) {
+
+      console.error(
+        "WAYL REJECTED:",
+        waylData
+      );
+
+      await supabaseAdmin
+        .from("orders")
+        .update({
+          status:
+            "failed",
+
+          payment_status:
+            "failed"
+        })
+        .eq(
+          "id",
+          order.id
+        );
+
+      return res.status(
+        waylResponse.status
+      ).json({
+
+        error:
+          "Wayl رفض طلب الدفع.",
+
+        waylStatus:
+          waylResponse.status,
+
+        message:
+          waylData?.message ||
+          waylData?.error ||
+          "لم يرسل Wayl رسالة واضحة.",
+
+        details:
+          waylData
+
+      });
+    }
+
+    // =====================================================
+    // رابط الدفع
+    // =====================================================
+
+    const paymentUrl =
+      waylData?.data?.url ||
+      waylData?.url ||
+      waylData?.data?.paymentUrl ||
+      waylData?.paymentUrl;
+
+    if (
+      typeof paymentUrl !== "string" ||
+      !/^https?:\/\//i.test(
+        paymentUrl
+      )
+    ) {
+
+      console.error(
+        "WAYL PAYMENT URL MISSING:",
+        waylData
+      );
+
+      await supabaseAdmin
+        .from("orders")
+        .update({
+          status:
+            "failed",
+
+          payment_status:
+            "failed"
+        })
+        .eq(
+          "id",
+          order.id
+        );
+
+      return res.status(502).json({
+
+        error:
+          "Wayl لم يُرجع رابط الدفع.",
+
+        details:
+          waylData
+
+      });
+    }
+
+    // =====================================================
+    // استخراج معرف الدفع من Wayl
+    // =====================================================
+
+    const waylPaymentId =
+      waylData?.data?.id ||
+      waylData?.id ||
+      waylData?.data?.paymentId ||
+      waylData?.paymentId ||
+      null;
+
+    // =====================================================
+    // تحديث الطلب ببيانات Wayl
+    // =====================================================
+
+    const waylUpdate = {
+
+      wayl_reference_id:
+        referenceId,
+
+      payment_status:
+        waylData?.data?.paymentStatus ||
+        waylData?.paymentStatus ||
+        "pending"
+
+    };
+
+    if (waylPaymentId) {
+      waylUpdate.wayl_payment_id =
+        String(
+          waylPaymentId
+        );
+    }
+
+    const {
+      error:
+        waylSaveError
+    } =
+      await supabaseAdmin
+        .from("orders")
+        .update(
+          waylUpdate
+        )
+        .eq(
+          "id",
+          order.id
+        );
+
+    if (waylSaveError) {
+
+      console.error(
+        "WAYL SAVE ERROR:",
+        waylSaveError
+      );
+
+      return res.status(500).json({
+
+        error:
+          "تم إنشاء رابط الدفع ولكن تعذر حفظ بيانات Wayl في الطلب.",
+
+        details:
+          waylSaveError.message,
+
+        code:
+          waylSaveError.code || null,
+
+        hint:
+          waylSaveError.hint || null
+
+      });
+    }
+
+    // =====================================================
+    // النجاح
+    // =====================================================
+
+    console.log(
+      "PAYMENT CREATED SUCCESSFULLY:",
+      {
+        orderId:
+          order.id,
+
+        referenceId:
+          referenceId,
+
+        waylPaymentId:
+          waylPaymentId,
+
+        totalIQD:
+          totalIQD
+      }
+    );
+
+    return res.status(200).json({
+
+      success:
+        true,
+
+      orderId:
+        order.id,
+
+      referenceId:
+        referenceId,
+
+      total:
+        totalIQD,
+
+      totalUSD:
+        totalUSD,
+
+      currency:
+        "IQD",
+
+      paymentUrl:
+        paymentUrl
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "CREATE PAYMENT ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+
+      error:
+        "حدث خطأ في خادم الدفع.",
+
+      message:
+        error?.message ||
+        "Unknown error"
+
+    });
+  }
+}
