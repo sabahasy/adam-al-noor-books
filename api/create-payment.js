@@ -129,13 +129,21 @@ try {
 }
 
 // إذا رفض Wayl الطلب
-if (!response.ok) {
-  console.error(
-    "WAYL PAYMENT ERROR:",
-    response.status,
-    waylData
-  );
 
+if (!response.ok) {
+  console.error("===== WAYL 422 ERROR =====");
+  console.error("STATUS:", response.status);
+  console.error("RAW RESPONSE:", rawText);
+  console.error("PARSED RESPONSE:", waylData);
+  console.error("==========================");
+
+  return res.status(422).json({
+    error: "Wayl رفض طلب الدفع",
+    waylStatus: response.status,
+    waylResponse: waylData,
+    rawResponse: rawText
+  });
+}
   return res.status(response.status).json({
     error: "Wayl رفض طلب الدفع",
 
