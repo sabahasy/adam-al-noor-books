@@ -1,7 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
-  // السماح بـ POST فقط
+
+  // =====================================================
+  // POST فقط
+  // =====================================================
+
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed"
@@ -9,24 +13,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // =====================================================
-    // قراءة المستخدم من Authorization
-    // =====================================================
-
-    const authHeader = req.headers.authorization || "";
-
-    const accessToken = authHeader.startsWith("Bearer ")
-      ? authHeader.substring(7)
-      : "";
-
-    if (!accessToken) {
-      return res.status(401).json({
-        error: "يجب تسجيل الدخول أولًا."
-      });
-    }
 
     // =====================================================
-    // مفاتيح Supabase
+    // SUPABASE
     // =====================================================
 
     const SUPABASE_URL =
@@ -37,65 +26,165 @@ export default async function handler(req, res) {
       process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!SUPABASE_SERVICE_ROLE_KEY) {
+
       console.error(
-        "SUPABASE_SERVICE_ROLE_KEY missing"
+        "SUPABASE_SERVICE_ROLE_KEY is missing"
       );
 
       return res.status(500).json({
-        error: "مفتاح Supabase السري غير موجود في Vercel."
+        error:
+          "مفتاح Supabase السري غير موجود في Vercel."
       });
     }
 
-    // عميل إداري للخادم فقط
-    const supabaseAdmin = createClient(
-      SUPABASE_URL,
-      SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabaseAdmin =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY
+      );
 
     // =====================================================
-    // التحقق من المستخدم
+    // التحقق من تسجيل الدخول
     // =====================================================
+
+    const authHeader =
+      req.headers.authorization || "";
+
+    const accessToken =
+      authHeader.startsWith("Bearer ")
+        ? authHeader.substring(7)
+        : "";
+
+    if (!accessToken) {
+
+      return res.status(401).json({
+        error:
+          "يجب تسجيل الدخول أولًا."
+      });
+
+    }
 
     const {
       data: userData,
       error: userError
-    } = await supabaseAdmin.auth.getUser(
-      accessToken
-    );
+    } =
+      await supabaseAdmin.auth.getUser(
+        accessToken
+      );
 
     if (
       userError ||
-      !userData?.user
+      !userData ||
+      !userData.user
     ) {
+
       console.error(
         "SUPABASE USER ERROR:",
         userError
       );
 
       return res.status(401).json({
-        error: "جلسة تسجيل الدخول غير صالحة. سجّل الدخول مرة أخرى."
+        error:
+          "جلسة تسجيل الدخول غير صالحة. سجّل الدخول مرة أخرى."
       });
+
     }
 
-    const user = userData.user;
+    const user =
+      userData.user;
 
     // =====================================================
     // قراءة السلة
     // =====================================================
 
-    const { items } = req.body || {};
+    const body =
+      req.body || {};
 
-    if (
-      !Array.isArray(items) ||
-      items.length === 0
-    ) {
+    const items =
+      Array.isArray(body.items)
+        ? body.items
+        : [];
+
+    if (items.length === 0) {
+
       return res.status(400).json({
-        error: "السلة فارغة."
+        error:
+          "السلة فارغة."
       });
+
     }
 
     // =====================================================
-    // مفاتيح Wayl
+    // استخراج IDs الحقيقية فقط
+    // =====================================================
+
+    const bookIds = [];
+
+    for (const item of items) {
+
+      const rawId =
+        item?.id;
+
+      // منع default-1 / default-2 / أي ID نصي
+      if (
+        rawId === undefined ||
+        rawId === null ||
+        rawId === ""
+      ) {
+
+        return res.status(400).json({
+          error:
+            "يوجد كتاب بدون معرّف."
+        });
+
+      }
+
+      const id =
+        Number(rawId);
+
+      if (
+        !Number.isSafeInteger(id) ||
+        id <= 0
+      ) {
+
+        console.error(
+          "INVALID BOOK ID:",
+          rawId
+        );
+
+        return res.status(400).json({
+          error:
+            "يوجد كتاب بمعرّف غير صحيح.",
+          bookId:
+            String(rawId)
+        });
+
+      }
+
+      bookIds.push(id);
+    }
+
+    // =====================================================
+    // منع تكرار الكتاب
+    // =====================================================
+
+    const uniqueBookIds =
+      [...new Set(bookIds)];
+
+    if (
+      uniqueBookIds.length !==
+      bookIds.length
+    ) {
+
+      return res.status(400).json({
+        error:
+          "يوجد كتاب مكرر في السلة."
+      });
+
+    }
+
+    // =====================================================
+    // WAYL
     // =====================================================
 
     const WAYL_API_KEY =
@@ -105,15 +194,21 @@ export default async function handler(req, res) {
       process.env.WAYL_WEBHOOK_SECRET;
 
     if (!WAYL_API_KEY) {
+
       return res.status(500).json({
-        error: "WAYL_API_KEY غير موجود في Vercel."
+        error:
+          "WAYL_API_KEY غير موجود في Vercel."
       });
+
     }
 
     if (!WAYL_WEBHOOK_SECRET) {
+
       return res.status(500).json({
-        error: "WAYL_WEBHOOK_SECRET غير موجود في Vercel."
+        error:
+          "WAYL_WEBHOOK_SECRET غير موجود في Vercel."
       });
+
     }
 
     // =====================================================
@@ -129,119 +224,204 @@ export default async function handler(req, res) {
       "https://project-akmpg.vercel.app";
 
     // =====================================================
-    // التحقق من الكتب والأسعار من Supabase
+    // قراءة الكتب من Supabase
     // =====================================================
-
-    const bookIds = items
-      .map(book => Number(book.id))
-      .filter(id => Number.isInteger(id));
-
-    if (bookIds.length !== items.length) {
-      return res.status(400).json({
-        error: "يوجد كتاب بمعرّف غير صحيح."
-      });
-    }
 
     const {
       data: books,
       error: booksError
-    } = await supabaseAdmin
-      .from("books")
-      .select(
-        "id,title_ar,price,is_available"
-      )
-      .in("id", bookIds);
+    } =
+      await supabaseAdmin
+        .from("books")
+        .select(
+          "id,title_ar,price,is_available"
+        )
+        .in(
+          "id",
+          uniqueBookIds
+        );
 
     if (booksError) {
+
       console.error(
         "SUPABASE BOOKS ERROR:",
         booksError
       );
 
       return res.status(500).json({
-        error: "تعذر قراءة الكتب من قاعدة البيانات."
+        error:
+          "تعذر قراءة الكتب من قاعدة البيانات.",
+        details:
+          booksError.message
       });
+
     }
+
+    // =====================================================
+    // التأكد أن جميع الكتب موجودة
+    // =====================================================
 
     if (
       !Array.isArray(books) ||
-      books.length !== items.length
+      books.length !== uniqueBookIds.length
     ) {
+
+      console.error(
+        "BOOKS NOT FOUND:",
+        {
+          requested:
+            uniqueBookIds,
+          returned:
+            books
+        }
+      );
+
       return res.status(400).json({
-        error: "يوجد كتاب غير موجود في قاعدة البيانات."
+        error:
+          "يوجد كتاب غير موجود في قاعدة البيانات."
       });
+
     }
 
     // =====================================================
-    // منع شراء كتاب غير متاح
+    // ترتيب الكتب بنفس ترتيب السلة
     // =====================================================
 
-    for (const book of books) {
-      if (book.is_available === false) {
-        return res.status(400).json({
-          error:
-            `الكتاب غير متاح حاليًا: ${book.title_ar}`
-        });
-      }
+    const orderedBooks =
+      uniqueBookIds.map(id =>
+        books.find(
+          book =>
+            Number(book.id) ===
+            Number(id)
+        )
+      );
+
+    // =====================================================
+    // التأكد من وجود كل كتاب
+    // =====================================================
+
+    if (
+      orderedBooks.some(
+        book => !book
+      )
+    ) {
+
+      return res.status(400).json({
+        error:
+          "تعذر مطابقة الكتب مع قاعدة البيانات."
+      });
+
     }
 
     // =====================================================
-    // إنشاء عناصر الطلب من أسعار Supabase
+    // التحقق من توفر الكتب والأسعار
     // =====================================================
 
-    const lineItem = books.map(book => {
-      const priceUSD = Number(book.price);
+    for (
+      const book of orderedBooks
+    ) {
 
       if (
-        !Number.isFinite(priceUSD) ||
-        priceUSD <= 0
+        book.is_available === false
       ) {
-        throw new Error(
-          `سعر الكتاب غير صحيح: ${book.title_ar}`
-        );
+
+        return res.status(400).json({
+          error:
+            `الكتاب غير متاح حاليًا: ${
+              book.title_ar
+            }`
+        });
+
       }
 
-      return {
-        label: String(
-          book.title_ar || "كتاب"
-        ),
+      const price =
+        Number(book.price);
 
-        amount: Math.round(
-          priceUSD * USD_TO_IQD
-        ),
+      if (
+        !Number.isFinite(price) ||
+        price <= 0
+      ) {
 
-        type: "increase"
-      };
-    });
+        return res.status(400).json({
+          error:
+            `سعر الكتاب غير صحيح: ${
+              book.title_ar
+            }`
+        });
+
+      }
+
+    }
+
+    // =====================================================
+    // إنشاء عناصر Wayl
+    // =====================================================
+
+    const lineItem =
+      orderedBooks.map(book => {
+
+        const priceUSD =
+          Number(book.price);
+
+        const amountIQD =
+          Math.round(
+            priceUSD *
+            USD_TO_IQD
+          );
+
+        return {
+
+          label:
+            String(
+              book.title_ar ||
+              "كتاب"
+            ),
+
+          amount:
+            amountIQD,
+
+          type:
+            "increase"
+
+        };
+
+      });
 
     // =====================================================
     // حساب الإجمالي
     // =====================================================
 
-    const totalIQD = lineItem.reduce(
-      (sum, item) =>
-        sum + Number(item.amount),
-      0
-    );
+    const totalIQD =
+      lineItem.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.amount),
+        0
+      );
 
-    const totalUSD = books.reduce(
-      (sum, book) =>
-        sum + Number(book.price),
-      0
-    );
+    const totalUSD =
+      orderedBooks.reduce(
+        (sum, book) =>
+          sum +
+          Number(book.price),
+        0
+      );
 
     if (
       !Number.isInteger(totalIQD) ||
       totalIQD <= 0
     ) {
+
       return res.status(400).json({
-        error: "إجمالي الطلب غير صحيح.",
+        error:
+          "إجمالي الطلب غير صحيح.",
         totalIQD
       });
+
     }
 
     // =====================================================
-    // رقم مرجعي فريد
+    // Reference ID
     // =====================================================
 
     const referenceId =
@@ -253,99 +433,146 @@ export default async function handler(req, res) {
         .substring(2, 10);
 
     // =====================================================
-    // إنشاء الطلب في Supabase
+    // إنشاء Order
     // =====================================================
 
     const {
       data: order,
       error: orderError
-    } = await supabaseAdmin
-      .from("orders")
-      .insert({
-        user_id: user.id,
-        total_amount: totalIQD,
-        status: "pending"
-      })
-      .select("id,user_id,total_amount,status,created_at")
-      .single();
+    } =
+      await supabaseAdmin
+        .from("orders")
+        .insert({
+
+          user_id:
+            user.id,
+
+          total_amount:
+            totalIQD,
+
+          status:
+            "pending"
+
+        })
+        .select(
+          "id,user_id,total_amount,status,created_at"
+        )
+        .single();
 
     if (orderError) {
+
       console.error(
-        "SUPABASE ORDER INSERT ERROR:",
+        "ORDER INSERT ERROR:",
         orderError
       );
 
       return res.status(500).json({
-        error: "تعذر إنشاء الطلب.",
-        details: orderError.message
+        error:
+          "تعذر إنشاء الطلب.",
+        details:
+          orderError.message
       });
+
     }
 
     // =====================================================
-    // إنشاء order_items
+    // إنشاء Order Items
     // =====================================================
 
-    const orderItems = books.map(book => ({
-      order_id: order.id,
-      book_id: book.id,
-      price: Number(book.price),
-      quantity: 1
-    }));
+    const orderItems =
+      orderedBooks.map(
+        book => ({
+
+          order_id:
+            order.id,
+
+          book_id:
+            Number(book.id),
+
+          price:
+            Number(book.price),
+
+          quantity:
+            1
+
+        })
+      );
 
     const {
-      error: orderItemsError
-    } = await supabaseAdmin
-      .from("order_items")
-      .insert(orderItems);
+      error:
+        orderItemsError
+    } =
+      await supabaseAdmin
+        .from("order_items")
+        .insert(
+          orderItems
+        );
 
     if (orderItemsError) {
+
       console.error(
-        "SUPABASE ORDER ITEMS ERROR:",
+        "ORDER ITEMS ERROR:",
         orderItemsError
       );
 
-      // حذف الطلب إذا فشل إنشاء العناصر
       await supabaseAdmin
         .from("orders")
         .delete()
-        .eq("id", order.id);
+        .eq(
+          "id",
+          order.id
+        );
 
       return res.status(500).json({
-        error: "تعذر حفظ كتب الطلب.",
-        details: orderItemsError.message
+        error:
+          "تعذر حفظ كتب الطلب.",
+        details:
+          orderItemsError.message
       });
+
     }
 
     // =====================================================
-    // إرسال طلب الدفع إلى Wayl
+    // إنشاء طلب Wayl
     // =====================================================
 
-    const requestBody = {
-      env: "test",
+    const waylRequest = {
 
-      referenceId,
+      env:
+        "test",
 
-      total: totalIQD,
+      referenceId:
+        referenceId,
 
-      currency: "IQD",
+      total:
+        totalIQD,
 
-      customParameter: String(order.id),
+      currency:
+        "IQD",
 
-      lineItem,
+      customParameter:
+        String(order.id),
 
-      webhookUrl,
+      lineItem:
+        lineItem,
+
+      webhookUrl:
+        webhookUrl,
 
       webhookSecret:
         WAYL_WEBHOOK_SECRET,
 
-      redirectionUrl
+      redirectionUrl:
+        redirectionUrl
+
     };
 
     console.log(
-      "WAYL REQUEST BODY:",
+      "WAYL REQUEST:",
       JSON.stringify({
-        ...requestBody,
-        webhookSecret: "[HIDDEN]"
+        ...waylRequest,
+        webhookSecret:
+          "[HIDDEN]"
       })
     );
 
@@ -353,75 +580,97 @@ export default async function handler(req, res) {
     // الاتصال بـ Wayl
     // =====================================================
 
-    const response = await fetch(
-      "https://api.thewayl.com/api/v1/links",
-      {
-        method: "POST",
+    const waylResponse =
+      await fetch(
+        "https://api.thewayl.com/api/v1/links",
+        {
 
-        headers: {
-          "Content-Type": "application/json",
+          method:
+            "POST",
 
-          "X-WAYL-AUTHENTICATION":
-            WAYL_API_KEY
-        },
+          headers: {
 
-        body: JSON.stringify(
-          requestBody
-        )
-      }
-    );
+            "Content-Type":
+              "application/json",
+
+            "X-WAYL-AUTHENTICATION":
+              WAYL_API_KEY
+
+          },
+
+          body:
+            JSON.stringify(
+              waylRequest
+            )
+
+        }
+      );
 
     const rawText =
-      await response.text();
+      await waylResponse.text();
 
     console.log(
       "WAYL STATUS:",
-      response.status
+      waylResponse.status
     );
 
     console.log(
-      "WAYL RAW RESPONSE:",
+      "WAYL RESPONSE:",
       rawText
     );
 
     let waylData;
 
     try {
+
       waylData =
-        JSON.parse(rawText);
+        JSON.parse(
+          rawText
+        );
+
     } catch {
+
       waylData = {
-        raw: rawText
+        raw:
+          rawText
       };
+
     }
 
     // =====================================================
-    // Wayl رفض الدفع
+    // Wayl رفض الطلب
     // =====================================================
 
-    if (!response.ok) {
+    if (
+      !waylResponse.ok
+    ) {
+
       console.error(
         "WAYL REJECTED:",
-        response.status,
+        waylResponse.status,
         waylData
       );
 
-      // تحديث الطلب إلى failed
       await supabaseAdmin
         .from("orders")
         .update({
-          status: "failed"
+          status:
+            "failed"
         })
-        .eq("id", order.id);
+        .eq(
+          "id",
+          order.id
+        );
 
       return res.status(
-        response.status
+        waylResponse.status
       ).json({
+
         error:
           "Wayl رفض طلب الدفع.",
 
         waylStatus:
-          response.status,
+          waylResponse.status,
 
         message:
           waylData?.message ||
@@ -431,7 +680,9 @@ export default async function handler(req, res) {
         errors:
           waylData?.errors ||
           null
+
       });
+
     }
 
     // =====================================================
@@ -441,22 +692,35 @@ export default async function handler(req, res) {
     const paymentUrl =
       waylData?.data?.url ||
       waylData?.url ||
-      waylData?.data?.paymentUrl;
+      waylData?.data?.paymentUrl ||
+      waylData?.paymentUrl;
 
-    if (!paymentUrl) {
+    if (
+      typeof paymentUrl !==
+        "string" ||
+      !/^https?:\/\//i.test(
+        paymentUrl
+      )
+    ) {
+
       console.error(
-        "WAYL NO PAYMENT URL:",
+        "WAYL PAYMENT URL MISSING:",
         waylData
       );
 
       await supabaseAdmin
         .from("orders")
         .update({
-          status: "failed"
+          status:
+            "failed"
         })
-        .eq("id", order.id);
+        .eq(
+          "id",
+          order.id
+        );
 
       return res.status(502).json({
+
         error:
           "Wayl لم يُرجع رابط الدفع.",
 
@@ -464,47 +728,62 @@ export default async function handler(req, res) {
           waylData?.message ||
           "لم يتم العثور على رابط الدفع.",
 
-        details: waylData
+        details:
+          waylData
+
       });
+
     }
 
     // =====================================================
-    // حفظ referenceId داخل customParameter موجود في Wayl
-    // الطلب نفسه يبقى pending حتى يأتي Webhook
+    // نجاح
     // =====================================================
 
     console.log(
-      "WAYL PAYMENT CREATED:",
+      "PAYMENT CREATED:",
       {
-        orderId: order.id,
-        userId: user.id,
-        referenceId,
-        totalUSD,
-        totalIQD
+
+        orderId:
+          order.id,
+
+        userId:
+          user.id,
+
+        referenceId:
+          referenceId,
+
+        totalUSD:
+          totalUSD,
+
+        totalIQD:
+          totalIQD
+
       }
     );
 
-    // =====================================================
-    // النجاح
-    // =====================================================
-
     return res.status(200).json({
-      success: true,
+
+      success:
+        true,
 
       orderId:
         order.id,
 
-      referenceId,
+      referenceId:
+        referenceId,
 
       total:
         totalIQD,
 
-      totalUSD,
+      totalUSD:
+        totalUSD,
 
       currency:
         "IQD",
 
-      paymentUrl
+      paymentUrl:
+        paymentUrl
+
     });
 
   } catch (error) {
@@ -515,12 +794,16 @@ export default async function handler(req, res) {
     );
 
     return res.status(500).json({
+
       error:
         "حدث خطأ في خادم الدفع.",
 
       message:
         error?.message ||
         "Unknown error"
+
     });
+
   }
+
 }
