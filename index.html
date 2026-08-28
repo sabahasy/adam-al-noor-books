@@ -2508,28 +2508,21 @@ function showStatus(
 /* =====================================================
    المكتبة
 ===================================================== */
-
 async function renderLibrary() {
 
   const container =
-    document.getElementById(
-      "libraryItems"
-    );
-
+    document.getElementById("libraryItems");
 
   if (!container) {
     return;
   }
 
-
   const token =
     getAccessToken();
-
 
   if (!token) {
 
     container.innerHTML = `
-
       <div class="empty">
 
         🔐 يجب تسجيل الدخول أولًا.
@@ -2544,53 +2537,43 @@ async function renderLibrary() {
         </button>
 
       </div>
-
     `;
 
     return;
-
   }
 
-
   container.innerHTML = `
-
     <div class="empty">
       جاري تحميل مكتبتك...
     </div>
-
   `;
 
-
   try {
+
+    /* =========================================
+       جلب كتب المستخدم من المكتبة
+    ========================================= */
 
     const response =
       await fetch(
         `${SUPABASE_URL}/rest/v1/library?select=id,book_id,order_id,purchased_at,books(id,title_ar,author_ar,pdf_url)&order=purchased_at.desc`,
         {
-
-          method:
-            "GET",
+          method: "GET",
 
           headers: {
-
-            "apikey":
-              SUPABASE_KEY,
+            "apikey": SUPABASE_KEY,
 
             "Authorization":
               `Bearer ${token}`,
 
             "Content-Type":
               "application/json"
-
           }
-
         }
       );
 
-
     const rawText =
       await response.text();
-
 
     if (!response.ok) {
 
@@ -2600,12 +2583,20 @@ async function renderLibrary() {
 
     }
 
+    let data;
 
-    const data =
-      JSON.parse(
-        rawText
+    try {
+
+      data =
+        JSON.parse(rawText);
+
+    } catch {
+
+      throw new Error(
+        "تعذر قراءة بيانات المكتبة."
       );
 
+    }
 
     if (
       !Array.isArray(data) ||
@@ -2613,82 +2604,199 @@ async function renderLibrary() {
     ) {
 
       container.innerHTML = `
-
         <div class="empty">
-
           📚 لا توجد كتب مشتراة حتى الآن.
+        </div>
+      `;
 
+      return;
+    }
+
+    /* =========================================
+       عرض الكتب
+    ========================================= */
+
+    container.innerHTML = "";
+
+    for (const item of data) {
+
+      const book =
+        item.books || {};
+
+      const filePath =
+        String(book.pdf_url || "").trim();
+
+      const bookElement =
+        document.createElement("div");
+
+      bookElement.className =
+        "library-book";
+
+      bookElement.innerHTML = `
+
+        <strong>
+          ${escapeHTML(
+            book.title_ar || "كتاب"
+          )}
+        </strong>
+
+        <br>
+
+        <small>
+          المؤلف:
+          ${escapeHTML(
+            book.author_ar || "Adam Al-Noor"
+          )}
+        </small>
+
+        <br>
+
+        <div
+          class="library-status"
+          style="margin-top:10px;color:#777;"
+        >
+          جاري تجهيز ملف الكتاب...
         </div>
 
       `;
 
-      return;
+      container.appendChild(
+        bookElement
+      );
 
-    }
+      /* =========================================
+         التأكد من وجود مسار PDF
+      ========================================= */
 
+      if (!filePath) {
 
-    container.innerHTML =
-      data.map(item => {
+        const status =
+          bookElement.querySelector(
+            ".library-status"
+          );
 
-        const book =
-          item.books || {};
+        status.textContent =
+          "ملف الكتاب غير متوفر حاليًا.";
 
+        status.style.color =
+          "#b3261e";
+
+        continue;
+      }
+
+      try {
+
+        /* =======================================
+           إنشاء رابط مؤقت من Storage
+        ======================================= */
+
+        const storageResponse =
+          await fetch(
+            `${SUPABASE_URL}/storage/v1/object/sign/books/${encodeURIComponent(filePath)}`,
+            {
+              method: "POST",
+
+              headers: {
+                "apikey":
+                  SUPABASE_KEY,
+
+                "Authorization":
+                  `Bearer ${token}`,
+
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  expiresIn: 3600
+                })
+            }
+          );
+
+        const storageText =
+          await storageResponse.text();
+
+        if (!storageResponse.ok) {
+
+          throw new Error(
+            `Storage HTTP ${storageResponse.status}: ${storageText}`
+          );
+
+        }
+
+        let storageData;
+
+        try {
+
+          storageData =
+            JSON.parse(storageText);
+
+        } catch {
+
+          throw new Error(
+            "Storage أعاد ردًا غير صالح."
+          );
+
+        }
+
+        const signedPath =
+          storageData?.signedURL ||
+          storageData?.signedUrl ||
+          storageData?.path ||
+          "";
+
+        if (!signedPath) {
+
+          throw new Error(
+            "لم يتم الحصول على رابط الكتاب."
+          );
+
+        }
 
         const pdfUrl =
-          book.pdf_url || "";
+          signedPath.startsWith("http")
+            ? signedPath
+            : `${SUPABASE_URL}/storage/v1${signedPath}`;
 
+        const status =
+          bookElement.querySelector(
+            ".library-status"
+          );
 
-        return `
+        status.innerHTML = `
 
-          <div class="library-book">
-
-            <strong>
-              ${escapeHTML(
-                book.title_ar ||
-                "كتاب"
-              )}
-            </strong>
-
-            <br>
-
-            <small>
-              المؤلف:
-              ${escapeHTML(
-                book.author_ar ||
-                "Adam Al-Noor"
-              )}
-            </small>
-
-            <br>
-
-            ${
-              pdfUrl
-                ? `
-                  <button
-                    onclick="openPDF('${escapeHTML(
-                      pdfUrl
-                    )}')"
-                  >
-                    📖 قراءة الكتاب
-                  </button>
-                `
-                : `
-                  <div
-                    style="
-                      margin-top:10px;
-                      color:#b3261e;
-                    "
-                  >
-                    ملف الكتاب غير متوفر حاليًا.
-                  </div>
-                `
-            }
-
-          </div>
+          <button
+            type="button"
+            onclick="openPDF('${encodeURIComponent(pdfUrl)}')"
+          >
+            📖 قراءة الكتاب
+          </button>
 
         `;
 
-      }).join("");
+      }
+      catch (storageError) {
+
+        console.error(
+          "PDF STORAGE ERROR:",
+          storageError
+        );
+
+        const status =
+          bookElement.querySelector(
+            ".library-status"
+          );
+
+        status.textContent =
+          "تعذر تجهيز ملف الكتاب.";
+
+        status.style.color =
+          "#b3261e";
+
+      }
+
+    }
 
   }
   catch (error) {
@@ -2697,7 +2805,6 @@ async function renderLibrary() {
       "LIBRARY ERROR:",
       error
     );
-
 
     container.innerHTML = `
 
@@ -2709,7 +2816,8 @@ async function renderLibrary() {
 
         <small>
           ${escapeHTML(
-            error.message
+            error?.message ||
+            "خطأ غير معروف"
           )}
         </small>
 
@@ -2720,7 +2828,6 @@ async function renderLibrary() {
   }
 
 }
-
 
 /* =====================================================
    فتح PDF
