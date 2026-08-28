@@ -1,6 +1,13 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Adam Al-Noor Books</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Adam Al-Noor Books</title>
+
+<style>
 
 * {
     box-sizing: border-box;
@@ -137,6 +144,12 @@ nav button:hover {
     justify-content: center;
     color: white;
     font-size: 55px;
+}
+
+.cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .book-content {
@@ -331,6 +344,55 @@ nav button:hover {
     color: #26732a;
 }
 
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.library-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.library-card .library-cover {
+    height: 220px;
+    background: linear-gradient(135deg, #222, #c9a227);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 50px;
+}
+
+.library-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.library-content {
+    padding: 15px;
+}
+
+.read-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #171717;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.read-button:hover {
+    background: #c9a227;
+}
+
 footer {
     margin-top: 50px;
     background: #171717;
@@ -361,32 +423,75 @@ footer {
 
 }
 
-</style></head><body><header><div class="logo">
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
 Adam Al-Noor <span>Books</span>
-</div><nav><button onclick="showPage('home')">
+</div>
+
+<nav>
+
+<button onclick="showPage('home')">
 الرئيسية
-</button><button onclick="showPage('library')">
+</button>
+
+<button onclick="showPage('library')">
 مكتبتي
-</button><button onclick="showPage('cart')">
+</button>
+
+<button onclick="showPage('cart')">
 السلة 🛒 <span id="cartCount">0</span>
-</button><button onclick="showPage('account')">
+</button>
+
+<button onclick="showPage('account')">
 حسابي
-</button></nav></header><section id="home" class="page active"><section class="hero"><h1>
+</button>
+
+</nav>
+
+</header>
+
+
+<!-- =====================================================
+     الرئيسية
+===================================================== -->
+
+<section id="home" class="page active">
+
+<section class="hero">
+
+<h1>
 مرحبًا بك في Adam Al-Noor Books
-</h1><p>
+</h1>
+
+<p>
 متجر الكتب الإلكترونية — اكتشف المعرفة واقرأ ما تحب
-</p></section><main class="container"><input
+</p>
+
+</section>
+
+<main class="container">
+
+<input
 class="search"
 id="search"
 type="text"
 placeholder="🔎 ابحث عن كتاب..."
-oninput="searchBooks"
-
-«»
+oninput="searchBooks()"
+>
 
 <h2 class="section-title">
 التصنيفات
-</h2><div class="categories"><button
+</h2>
+
+<div class="categories">
+
+<button
 class="category"
 onclick="filterCategory('all')">
 الكل
@@ -410,116 +515,273 @@ onclick="filterCategory('الروايات')">
 الروايات
 </button>
 
-</div><h2 class="section-title">
+</div>
+
+<h2 class="section-title">
 كتبنا
-</h2><div id="books" class="books"></div></main></section><section id="library" class="page"><main class="container"><h2>
+</h2>
+
+<div id="books" class="books"></div>
+
+</main>
+
+</section>
+
+
+<!-- =====================================================
+     مكتبتي
+===================================================== -->
+
+<section id="library" class="page">
+
+<main class="container">
+
+<h2>
 📚 مكتبتي
-</h2><div class="box"><div id="libraryItems"><div class="empty">
+</h2>
+
+<div class="box">
+
+<div id="libraryItems">
+
+<div class="empty">
 سجّل الدخول لمشاهدة مكتبتك.
-</div></div></div></main></section><section id="cart" class="page"><main class="container"><h2>
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+</section>
+
+
+<!-- =====================================================
+     السلة
+===================================================== -->
+
+<section id="cart" class="page">
+
+<main class="container">
+
+<h2>
 🛒 سلة المشتريات
-</h2><div class="box"><div id="cartItems"></div><div id="cartTotal"></div><button
+</h2>
+
+<div class="box">
+
+<div id="cartItems"></div>
+
+<div id="cartTotal"></div>
+
+<button
 id="checkoutButton"
 class="checkout-button"
 onclick="checkout()">
+
 إتمام الشراء
+
 </button>
 
 <div
 id="checkoutStatus"
 class="status">
-</div></div></main></section><section id="account" class="page"><main class="container"><h2>
+</div>
+
+</div>
+
+</main>
+
+</section>
+
+
+<!-- =====================================================
+     الحساب
+===================================================== -->
+
+<section id="account" class="page">
+
+<main class="container">
+
+<h2>
 👤 حسابي
-</h2><div id="loginBox" class="box"><h3>
+</h2>
+
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="box">
+
+<h3>
 تسجيل الدخول
-</h3><div class="form-group"><label>
+</h3>
+
+<div class="form-group">
+
+<label>
 البريد الإلكتروني
-</label><input
+</label>
+
+<input
 id="loginEmail"
 type="email"
 placeholder="example@email.com"
+autocomplete="email"
+>
 
-«»
+</div>
 
-</div><div class="form-group"><label>
+
+<div class="form-group">
+
+<label>
 كلمة المرور
-</label><input
+</label>
+
+<input
 id="loginPassword"
 type="password"
 placeholder="كلمة المرور"
+autocomplete="current-password"
+>
 
-«»
+</div>
 
-</div><button
+
+<button
 class="form-button"
 onclick="loginUser()">
+
 تسجيل الدخول
+
 </button>
+
 
 <button
 class="switch-button"
 onclick="showSignup()">
+
 إنشاء حساب جديد
+
 </button>
+
 
 <div
 id="loginStatus"
 class="status">
-</div></div><div
+</div>
+
+</div>
+
+
+<!-- SIGNUP -->
+
+<div
 id="signupBox"
 class="box"
-style="display:none;"><h3>
+style="display:none;">
+
+<h3>
 إنشاء حساب جديد
-</h3><div class="form-group"><label>
+</h3>
+
+
+<div class="form-group">
+
+<label>
 البريد الإلكتروني
-</label><input
+</label>
+
+<input
 id="signupEmail"
 type="email"
 placeholder="example@email.com"
+autocomplete="email"
+>
 
-«»
+</div>
 
-</div><div class="form-group"><label>
+
+<div class="form-group">
+
+<label>
 كلمة المرور
-</label><input
+</label>
+
+<input
 id="signupPassword"
 type="password"
 placeholder="كلمة المرور"
+autocomplete="new-password"
+>
 
-«»
+</div>
 
-</div><button
+
+<button
 class="form-button"
 onclick="signupUser()">
+
 إنشاء حساب
+
 </button>
+
 
 <button
 class="switch-button"
 onclick="showLogin()">
+
 العودة إلى تسجيل الدخول
+
 </button>
+
 
 <div
 id="signupStatus"
 class="status">
-</div></div><div
+</div>
+
+</div>
+
+
+<!-- USER -->
+
+<div
 id="userBox"
 class="box"
-style="display:none;"><h3>
+style="display:none;">
+
+<h3>
 مرحبًا بك 👋
-</h3><div
+</h3>
+
+<div
 id="userEmail"
 class="account-email">
-</div><button
+</div>
+
+<button
 class="logout-button"
 onclick="logoutUser()">
+
 تسجيل الخروج
+
 </button>
 
-</div></main></section><footer>© 2026 Adam Al-Noor Books
+</div>
 
-</footer><script>
+</main>
+
+</section>
+
+
+<footer>
+© 2026 Adam Al-Noor Books
+</footer>
+
+
+<script>
 
 /* =====================================================
    SUPABASE
@@ -540,7 +802,7 @@ const USD_TO_IQD = 1310;
 
 
 /* =====================================================
-   الكتب الأساسية
+   الكتب الافتراضية
 ===================================================== */
 
 const defaultBooks = [
@@ -586,6 +848,19 @@ localStorage.getItem("adamAlNoorCart") || "[]"
 
 
 /* =====================================================
+   Access Token
+===================================================== */
+
+function getAccessToken() {
+
+return localStorage.getItem(
+"supabase_access_token"
+) || "";
+
+}
+
+
+/* =====================================================
    عرض الكتب
 ===================================================== */
 
@@ -606,50 +881,93 @@ container.innerHTML =
 return;
 }
 
-container.innerHTML = list.map((book) => {
+
+container.innerHTML =
+list.map(book => {
 
 const realIndex =
 books.findIndex(
-item => String(item.id) === String(book.id)
+item =>
+String(item.id) === String(book.id)
 );
+
+
+let coverHTML =
+'<div class="cover">📖</div>';
+
+if (book.cover_url) {
+
+coverHTML = `
+<div class="cover">
+<img
+src="${escapeHTML(book.cover_url)}"
+alt="${escapeHTML(book.title_ar || book.title || "كتاب")}"
+>
+</div>
+`;
+
+}
+
 
 return `
 
 <div class="book">
 
-<div class="cover">
-📖
-</div>
+${coverHTML}
 
 <div class="book-content">
 
 <h3>
-${escapeHTML(book.title || "كتاب")}
+${escapeHTML(
+book.title_ar ||
+book.title ||
+"كتاب"
+)}
 </h3>
 
 <div class="author">
+
 المؤلف:
-${escapeHTML(book.author || "Adam Al-Noor")}
+${escapeHTML(
+book.author_ar ||
+book.auother_ar ||
+book.author ||
+"Adam Al-Noor"
+)}
+
 </div>
 
 <div class="category-name">
+
 التصنيف:
-${escapeHTML(book.category || "عام")}
+${escapeHTML(
+book.category ||
+"عام"
+)}
+
 </div>
 
 <div class="price">
+
 ${Number(book.price || 0)} $
+
 </div>
+
 
 <button
 onclick="addToCart(${realIndex})">
+
 إضافة إلى السلة 🛒
+
 </button>
+
 
 <button
 class="buy-button"
 onclick="buyNow(${realIndex})">
+
 شراء الآن
+
 </button>
 
 </div>
@@ -679,28 +997,34 @@ method: "GET",
 
 headers: {
 "apikey": SUPABASE_KEY,
-"Authorization": `Bearer ${SUPABASE_KEY}`,
-"Content-Type": "application/json"
+"Authorization":
+`Bearer ${SUPABASE_KEY}`,
+"Content-Type":
+"application/json"
 }
-
 }
 );
+
 
 if (!response.ok) {
 
 throw new Error(
-"Supabase HTTP " + response.status
+"Supabase HTTP " +
+response.status
 );
 
 }
 
+
 const data =
 await response.json();
+
 
 console.log(
 "Supabase books:",
 data
 );
+
 
 if (
 Array.isArray(data) &&
@@ -709,28 +1033,32 @@ data.length > 0
 
 books = data;
 
-} else {
+}
+else {
 
 books = [...defaultBooks];
 
 }
 
-currentBooks = [...books];
+
+currentBooks =
+[...books];
 
 renderBooks();
 
 }
-
-catch (error) {
+catch(error) {
 
 console.error(
-"Supabase error:",
+"Supabase books error:",
 error
 );
 
-books = [...defaultBooks];
+books =
+[...defaultBooks];
 
-currentBooks = [...books];
+currentBooks =
+[...books];
 
 renderBooks();
 
@@ -748,17 +1076,33 @@ function searchBooks() {
 const input =
 document.getElementById("search");
 
+if (!input) {
+return;
+}
+
 const value =
 input.value.trim().toLowerCase();
+
 
 currentBooks =
 books.filter(book => {
 
 const title =
-String(book.title || "").toLowerCase();
+String(
+book.title_ar ||
+book.title ||
+""
+).toLowerCase();
+
 
 const author =
-String(book.author || "").toLowerCase();
+String(
+book.author_ar ||
+book.auother_ar ||
+book.author ||
+""
+).toLowerCase();
+
 
 return (
 title.includes(value) ||
@@ -766,6 +1110,7 @@ author.includes(value)
 );
 
 });
+
 
 renderBooks();
 
@@ -783,12 +1128,21 @@ if (category === "all") {
 currentBooks =
 [...books];
 
-} else {
+}
+else {
 
 currentBooks =
-books.filter(book =>
-String(book.category || "") === category
+books.filter(book => {
+
+const categoryName =
+String(
+book.category ||
+""
 );
+
+return categoryName === category;
+
+});
 
 }
 
@@ -826,11 +1180,13 @@ if (!book) {
 return;
 }
 
+
 const exists =
 cart.some(
 item =>
 String(item.id) === String(book.id)
 );
+
 
 if (exists) {
 
@@ -839,17 +1195,19 @@ alert(
 );
 
 return;
+
 }
+
 
 cart.push(book);
 
 saveCart();
 
+renderCart();
+
 alert(
 "تمت إضافة الكتاب إلى السلة 🛒"
 );
-
-renderCart();
 
 }
 
@@ -867,11 +1225,13 @@ if (!book) {
 return;
 }
 
+
 const exists =
 cart.some(
 item =>
 String(item.id) === String(book.id)
 );
+
 
 if (!exists) {
 
@@ -880,6 +1240,7 @@ cart.push(book);
 saveCart();
 
 }
+
 
 showPage("cart");
 
@@ -898,9 +1259,11 @@ document.getElementById("cartItems");
 const totalContainer =
 document.getElementById("cartTotal");
 
-if (!container) {
+
+if (!container || !totalContainer) {
 return;
 }
+
 
 if (cart.length === 0) {
 
@@ -913,15 +1276,24 @@ return;
 
 }
 
+
 container.innerHTML =
-cart.map((book, index) => `
+cart.map((book, index) => {
+
+const title =
+book.title_ar ||
+book.title ||
+"كتاب";
+
+
+return `
 
 <div class="cart-item">
 
 <div>
 
 <strong>
-${escapeHTML(book.title || "كتاب")}
+${escapeHTML(title)}
 </strong>
 
 <br>
@@ -932,15 +1304,21 @@ ${Number(book.price || 0)} $
 
 </div>
 
+
 <button
 class="remove-button"
 onclick="removeFromCart(${index})">
+
 حذف
+
 </button>
 
 </div>
 
-`).join("");
+`;
+
+}).join("");
+
 
 const total =
 cart.reduce(
@@ -949,18 +1327,28 @@ sum + Number(book.price || 0),
 0
 );
 
+
 const totalIQD =
-Math.round(total * USD_TO_IQD);
+Math.round(
+total * USD_TO_IQD
+);
+
 
 totalContainer.innerHTML = `
 
 <div class="cart-total">
-الإجمالي: ${total.toFixed(2)} $
+
+الإجمالي:
+${total.toFixed(2)} $
+
 <br>
 
 <span style="font-size:14px;color:#777;">
+
 ما يعادل تقريبًا
-${totalIQD.toLocaleString("en-US")} IQD
+${totalIQD.toLocaleString("en-US")}
+IQD
+
 </span>
 
 </div>
@@ -971,7 +1359,7 @@ ${totalIQD.toLocaleString("en-US")} IQD
 
 
 /* =====================================================
-   حذف من السلة
+   حذف
 ===================================================== */
 
 function removeFromCart(index) {
@@ -1018,8 +1406,10 @@ page.classList.remove("active");
 
 });
 
+
 const page =
 document.getElementById(pageId);
+
 
 if (page) {
 
@@ -1027,28 +1417,38 @@ page.classList.add("active");
 
 }
 
+
 window.scrollTo({
 top: 0,
 behavior: "smooth"
 });
 
+
 if (pageId === "cart") {
+
 renderCart();
+
 }
+
 
 if (pageId === "library") {
+
 renderLibrary();
+
 }
 
+
 if (pageId === "account") {
+
 checkUser();
+
 }
 
 }
 
 
 /* =====================================================
-   حساب المستخدم
+   فحص المستخدم
 ===================================================== */
 
 async function checkUser() {
@@ -1056,12 +1456,15 @@ async function checkUser() {
 const token =
 getAccessToken();
 
+
 if (!token) {
 
 showLogin();
 
 return;
+
 }
+
 
 try {
 
@@ -1069,53 +1472,65 @@ const response =
 await fetch(
 `${SUPABASE_URL}/auth/v1/user`,
 {
+method: "GET",
+
 headers: {
-"apikey": SUPABASE_KEY,
+"apikey":
+SUPABASE_KEY,
+
 "Authorization":
 `Bearer ${token}`
 }
 }
 );
 
+
 if (!response.ok) {
+
+localStorage.removeItem(
+"supabase_access_token"
+);
+
+localStorage.removeItem(
+"supabase_refresh_token"
+);
 
 showLogin();
 
 return;
+
 }
+
 
 const user =
 await response.json();
 
-if (user && user.email) {
+
+if (
+user &&
+user.email
+) {
 
 showLoggedUser(user);
 
-} else {
+}
+else {
 
 showLogin();
 
 }
 
 }
-catch {
+catch(error) {
+
+console.error(
+"CHECK USER ERROR:",
+error
+);
 
 showLogin();
 
 }
-
-}
-
-
-/* =====================================================
-   Access Token
-===================================================== */
-
-function getAccessToken() {
-
-return localStorage.getItem(
-"supabase_access_token"
-) || "";
 
 }
 
@@ -1132,13 +1547,18 @@ document
 .value
 .trim();
 
+
 const password =
 document
 .getElementById("loginPassword")
 .value;
 
+
 const status =
-document.getElementById("loginStatus");
+document.getElementById(
+"loginStatus"
+);
+
 
 if (!email || !password) {
 
@@ -1151,6 +1571,7 @@ status,
 return;
 
 }
+
 
 try {
 
@@ -1161,56 +1582,85 @@ await fetch(
 method: "POST",
 
 headers: {
-"apikey": SUPABASE_KEY,
+"apikey":
+SUPABASE_KEY,
+
 "Content-Type":
 "application/json"
 },
 
-body: JSON.stringify({
-email: email,
-password: password
+body:
+JSON.stringify({
+email,
+password
 })
-
 }
 );
 
+
 const data =
 await response.json();
+
 
 if (!response.ok) {
 
 throw new Error(
 data.error_description ||
 data.msg ||
+data.message ||
 "فشل تسجيل الدخول"
 );
 
 }
+
+
+if (!data.access_token) {
+
+throw new Error(
+"لم يتم استلام Access Token."
+);
+
+}
+
 
 localStorage.setItem(
 "supabase_access_token",
 data.access_token
 );
 
+
 localStorage.setItem(
 "supabase_refresh_token",
 data.refresh_token || ""
 );
 
+
 showLoggedUser(
-data.user || { email: email }
-);
-
-alert(
-"تم تسجيل الدخول بنجاح ✅"
-);
-
+data.user || {
+email
 }
-catch (error) {
+);
+
 
 showStatus(
 status,
-error.message,
+"تم تسجيل الدخول بنجاح ✅",
+"success"
+);
+
+}
+catch(error) {
+
+console.error(
+"LOGIN ERROR:",
+error
+);
+
+
+showStatus(
+status,
+error.message ||
+"فشل تسجيل الدخول.",
 "error"
 );
 
@@ -1220,7 +1670,7 @@ error.message,
 
 
 /* =====================================================
-   إنشاء حساب
+   إنشاء الحساب
 ===================================================== */
 
 async function signupUser() {
@@ -1231,13 +1681,18 @@ document
 .value
 .trim();
 
+
 const password =
 document
 .getElementById("signupPassword")
 .value;
 
+
 const status =
-document.getElementById("signupStatus");
+document.getElementById(
+"signupStatus"
+);
+
 
 if (!email || !password) {
 
@@ -1250,6 +1705,7 @@ status,
 return;
 
 }
+
 
 if (password.length < 6) {
 
@@ -1263,6 +1719,7 @@ return;
 
 }
 
+
 try {
 
 const response =
@@ -1272,31 +1729,37 @@ await fetch(
 method: "POST",
 
 headers: {
-"apikey": SUPABASE_KEY,
+"apikey":
+SUPABASE_KEY,
+
 "Content-Type":
 "application/json"
 },
 
-body: JSON.stringify({
-email: email,
-password: password
+body:
+JSON.stringify({
+email,
+password
 })
-
 }
 );
 
+
 const data =
 await response.json();
+
 
 if (!response.ok) {
 
 throw new Error(
 data.msg ||
 data.error_description ||
+data.message ||
 "فشل إنشاء الحساب"
 );
 
 }
+
 
 if (data.access_token) {
 
@@ -1305,20 +1768,26 @@ localStorage.setItem(
 data.access_token
 );
 
+
 localStorage.setItem(
 "supabase_refresh_token",
 data.refresh_token || ""
 );
 
+
 showLoggedUser(
-data.user || {email: email}
+data.user || {
+email
+}
 );
+
 
 alert(
 "تم إنشاء الحساب وتسجيل الدخول بنجاح ✅"
 );
 
-} else {
+}
+else {
 
 showStatus(
 status,
@@ -1329,11 +1798,18 @@ status,
 }
 
 }
-catch (error) {
+catch(error) {
+
+console.error(
+"SIGNUP ERROR:",
+error
+);
+
 
 showStatus(
 status,
-error.message,
+error.message ||
+"فشل إنشاء الحساب.",
 "error"
 );
 
@@ -1343,27 +1819,62 @@ error.message,
 
 
 /* =====================================================
-   المستخدم المسجل
+   عرض المستخدم
 ===================================================== */
 
 function showLoggedUser(user) {
 
+const loginBox =
 document.getElementById(
 "loginBox"
-).style.display = "none";
+);
 
+const signupBox =
 document.getElementById(
 "signupBox"
-).style.display = "none";
+);
 
+const userBox =
 document.getElementById(
 "userBox"
-).style.display = "block";
+);
 
+const userEmail =
 document.getElementById(
 "userEmail"
-).textContent =
+);
+
+
+if (loginBox) {
+
+loginBox.style.display =
+"none";
+
+}
+
+
+if (signupBox) {
+
+signupBox.style.display =
+"none";
+
+}
+
+
+if (userBox) {
+
+userBox.style.display =
+"block";
+
+}
+
+
+if (userEmail) {
+
+userEmail.textContent =
 user.email || "";
+
+}
 
 }
 
@@ -1374,7 +1885,13 @@ user.email || "";
 
 async function logoutUser() {
 
+const token =
+getAccessToken();
+
+
 try {
+
+if (token) {
 
 await fetch(
 `${SUPABASE_URL}/auth/v1/logout`,
@@ -1382,15 +1899,27 @@ await fetch(
 method: "POST",
 
 headers: {
-"apikey": SUPABASE_KEY,
+"apikey":
+SUPABASE_KEY,
+
 "Authorization":
-`Bearer ${getAccessToken()}`
+`Bearer ${token}`
 }
 }
 );
 
 }
-catch {}
+
+}
+catch(error) {
+
+console.warn(
+"LOGOUT WARNING:",
+error
+);
+
+}
+
 
 localStorage.removeItem(
 "supabase_access_token"
@@ -1400,7 +1929,9 @@ localStorage.removeItem(
 "supabase_refresh_token"
 );
 
+
 showLogin();
+
 
 alert(
 "تم تسجيل الخروج."
@@ -1410,43 +1941,97 @@ alert(
 
 
 /* =====================================================
-   واجهة تسجيل الدخول
+   عرض تسجيل الدخول
 ===================================================== */
 
 function showLogin() {
 
+const loginBox =
 document.getElementById(
 "loginBox"
-).style.display = "block";
+);
 
+const signupBox =
 document.getElementById(
 "signupBox"
-).style.display = "none";
+);
 
+const userBox =
 document.getElementById(
 "userBox"
-).style.display = "none";
+);
+
+
+if (loginBox) {
+
+loginBox.style.display =
+"block";
+
+}
+
+
+if (signupBox) {
+
+signupBox.style.display =
+"none";
+
+}
+
+
+if (userBox) {
+
+userBox.style.display =
+"none";
+
+}
 
 }
 
 
 /* =====================================================
-   واجهة إنشاء الحساب
+   عرض إنشاء الحساب
 ===================================================== */
 
 function showSignup() {
 
+const loginBox =
 document.getElementById(
 "loginBox"
-).style.display = "none";
+);
 
+const signupBox =
 document.getElementById(
 "signupBox"
-).style.display = "block";
+);
 
+const userBox =
 document.getElementById(
 "userBox"
-).style.display = "none";
+);
+
+
+if (loginBox) {
+
+loginBox.style.display =
+"none";
+
+}
+
+
+if (signupBox) {
+
+signupBox.style.display =
+"block";
+
+}
+
+
+if (userBox) {
+
+userBox.style.display =
+"none";
+
+}
 
 }
 
@@ -1465,11 +2050,14 @@ if (!element) {
 return;
 }
 
+
 element.textContent =
-message;
+String(message);
+
 
 element.className =
 "status " + type;
+
 
 element.style.display =
 "block";
@@ -1481,20 +2069,27 @@ element.style.display =
    مكتبتي
 ===================================================== */
 
-function renderLibrary() {
+async function renderLibrary() {
 
 const container =
 document.getElementById(
 "libraryItems"
 );
 
+
+if (!container) {
+return;
+}
+
+
 const token =
 getAccessToken();
 
+
 if (!token) {
 
-container.innerHTML =
-`
+container.innerHTML = `
+
 <div class="empty">
 
 🔐 يجب تسجيل الدخول أولًا
@@ -1504,29 +2099,297 @@ container.innerHTML =
 <button
 class="form-button"
 onclick="showPage('account')">
+
 تسجيل الدخول
+
 </button>
 
 </div>
+
 `;
 
 return;
 
 }
 
-container.innerHTML =
-`
+
+container.innerHTML = `
+
 <div class="empty">
 
-📚 مكتبتك جاهزة.
+⏳ جاري تحميل مكتبتك...
+
+</div>
+
+`;
+
+
+try {
+
+/*
+   جلب المستخدم الحالي
+*/
+
+const userResponse =
+await fetch(
+`${SUPABASE_URL}/auth/v1/user`,
+{
+headers: {
+"apikey":
+SUPABASE_KEY,
+
+"Authorization":
+`Bearer ${token}`
+}
+}
+);
+
+
+if (!userResponse.ok) {
+
+throw new Error(
+"انتهت جلسة تسجيل الدخول."
+);
+
+}
+
+
+const user =
+await userResponse.json();
+
+
+const userId =
+user?.id;
+
+
+if (!userId) {
+
+throw new Error(
+"لم يتم العثور على User ID."
+);
+
+}
+
+
+/*
+   جلب عناصر المكتبة مع بيانات الكتب
+*/
+
+const libraryUrl =
+`${SUPABASE_URL}/rest/v1/library` +
+`?select=id,user_id,book_id,order_id,purchased_at,books(*)` +
+`&user_id=eq.${encodeURIComponent(userId)}` +
+`&order= purchased_at.desc`;
+
+
+const libraryResponse =
+await fetch(
+libraryUrl,
+{
+headers: {
+"apikey":
+SUPABASE_KEY,
+
+"Authorization":
+`Bearer ${token}`,
+
+"Content-Type":
+"application/json"
+}
+}
+);
+
+
+if (!libraryResponse.ok) {
+
+const errorText =
+await libraryResponse.text();
+
+throw new Error(
+"فشل تحميل المكتبة: " +
+errorText
+);
+
+}
+
+
+const data =
+await libraryResponse.json();
+
+
+if (
+!Array.isArray(data) ||
+data.length === 0
+) {
+
+container.innerHTML = `
+
+<div class="empty">
+
+📚 لا توجد كتب مشتراة حتى الآن.
 
 <br><br>
 
-بعد تأكيد الدفع وربط نظام المشتريات،
-ستظهر الكتب التي اشتريتها هنا.
+بعد إتمام عملية شراء ناجحة،
+سيظهر الكتاب هنا تلقائيًا.
 
 </div>
+
 `;
+
+return;
+
+}
+
+
+container.innerHTML = `
+
+<div class="library-grid">
+
+${data.map(item => {
+
+const book =
+item.books || {};
+
+
+const title =
+book.title_ar ||
+book.title ||
+"كتاب";
+
+
+const author =
+book.author_ar ||
+book.auother_ar ||
+book.author ||
+"Adam Al-Noor";
+
+
+const cover =
+book.cover_url || "";
+
+
+const pdf =
+book.pdf_url || "";
+
+
+let coverHTML =
+'<div class="library-cover">📖</div>';
+
+
+if (cover) {
+
+coverHTML = `
+
+<div class="library-cover">
+
+<img
+src="${escapeHTML(cover)}"
+alt="${escapeHTML(title)}"
+>
+
+</div>
+
+`;
+
+}
+
+
+let buttonHTML = "";
+
+if (pdf) {
+
+buttonHTML = `
+
+<a
+class="read-button"
+href="${escapeHTML(pdf)}"
+target="_blank"
+rel="noopener noreferrer">
+
+📖 قراءة الكتاب
+
+</a>
+
+`;
+
+}
+else {
+
+buttonHTML = `
+
+<div class="empty"
+style="padding:15px;">
+
+ملف PDF غير متوفر حاليًا.
+
+</div>
+
+`;
+
+}
+
+
+return `
+
+<div class="library-card">
+
+${coverHTML}
+
+<div class="library-content">
+
+<h3>
+${escapeHTML(title)}
+</h3>
+
+<div class="author">
+
+المؤلف:
+${escapeHTML(author)}
+
+</div>
+
+${buttonHTML}
+
+</div>
+
+</div>
+
+`;
+
+}).join("")}
+
+</div>
+
+`;
+
+}
+catch(error) {
+
+console.error(
+"LIBRARY ERROR:",
+error
+);
+
+
+container.innerHTML = `
+
+<div class="empty">
+
+❌ تعذر تحميل مكتبتك.
+
+<br><br>
+
+${escapeHTML(
+error.message ||
+"حدث خطأ غير معروف."
+)}
+
+</div>
+
+`;
+
+}
 
 }
 
@@ -1539,24 +2402,47 @@ async function checkout() {
 
 if (!cart || cart.length === 0) {
 
-alert("السلة فارغة.");
+alert(
+"السلة فارغة."
+);
 
 return;
 
 }
+
+
+/*
+   يجب تسجيل الدخول قبل الدفع
+*/
+
+const token =
+getAccessToken();
+
+
+if (!token) {
+
+alert(
+"يجب تسجيل الدخول أولًا قبل إتمام الشراء."
+);
+
+showPage("account");
+
+return;
+
+}
+
 
 const checkoutButton =
 document.getElementById(
 "checkoutButton"
 );
 
+
 const status =
 document.getElementById(
 "checkoutStatus"
 );
 
-
-/* منع الضغط المتكرر */
 
 if (
 checkoutButton &&
@@ -1568,7 +2454,9 @@ return;
 }
 
 
-/* حساب المجموع بالدولار */
+/*
+   حساب الإجمالي
+*/
 
 const totalUSD =
 cart.reduce(
@@ -1577,8 +2465,6 @@ sum + Number(book.price || 0),
 0
 );
 
-
-/* تحويل إلى IQD */
 
 const totalIQD =
 Math.round(
@@ -1602,7 +2488,9 @@ return;
 }
 
 
-/* حالة الانتظار */
+/*
+   إيقاف الزر
+*/
 
 if (checkoutButton) {
 
@@ -1614,6 +2502,7 @@ checkoutButton.textContent =
 
 }
 
+
 if (status) {
 
 status.style.display =
@@ -1622,7 +2511,9 @@ status.style.display =
 }
 
 
-/* البيانات المرسلة إلى API */
+/*
+   بيانات الطلب
+*/
 
 const requestBody = {
 
@@ -1633,7 +2524,9 @@ id:
 book.id,
 
 title:
-book.title,
+book.title_ar ||
+book.title ||
+"كتاب",
 
 price:
 Number(book.price || 0)
@@ -1648,6 +2541,7 @@ totalIQD
 
 };
 
+
 console.log(
 "CREATE PAYMENT REQUEST:",
 requestBody
@@ -1656,12 +2550,9 @@ requestBody
 
 try {
 
-/*
-   مهلة 20 ثانية
-*/
-
 const controller =
 new AbortController();
+
 
 const timeout =
 setTimeout(
@@ -1669,10 +2560,6 @@ setTimeout(
 20000
 );
 
-
-/*
-   إنشاء رابط الدفع
-*/
 
 const response =
 await fetch(
@@ -1685,7 +2572,10 @@ headers: {
 "application/json",
 
 "Accept":
-"application/json"
+"application/json",
+
+"Authorization":
+`Bearer ${token}`
 },
 
 body:
@@ -1696,20 +2586,19 @@ controller.signal
 }
 );
 
+
 clearTimeout(timeout);
 
 
-/*
-   نقرأ الرد كنص أولًا.
-*/
-
 const rawText =
 await response.text();
+
 
 console.log(
 "CREATE PAYMENT STATUS:",
 response.status
 );
+
 
 console.log(
 "CREATE PAYMENT RAW RESPONSE:",
@@ -1717,11 +2606,8 @@ rawText
 );
 
 
-/*
-   تحويل JSON
-*/
-
 let data;
+
 
 try {
 
@@ -1729,25 +2615,15 @@ data =
 JSON.parse(rawText);
 
 }
-catch (jsonError) {
-
-console.error(
-"API JSON PARSE ERROR:",
-jsonError
-);
+catch {
 
 throw new Error(
-rawText
-? "خادم الدفع أعاد ردًا غير صالح."
-: "خادم الدفع لم يُرجع أي بيانات."
+rawText ||
+"خادم الدفع أعاد ردًا غير صالح."
 );
 
 }
 
-
-/*
-   فحص HTTP
-*/
 
 if (!response.ok) {
 
@@ -1760,20 +2636,12 @@ data?.message ||
 }
 
 
-/*
-   استخراج رابط Wayl
-*/
-
 const paymentUrl =
 data?.paymentUrl ||
 data?.data?.paymentUrl ||
 data?.url ||
 data?.data?.url;
 
-
-/*
-   التأكد من الرابط
-*/
 
 if (
 typeof paymentUrl !== "string" ||
@@ -1793,7 +2661,7 @@ throw new Error(
 
 
 /*
-   حفظ الطلب مؤقتًا
+   حفظ الطلب المعلق
 */
 
 localStorage.setItem(
@@ -1817,6 +2685,9 @@ totalIQD,
 paymentUrl:
 paymentUrl,
 
+userId:
+null,
+
 createdAt:
 new Date().toISOString()
 
@@ -1824,20 +2695,12 @@ new Date().toISOString()
 );
 
 
-/*
-   عرض رسالة نجاح
-*/
-
 showStatus(
 status,
 "تم إنشاء الرابط ✓ جارٍ تحويلك إلى صفحة الدفع...",
 "success"
 );
 
-
-/*
-   تغيير الزر
-*/
 
 if (checkoutButton) {
 
@@ -1847,24 +2710,14 @@ checkoutButton.textContent =
 }
 
 
-/*
-   الانتقال إلى Wayl
-*/
-
 console.log(
 "REDIRECTING TO WAYL:",
 paymentUrl
 );
 
 
-/*
-   نستخدم location.replace
-   بدل assign حتى لا تبقى صفحة الدفع
-   في سجل الرجوع بشكل غير ضروري.
-*/
-
 setTimeout(
-function() {
+() => {
 
 window.location.replace(
 paymentUrl
@@ -1875,23 +2728,13 @@ paymentUrl
 );
 
 
-/*
-   حماية إضافية:
-   إذا لم ينفذ المتصفح التحويل خلال 2 ثانية،
-   نحاول مرة أخرى.
-*/
-
 setTimeout(
-function() {
+() => {
 
 if (
-document.visibilityState === "visible"
+document.visibilityState ===
+"visible"
 ) {
-
-console.log(
-"WAYL REDIRECT RETRY:",
-paymentUrl
-);
 
 window.location.href =
 paymentUrl;
@@ -1903,12 +2746,13 @@ paymentUrl;
 );
 
 }
-catch (error) {
+catch(error) {
 
 console.error(
 "CHECKOUT ERROR:",
 error
 );
+
 
 if (
 error?.name === "AbortError"
@@ -1932,6 +2776,7 @@ error?.message ||
 
 }
 
+
 if (checkoutButton) {
 
 checkoutButton.disabled =
@@ -1953,12 +2798,27 @@ checkoutButton.textContent =
 
 function escapeHTML(value) {
 
-return String(value)
-.replace(/&/g, "&amp;")
-.replace(/</g, "&lt;")
-.replace(/>/g, "&gt;")
-.replace(/"/g, "&quot;")
-.replace(/'/g, "&#039;");
+return String(value ?? "")
+.replace(
+/&/g,
+"&amp;"
+)
+.replace(
+/</g,
+"&lt;"
+)
+.replace(
+/>/g,
+"&gt;"
+)
+.replace(
+/"/g,
+"&quot;"
+)
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
 
@@ -1977,5 +2837,7 @@ loadBooks();
 
 checkUser();
 
-</script></body>
+</script>
+
+</body>
 </html>
