@@ -1,22 +1,28 @@
 export default async function handler(req, res) {
-// السماح بطلبات POST فقط
+try {
+// ==============================
+// 1. POST فقط
+// ==============================
 if (req.method !== "POST") {
 return res.status(405).json({
 error: "Method not allowed"
 });
 }
 
-try {
+// ==============================
+// 2. قراءة السلة
+// ==============================
 const { items } = req.body || {};
 
-// التحقق من السلة
 if (!Array.isArray(items) || items.length === 0) {
   return res.status(400).json({
     error: "السلة فارغة"
   });
 }
 
-// مفتاح Wayl من Environment Variables في Vercel
+// ==============================
+// 3. مفتاح Wayl
+// ==============================
 const WAYL_API_KEY = process.env.WAYL_API_KEY;
 
 if (!WAYL_API_KEY) {
@@ -25,27 +31,40 @@ if (!WAYL_API_KEY) {
   });
 }
 
-// سعر التحويل المستخدم في المتجر
+// ==============================
+// 4. تحويل USD إلى IQD
+// ==============================
 const USD_TO_IQD = 1310;
 
-// إنشاء عناصر الطلب
-const lineItem = items.map((book) => {
+// ==============================
+// 5. إنشاء lineItem
+// ==============================
+const lineItem = [];
+
+for (const book of items) {
   const priceUSD = Number(book.price);
 
   if (!Number.isFinite(priceUSD) || priceUSD <= 0) {
-    throw new Error(
-      `سعر الكتاب غير صحيح: ${book.title || "كتاب"}`
-    );
+    return res.status(400).json({
+      error: "سعر الكتاب غير صحيح",
+      title: book.title || "كتاب"
+    });
   }
 
-  return {
-    label: String(book.title || "كتاب"),
-    amount: Math.round(priceUSD * USD_TO_IQD),
-    type: "increase"
-  };
-});
+  const amountIQD = Math.round(
+    priceUSD * USD_TO_IQD
+  );
 
-// حساب الإجمالي
+  lineItem.push({
+    label: String(book.title || "كتاب"),
+    amount: amountIQD,
+    type: "increase"
+  });
+}
+
+// ==============================
+// 6. حساب الإجمالي من lineItem
+// ==============================
 const totalIQD = lineItem.reduce(
   (sum, item) => sum + item.amount,
   0
@@ -53,11 +72,14 @@ const totalIQD = lineItem.reduce(
 
 if (!Number.isInteger(totalIQD) || totalIQD <= 0) {
   return res.status(400).json({
-    error: "إجمالي الطلب غير صحيح"
+    error: "إجمالي الطلب غير صحيح",
+    totalIQD: totalIQD
   });
 }
 
-// رقم مرجعي فريد للطلب
+// ==============================
+// 7. رقم طلب فريد
+// ==============================
 const referenceId =
   "adam-" +
   Date.now() +
@@ -66,30 +88,41 @@ const referenceId =
     .toString(36)
     .substring(2, 10);
 
-// رابط الموقع
+// ==============================
+// 8. رابط العودة
+// ==============================
 const siteUrl =
-  process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://project-akmpg.vercel.app";
+  "https://project-akmpg.vercel.app";
 
-// بيانات طلب Wayl
+// ==============================
+// 9. بيانات Wayl
+// ==============================
 const requestBody = {
   env: "test",
+
   referenceId: referenceId,
+
   total: totalIQD,
+
   currency: "IQD",
+
   customParameter: "",
+
   lineItem: lineItem,
+
   redirectionUrl: siteUrl
 };
 
+// لا نطبع المفتاح السري في Logs
 console.log(
-  "WAYL REQUEST:",
+  "WAYL REQUEST BODY:",
   JSON.stringify(requestBody)
 );
 
-// إرسال الطلب إلى Wayl
-const response = await fetch(
+// ==============================
+// 10. إرسال الطلب إلى Wayl
+// ==============================
+const waylResponse = await fetch(
   "https://api.thewayl.com/api/v1/links",
   {
     method: "POST",
@@ -103,111 +136,137 @@ const response = await fetch(
   }
 );
 
-// قراءة الرد كنص أولًا
-const rawText = await response.text();
+// ==============================
+// 11. قراءة الرد كنص
+// ==============================
+const rawText =
+  await waylResponse.text();
 
-console.log("WAYL STATUS:", response.status);
-console.log("WAYL RESPONSE:", rawText);
+console.log(
+  "WAYL STATUS:",
+  waylResponse.status
+);
 
-// تحويل الرد إلى JSON إذا كان صالحًا
+console.log(
+  "WAYL RAW RESPONSE:",
+  rawText
+);
+
+// ==============================
+// 12. تحويل JSON
+// ==============================
 let waylData = null;
 
 try {
-  waylData = rawText
-    ? JSON.parse(rawText)
-    : null;
+  waylData =
+    rawText
+      ? JSON.parse(rawText)
+      : null;
 } catch (parseError) {
+
   console.error(
-    "WAYL RESPONSE IS NOT JSON:",
+    "WAYL RETURNED NON JSON:",
     rawText
   );
 
   return res.status(502).json({
-    error: "Wayl أرسل استجابة غير صالحة",
-    waylStatus: response.status
-  });
-}
-
-// إذا رفض Wayl الطلب
-
-if (!response.ok) {
-  console.error("===== WAYL 422 ERROR =====");
-  console.error("STATUS:", response.status);
-  console.error("RAW RESPONSE:", rawText);
-  console.error("PARSED RESPONSE:", waylData);
-  console.error("==========================");
-
-  return res.status(422).json({
-    error: "Wayl رفض طلب الدفع",
-    waylStatus: response.status,
-    waylResponse: waylData,
+    error: "Wayl أرسل استجابة غير JSON",
+    waylStatus: waylResponse.status,
     rawResponse: rawText
   });
 }
-  return res.status(response.status).json({
-    error: "Wayl رفض طلب الدفع",
 
-    waylStatus: response.status,
+// ==============================
+// 13. Wayl رفض الطلب
+// ==============================
+if (!waylResponse.ok) {
 
-    message:
-      waylData?.message ||
-      waylData?.error ||
-      "لم يرسل Wayl رسالة واضحة",
-
-    errors:
-      waylData?.errors ||
-      null
-  });
-}
-
-// استخراج رابط الدفع
-const paymentUrl =
-  waylData?.data?.url ||
-  waylData?.url ||
-  waylData?.paymentUrl;
-
-// التحقق من وجود الرابط
-if (!paymentUrl) {
   console.error(
-    "PAYMENT URL NOT FOUND:",
+    "WAYL REJECTED:",
+    waylResponse.status,
     waylData
   );
 
   return res.status(502).json({
-    error: "Wayl لم يُرجع رابط الدفع",
+    error: "Wayl رفض طلب الدفع",
+
+    waylStatus:
+      waylResponse.status,
 
     message:
       waylData?.message ||
-      "لم يتم العثور على رابط الدفع في استجابة Wayl"
+      waylData?.error ||
+      "Wayl رفض الطلب",
+
+    errors:
+      waylData?.errors ||
+      null,
+
+    details:
+      waylData
   });
 }
 
-// إرسال النجاح إلى الموقع
+// ==============================
+// 14. استخراج رابط الدفع
+// ==============================
+const paymentUrl =
+  waylData?.data?.url;
+
+if (!paymentUrl) {
+
+  console.error(
+    "WAYL URL MISSING:",
+    waylData
+  );
+
+  return res.status(502).json({
+    error:
+      "Wayl لم يُرجع رابط الدفع",
+
+    details:
+      waylData
+  });
+}
+
+// ==============================
+// 15. نجاح
+// ==============================
+console.log(
+  "WAYL PAYMENT LINK CREATED:",
+  paymentUrl
+);
+
 return res.status(200).json({
   success: true,
 
-  referenceId: referenceId,
+  referenceId:
+    referenceId,
 
-  total: totalIQD,
+  total:
+    totalIQD,
 
-  currency: "IQD",
+  currency:
+    "IQD",
 
-  paymentUrl: paymentUrl
+  paymentUrl:
+    paymentUrl
 });
 
 } catch (error) {
 
 console.error(
-  "CREATE PAYMENT ERROR:",
+  "CREATE PAYMENT SERVER ERROR:",
   error
 );
 
 return res.status(500).json({
-  error: "حدث خطأ في خادم الدفع",
+  error:
+    "حدث خطأ في خادم الدفع",
 
   message:
     error?.message ||
-    "Unknown error"
+    "Unknown server error"
 });
 
 }
