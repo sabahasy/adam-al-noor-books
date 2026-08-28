@@ -1,171 +1,234 @@
 import crypto from "crypto";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default async function handler(req, res) {
-  // Wayl يجب أن يرسل POST
+
+  /* =====================================================
+     Wayl Webhook
+  ===================================================== */
+
   if (req.method !== "POST") {
     return res.status(405).json({
-      error: "Method not allowed"
+      error: "Method not allowed",
     });
   }
 
   try {
-    const secret = process.env.WAYL_WEBHOOK_SECRET;
+
+    const secret =
+      process.env.WAYL_WEBHOOK_SECRET;
 
     if (!secret) {
+
       console.error(
-        "WAYL_WEBHOOK_SECRET غير موجود في Vercel"
+        "WAYL WEBHOOK: WAYL_WEBHOOK_SECRET missing"
       );
 
       return res.status(500).json({
-        error: "Webhook secret غير موجود"
+        error: "Webhook secret missing",
       });
     }
 
-    // =====================================================
-    // قراءة جسم الطلب
-    // =====================================================
+    /* =====================================================
+       قراءة الـ RAW BODY كما أرسله Wayl
+    ===================================================== */
 
-    const body =
-      typeof req.body === "string"
-        ? req.body
-        : JSON.stringify(req.body || {});
+    const chunks = [];
 
-    // =====================================================
-    // قراءة توقيع Wayl
-    // =====================================================
+    for await (const chunk of req) {
+      chunks.push(
+        Buffer.isBuffer(chunk)
+          ? chunk
+          : Buffer.from(chunk)
+      );
+    }
 
-    const signature =
+    const rawBody =
+      Buffer.concat(chunks);
+
+    /* =====================================================
+       قراءة التوقيع
+    ===================================================== */
+
+    const signatureHeader =
       req.headers["x-wayl-signature-256"];
 
-    if (!signature) {
+    if (!signatureHeader) {
+
       console.error(
         "WAYL WEBHOOK: signature missing"
       );
 
       return res.status(401).json({
-        error: "Webhook signature missing"
+        error: "Webhook signature missing",
       });
     }
 
-    // =====================================================
-    // إنشاء التوقيع المتوقع
-    // =====================================================
+    const receivedSignature =
+      String(signatureHeader)
+        .trim()
+        .replace(/^sha256=/i, "");
+
+    /* =====================================================
+       إنشاء HMAC
+       Wayl يستخدم:
+       HMAC-SHA256(raw body, webhookSecret)
+    ===================================================== */
 
     const expectedSignature =
-      "sha256=" +
       crypto
-        .createHmac("sha256", secret)
-        .update(body)
+        .createHmac(
+          "sha256",
+          secret
+        )
+        .update(rawBody)
         .digest("hex");
 
-    // =====================================================
-    // مقارنة التوقيع بأمان
-    // =====================================================
+    /* =====================================================
+       مقارنة آمنة
+    ===================================================== */
 
-    const received =
-      String(signature);
+    const receivedBuffer =
+      Buffer.from(
+        receivedSignature,
+        "hex"
+      );
 
-    const expected =
-      String(expectedSignature);
+    const expectedBuffer =
+      Buffer.from(
+        expectedSignature,
+        "hex"
+      );
 
     if (
-      received.length !==
-      expected.length
+      receivedBuffer.length !==
+      expectedBuffer.length
     ) {
+
       console.error(
-        "WAYL WEBHOOK: invalid signature"
+        "WAYL WEBHOOK: invalid signature length"
       );
 
       return res.status(401).json({
-        error: "Invalid webhook signature"
+        error: "Invalid webhook signature",
       });
     }
 
     const valid =
       crypto.timingSafeEqual(
-        Buffer.from(received),
-        Buffer.from(expected)
+        receivedBuffer,
+        expectedBuffer
       );
 
     if (!valid) {
+
       console.error(
         "WAYL WEBHOOK: invalid signature"
       );
 
       return res.status(401).json({
-        error: "Invalid webhook signature"
+        error: "Invalid webhook signature",
       });
     }
 
-    // =====================================================
-    // قراءة بيانات Wayl
-    // =====================================================
+    /* =====================================================
+       الآن فقط نحلل JSON
+    ===================================================== */
 
     let data;
 
     try {
+
       data =
-        typeof req.body === "object"
-          ? req.body
-          : JSON.parse(body);
+        JSON.parse(
+          rawBody.toString("utf8")
+        );
+
     } catch (error) {
+
       console.error(
-        "WAYL WEBHOOK: invalid JSON"
+        "WAYL WEBHOOK: invalid JSON",
+        error
       );
 
       return res.status(400).json({
-        error: "Invalid JSON"
+        error: "Invalid JSON",
       });
     }
 
-    // =====================================================
-    // تسجيل إشعار Wayl بدون إظهار السر
-    // =====================================================
+    /* =====================================================
+       تسجيل البيانات
+       بدون تسجيل الـ secret
+    ===================================================== */
 
     console.log(
       "WAYL WEBHOOK RECEIVED:",
       JSON.stringify(data)
     );
 
-    // =====================================================
-    // استخراج البيانات المهمة
-    // =====================================================
+    /* =====================================================
+       بيانات Wayl الرسمية
+    ===================================================== */
 
     const referenceId =
       data?.referenceId ||
-      data?.data?.referenceId ||
       null;
 
-    const status =
-      data?.status ||
-      data?.data?.status ||
+    const paymentStatus =
+      data?.paymentStatus ||
+      null;
+
+    const paymentMethod =
+      data?.paymentMethod ||
+      null;
+
+    const paymentProcessor =
+      data?.paymentProcessor ||
+      null;
+
+    const total =
+      data?.total ||
+      null;
+
+    const code =
+      data?.code ||
       null;
 
     const paymentId =
-      data?.paymentId ||
-      data?.data?.paymentId ||
+      data?.id ||
       null;
 
-    // =====================================================
-    // عرض معلومات العملية في Logs
-    // =====================================================
+    const event =
+      data?.event ||
+      null;
 
     console.log(
       "WAYL PAYMENT UPDATE:",
       {
         referenceId,
-        status,
-        paymentId
+        paymentStatus,
+        paymentMethod,
+        paymentProcessor,
+        total,
+        code,
+        paymentId,
+        event,
       }
     );
 
-    // =====================================================
-    // نجاح استقبال Webhook
-    // =====================================================
+    /* =====================================================
+       مهم:
+       في هذه المرحلة نؤكد لـ Wayl أن Webhook تم استلامه
+    ===================================================== */
 
     return res.status(200).json({
       success: true,
-      received: true
+      received: true,
     });
 
   } catch (error) {
@@ -176,7 +239,7 @@ export default async function handler(req, res) {
     );
 
     return res.status(500).json({
-      error: "Webhook server error"
+      error: "Webhook server error",
     });
   }
 }
