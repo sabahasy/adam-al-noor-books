@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
-<head>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Adam Al-Noor Books</title>
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Adam Al-Noor Books</title><style>
 
 * {
     box-sizing: border-box;
@@ -328,6 +321,16 @@ nav button:hover {
     display: none;
 }
 
+.status.error {
+    background: #fff0f0;
+    color: #b3261e;
+}
+
+.status.success {
+    background: #effaf0;
+    color: #26732a;
+}
+
 footer {
     margin-top: 50px;
     background: #171717;
@@ -358,72 +361,32 @@ footer {
 
 }
 
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<div class="logo">
+</style></head><body><header><div class="logo">
 Adam Al-Noor <span>Books</span>
-</div>
-
-<nav>
-
-<button onclick="showPage('home')">
+</div><nav><button onclick="showPage('home')">
 الرئيسية
-</button>
-
-<button onclick="showPage('library')">
+</button><button onclick="showPage('library')">
 مكتبتي
-</button>
-
-<button onclick="showPage('cart')">
+</button><button onclick="showPage('cart')">
 السلة 🛒 <span id="cartCount">0</span>
-</button>
-
-<button onclick="showPage('account')">
+</button><button onclick="showPage('account')">
 حسابي
-</button>
-
-</nav>
-
-</header>
-
-
-<section id="home" class="page active">
-
-<section class="hero">
-
-<h1>
+</button></nav></header><section id="home" class="page active"><section class="hero"><h1>
 مرحبًا بك في Adam Al-Noor Books
-</h1>
-
-<p>
+</h1><p>
 متجر الكتب الإلكترونية — اكتشف المعرفة واقرأ ما تحب
-</p>
-
-</section>
-
-<main class="container">
-
-<input
+</p></section><main class="container"><input
 class="search"
 id="search"
 type="text"
 placeholder="🔎 ابحث عن كتاب..."
 oninput="searchBooks()"
->
+
+«»
 
 <h2 class="section-title">
 التصنيفات
-</h2>
-
-<div class="categories">
-
-<button class="category"
+</h2><div class="categories"><button class="category"
 onclick="filterCategory('all')">
 الكل
 </button>
@@ -443,59 +406,15 @@ onclick="filterCategory('الروايات')">
 الروايات
 </button>
 
-</div>
-
-<h2 class="section-title">
+</div><h2 class="section-title">
 كتبنا
-</h2>
-
-<div id="books" class="books"></div>
-
-</main>
-
-</section>
-
-
-<section id="library" class="page">
-
-<main class="container">
-
-<h2>
+</h2><div id="books" class="books"></div></main></section><section id="library" class="page"><main class="container"><h2>
 📚 مكتبتي
-</h2>
-
-<div class="box">
-
-<div id="libraryItems">
-
-<div class="empty">
+</h2><div class="box"><div id="libraryItems"><div class="empty">
 سجّل الدخول لمشاهدة مكتبتك.
-</div>
-
-</div>
-
-</div>
-
-</main>
-
-</section>
-
-
-<section id="cart" class="page">
-
-<main class="container">
-
-<h2>
+</div></div></div></main></section><section id="cart" class="page"><main class="container"><h2>
 🛒 سلة المشتريات
-</h2>
-
-<div class="box">
-
-<div id="cartItems"></div>
-
-<div id="cartTotal"></div>
-
-<button
+</h2><div class="box"><div id="cartItems"></div><div id="cartTotal"></div><button
 id="checkoutButton"
 class="checkout-button"
 onclick="checkout()">
@@ -505,58 +424,29 @@ onclick="checkout()">
 <div
 id="checkoutStatus"
 class="status">
-</div>
-
-</div>
-
-</main>
-
-</section>
-
-
-<section id="account" class="page">
-
-<main class="container">
-
-<h2>
+</div></div></main></section><section id="account" class="page"><main class="container"><h2>
 👤 حسابي
-</h2>
-
-<div id="loginBox" class="box">
-
-<h3>
+</h2><div id="loginBox" class="box"><h3>
 تسجيل الدخول
-</h3>
-
-<div class="form-group">
-
-<label>
+</h3><div class="form-group"><label>
 البريد الإلكتروني
-</label>
-
-<input
+</label><input
 id="loginEmail"
 type="email"
 placeholder="example@email.com"
->
 
-</div>
+«»
 
-<div class="form-group">
-
-<label>
+</div><div class="form-group"><label>
 كلمة المرور
-</label>
-
-<input
+</label><input
 id="loginPassword"
 type="password"
 placeholder="كلمة المرور"
->
 
-</div>
+«»
 
-<button
+</div><button
 class="form-button"
 onclick="loginUser()">
 تسجيل الدخول
@@ -571,49 +461,30 @@ onclick="showSignup()">
 <div
 id="loginStatus"
 class="status">
-</div>
-
-</div>
-
-
-<div
+</div></div><div
 id="signupBox"
 class="box"
-style="display:none;">
-
-<h3>
+style="display:none;"><h3>
 إنشاء حساب جديد
-</h3>
-
-<div class="form-group">
-
-<label>
+</h3><div class="form-group"><label>
 البريد الإلكتروني
-</label>
-
-<input
+</label><input
 id="signupEmail"
 type="email"
 placeholder="example@email.com"
->
 
-</div>
+«»
 
-<div class="form-group">
-
-<label>
+</div><div class="form-group"><label>
 كلمة المرور
-</label>
-
-<input
+</label><input
 id="signupPassword"
 type="password"
 placeholder="كلمة المرور"
->
 
-</div>
+«»
 
-<button
+</div><button
 class="form-button"
 onclick="signupUser()">
 إنشاء حساب
@@ -628,46 +499,23 @@ onclick="showLogin()">
 <div
 id="signupStatus"
 class="status">
-</div>
-
-</div>
-
-
-<div
+</div></div><div
 id="userBox"
 class="box"
-style="display:none;">
-
-<h3>
+style="display:none;"><h3>
 مرحبًا بك 👋
-</h3>
-
-<div
+</h3><div
 id="userEmail"
 class="account-email">
-</div>
-
-<button
+</div><button
 class="logout-button"
 onclick="logoutUser()">
 تسجيل الخروج
 </button>
 
-</div>
+</div></main></section><footer>© 2026 Adam Al-Noor Books
 
-</main>
-
-</section>
-
-
-<footer>
-
-© 2026 Adam Al-Noor Books
-
-</footer>
-
-
-<script>
+</footer><script>
 
 /* =====================================================
    SUPABASE
@@ -683,17 +531,6 @@ const SUPABASE_KEY =
 /* =====================================================
    إعدادات المتجر
 ===================================================== */
-
-/*
-   Wayl يقبل IQD فقط.
-
-   الأسعار الظاهرة للعميل بالدولار.
-   نستخدم هذا الرقم لتحويل الدولار إلى الدينار
-   قبل إرسال الطلب إلى Wayl.
-
-   مثال:
-   5 USD × 1310 = 6550 IQD
-*/
 
 const USD_TO_IQD = 1310;
 
@@ -1302,8 +1139,7 @@ document
 .value;
 
 const status =
-document
-.getElementById("loginStatus");
+document.getElementById("loginStatus");
 
 if (!email || !password) {
 
@@ -1400,8 +1236,7 @@ document
 .value;
 
 const status =
-document
-.getElementById("signupStatus");
+document.getElementById("signupStatus");
 
 if (!email || !password) {
 
@@ -1616,10 +1451,17 @@ document.getElementById(
    الرسائل
 ===================================================== */
 
-function showStatus(element, message) {
+function showStatus(element, message, type = "") {
+
+if (!element) {
+return;
+}
 
 element.textContent =
 message;
+
+element.className =
+"status " + type;
 
 element.style.display =
 "block";
@@ -1708,9 +1550,14 @@ document.getElementById(
 );
 
 
-/*
-   حساب المجموع بالدولار
-*/
+/* منع الضغط المتكرر */
+
+if (checkoutButton.disabled) {
+return;
+}
+
+
+/* حساب المجموع */
 
 const totalUSD =
 cart.reduce(
@@ -1720,9 +1567,7 @@ sum + Number(book.price || 0),
 );
 
 
-/*
-   تحويل المبلغ إلى IQD
-*/
+/* تحويل إلى IQD */
 
 const totalIQD =
 Math.round(
@@ -1730,11 +1575,15 @@ totalUSD * USD_TO_IQD
 );
 
 
-if (!Number.isInteger(totalIQD) || totalIQD <= 0) {
+if (
+!Number.isInteger(totalIQD) ||
+totalIQD <= 0
+) {
 
 showStatus(
 status,
-"تعذر حساب مبلغ الدفع."
+"تعذر حساب مبلغ الدفع.",
+"error"
 );
 
 return;
@@ -1742,32 +1591,20 @@ return;
 }
 
 
-/*
-   منع الضغط المتكرر
-*/
+/* حالة الانتظار */
 
 checkoutButton.disabled = true;
 
 checkoutButton.textContent =
 "جاري إنشاء رابط الدفع...";
 
-status.style.display = "none";
+status.style.display =
+"none";
 
 
-try {
+/* إنشاء طلب */
 
-const response =
-await fetch(
-"/api/create-payment",
-{
-method: "POST",
-
-headers: {
-"Content-Type":
-"application/json"
-},
-
-body: JSON.stringify({
+const requestBody = {
 
 items: cart.map(book => ({
 id: book.id,
@@ -1779,32 +1616,146 @@ totalUSD: totalUSD,
 
 totalIQD: totalIQD
 
-})
+};
+
+console.log(
+"CREATE PAYMENT REQUEST:",
+requestBody
+);
+
+
+try {
+
+/*
+   مهلة قصوى 20 ثانية
+*/
+
+const controller =
+new AbortController();
+
+const timeout =
+setTimeout(
+() => controller.abort(),
+20000
+);
+
+
+/*
+   الاتصال بـ API
+*/
+
+const response =
+await fetch(
+"/api/create-payment",
+{
+method: "POST",
+
+headers: {
+"Content-Type":
+"application/json",
+"Accept":
+"application/json"
+},
+
+body:
+JSON.stringify(requestBody),
+
+signal:
+controller.signal
 
 }
 );
 
 
-const data =
-await response.json();
+clearTimeout(timeout);
 
+
+/*
+   نقرأ الرد كنص أولًا.
+   هذا يمنع مشكلة:
+   Unexpected token 'A'
+*/
+
+const rawText =
+await response.text();
+
+console.log(
+"CREATE PAYMENT STATUS:",
+response.status
+);
+
+console.log(
+"CREATE PAYMENT RAW RESPONSE:",
+rawText
+);
+
+
+/*
+   محاولة تحويل الرد إلى JSON
+*/
+
+let data = null;
+
+try {
+
+data =
+JSON.parse(rawText);
+
+}
+catch (jsonError) {
+
+console.error(
+"API JSON PARSE ERROR:",
+jsonError
+);
+
+throw new Error(
+rawText
+? `خادم الدفع أعاد ردًا غير صالح: ${rawText.substring(0, 200)}`
+: "خادم الدفع لم يُرجع أي بيانات."
+);
+
+}
+
+
+/*
+   إذا كان API أعاد خطأ
+*/
 
 if (!response.ok) {
 
 throw new Error(
-data.error ||
-"فشل إنشاء رابط الدفع."
+data?.error ||
+data?.message ||
+`فشل إنشاء رابط الدفع. HTTP ${response.status}`
 );
 
 }
 
 
+/*
+   التأكد من وجود الرابط
+*/
+
+const paymentUrl =
+data?.paymentUrl ||
+data?.data?.paymentUrl ||
+data?.url ||
+data?.data?.url;
+
+
 if (
-!data.paymentUrl
+typeof paymentUrl !== "string" ||
+!paymentUrl.startsWith("http")
 ) {
 
+console.error(
+"WAYL PAYMENT URL MISSING:",
+data
+);
+
 throw new Error(
-"لم يتم استلام رابط الدفع من Wayl."
+"تم إنشاء الطلب لكن لم يتم استلام رابط الدفع من Wayl."
 );
 
 }
@@ -1817,37 +1768,108 @@ throw new Error(
 localStorage.setItem(
 "adamAlNoorPendingOrder",
 JSON.stringify({
-referenceId: data.referenceId,
-items: cart,
-totalUSD: totalUSD,
-totalIQD: totalIQD,
-createdAt: new Date().toISOString()
+
+referenceId:
+data.referenceId ||
+data?.data?.referenceId ||
+"",
+
+items:
+cart,
+
+totalUSD:
+totalUSD,
+
+totalIQD:
+totalIQD,
+
+paymentUrl:
+paymentUrl,
+
+createdAt:
+new Date().toISOString()
+
 })
 );
 
 
 /*
-   الانتقال إلى صفحة Wayl
+   نجاح
 */
 
-window.location.href =
-data.paymentUrl;
+console.log(
+"WAYL PAYMENT URL:",
+paymentUrl
+);
+
+showStatus(
+status,
+"تم إنشاء رابط الدفع. جارٍ تحويلك إلى Wayl...",
+"success"
+);
+
+
+/*
+   تغيير الزر
+*/
+
+checkoutButton.textContent =
+"تم إنشاء الرابط ✓";
+
+
+/*
+   الانتقال إلى Wayl
+*/
+
+setTimeout(
+() => {
+
+window.location.assign(
+paymentUrl
+);
+
+},
+300
+);
 
 }
 catch (error) {
 
 console.error(
-"Checkout error:",
+"CHECKOUT ERROR:",
 error
 );
 
+
+if (
+error?.name === "AbortError"
+) {
+
 showStatus(
 status,
-error.message ||
-"حدث خطأ أثناء تجهيز الدفع."
+"انتهت مهلة الاتصال بخادم الدفع. حاول مرة أخرى.",
+"error"
 );
 
-checkoutButton.disabled = false;
+}
+else {
+
+showStatus(
+status,
+error?.message ||
+"حدث خطأ أثناء إنشاء رابط الدفع.",
+"error"
+);
+
+}
+
+
+/*
+   إعادة الزر للعمل
+*/
+
+checkoutButton.disabled =
+false;
 
 checkoutButton.textContent =
 "إتمام الشراء";
@@ -1887,8 +1909,4 @@ loadBooks();
 
 checkUser();
 
-</script>
-
-</body>
-
-</html>
+</script></body></html>
