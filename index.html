@@ -2508,31 +2508,20 @@ function showStatus(
 /* =====================================================
    المكتبة
 ===================================================== */
-
 async function renderLibrary() {
 
   const container =
     document.getElementById("libraryItems");
 
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
-  const token =
-    getAccessToken();
+  const token = getAccessToken();
 
   if (!token) {
 
     container.innerHTML = `
       <div class="empty">
         🔐 يجب تسجيل الدخول أولًا.
-        <br><br>
-        <button
-          class="form-button"
-          onclick="showPage('account')"
-        >
-          تسجيل الدخول
-        </button>
       </div>
     `;
 
@@ -2547,68 +2536,25 @@ async function renderLibrary() {
 
   try {
 
-    /* =================================================
-       جلب كتب المستخدم من Library
-    ================================================= */
-
-    const response =
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/library?select=id,book_id,order_id,purchased_at,books(id,title_ar,author_ar,pdf_url)&order=purchased_at.desc`,
-        {
-          method: "GET",
-
-          headers: {
-            "apikey": SUPABASE_KEY,
-
-            "Authorization":
-              `Bearer ${token}`,
-
-            "Content-Type":
-              "application/json"
-          }
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/library?select=id,book_id,order_id,purchased_at,books(id,title_ar,author_ar,pdf_url)&order=purchased_at.desc`,
+      {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${token}`
         }
-      );
-
-    const rawText =
-      await response.text();
-
-    console.log(
-      "LIBRARY STATUS:",
-      response.status
-    );
-
-    console.log(
-      "LIBRARY RESPONSE:",
-      rawText
+      }
     );
 
     if (!response.ok) {
-
       throw new Error(
-        `HTTP ${response.status}: ${rawText}`
+        `HTTP ${response.status}`
       );
-
     }
 
-    let data;
+    const data = await response.json();
 
-    try {
-
-      data =
-        JSON.parse(rawText);
-
-    } catch {
-
-      throw new Error(
-        "بيانات المكتبة غير صالحة."
-      );
-
-    }
-
-    if (
-      !Array.isArray(data) ||
-      data.length === 0
-    ) {
+    if (!Array.isArray(data) || data.length === 0) {
 
       container.innerHTML = `
         <div class="empty">
@@ -2619,122 +2565,151 @@ async function renderLibrary() {
       return;
     }
 
-    /* =================================================
-       عرض الكتب
-    ================================================= */
-
     let html = "";
 
     for (const item of data) {
 
-      const book =
-        item.books || {};
+      const book = item.books || {};
 
       const title =
-        book.title_ar ||
-        "كتاب";
+        book.title_ar || "كتاب";
 
       const author =
-        book.author_ar ||
-        "Adam Al-Noor";
+        book.author_ar || "Adam Al-Noor";
 
       const filePath =
-        String(
-          book.pdf_url || ""
-        ).trim();
+        String(book.pdf_url || "").trim();
 
-      let readButton = "";
+      let readButton = `
+        <div class="library-status">
+          جاري تجهيز الكتاب...
+        </div>
+      `;
 
-      /* ===============================================
-         إنشاء Signed URL من Supabase Storage
-      =============================================== */
+      html += `
+        <div class="library-book">
 
-   if (filePath) {
+          <strong>
+            ${escapeHTML(title)}
+          </strong>
 
-  try {
+          <br>
 
-    const pdfResponse =
-      await fetch(
-        "/api/library-pdf",
-        {
-          method: "POST",
+          <small>
+            المؤلف:
+            ${escapeHTML(author)}
+          </small>
 
-          headers: {
-            "Content-Type":
-              "application/json",
+          <br>
 
-            "Authorization":
-              `Bearer ${token}`
-          },
+          <div
+            class="library-status"
+            data-file="${escapeHTML(filePath)}"
+          >
+            جاري تجهيز الكتاب...
+          </div>
 
-          body: JSON.stringify({
-            filePath: filePath
-          })
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+
+    const bookElements =
+      container.querySelectorAll(".library-book");
+
+    for (const bookElement of bookElements) {
+
+      const status =
+        bookElement.querySelector(
+          ".library-status"
+        );
+
+      const filePath =
+        status?.dataset?.file || "";
+
+      if (!filePath) {
+
+        status.textContent =
+          "ملف الكتاب غير متوفر حاليًا.";
+
+        continue;
+      }
+
+      try {
+
+        const pdfResponse =
+          await fetch(
+            "/api/library-pdf",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  `Bearer ${token}`
+              },
+
+              body: JSON.stringify({
+                filePath: filePath
+              })
+            }
+          );
+
+        const pdfText =
+          await pdfResponse.text();
+
+        if (!pdfResponse.ok) {
+
+          throw new Error(
+            `PDF API HTTP ${pdfResponse.status}: ${pdfText}`
+          );
+
         }
-      );
 
-    const pdfText =
-      await pdfResponse.text();
+        const pdfData =
+          JSON.parse(pdfText);
 
-    console.log(
-      "PDF API RESPONSE:",
-      pdfText
-    );
+        const finalUrl =
+          pdfData?.url;
 
-    if (!pdfResponse.ok) {
+        if (!finalUrl) {
 
-      throw new Error(
-        `PDF API HTTP ${pdfResponse.status}: ${pdfText}`
-      );
+          throw new Error(
+            "لم يتم الحصول على رابط الكتاب."
+          );
 
+        }
+
+        status.innerHTML = `
+          <button
+            type="button"
+            onclick="openPDF('${finalUrl.replace(/'/g, "\\'")}')"
+          >
+            📖 قراءة الكتاب
+          </button>
+        `;
+
+      }
+      catch (error) {
+
+        console.error(
+          "PDF API ERROR:",
+          error
+        );
+
+        status.textContent =
+          "تعذر تجهيز ملف الكتاب.";
+
+        status.style.color =
+          "#b3261e";
+      }
     }
 
-    const pdfData =
-      JSON.parse(pdfText);
-
-    const finalUrl =
-      pdfData?.url;
-
-    if (!finalUrl) {
-
-      throw new Error(
-        "لم يتم الحصول على رابط الكتاب."
-      );
-
-    }
-
-    readButton = `
-      <button
-        type="button"
-        onclick="openPDF('${escapeHTML(finalUrl)}')"
-      >
-        📖 قراءة الكتاب
-      </button>
-    `;
-
   }
-  catch (pdfError) {
-
-    console.error(
-      "PDF API ERROR:",
-      pdfError
-    );
-
-    readButton = `
-      <div
-        style="
-          margin-top:10px;
-          color:#b3261e;
-        "
-      >
-        تعذر تجهيز ملف الكتاب.
-      </div>
-    `;
-
-  }
-
-  }   
-
+  catch (error) {
 
     console.error(
       "LIBRARY ERROR:",
@@ -2742,26 +2717,18 @@ async function renderLibrary() {
     );
 
     container.innerHTML = `
-
       <div class="empty">
-
         ⚠️ تعذر تحميل المكتبة.
-
         <br><br>
-
         <small>
           ${escapeHTML(
             error?.message ||
             "خطأ غير معروف"
           )}
         </small>
-
       </div>
-
     `;
-
   }
-
 }
 /* =====================================================
    فتح PDF
