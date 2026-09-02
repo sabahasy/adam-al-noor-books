@@ -1202,9 +1202,10 @@ async function loadBooks() {
             Number(book.id);
 
           return (
-            Number.isSafeInteger(id) &&
-            id > 0
-          );
+    Number.isSafeInteger(id) &&
+    id > 0 &&
+    book.is_available === true
+);
 
         })
         .map(book => ({
