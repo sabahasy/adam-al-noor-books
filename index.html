@@ -814,7 +814,7 @@ const SUPABASE_KEY =
    إعدادات المتجر
 ===================================================== */
 
-const USD_TO_IQD = 1310;
+const CURRENCY = "IQD";
 
 
 /* =====================================================
@@ -1674,17 +1674,14 @@ function renderCart() {
       "cartItems"
     );
 
-
   const totalContainer =
     document.getElementById(
       "cartTotal"
     );
 
-
   if (!container) {
     return;
   }
-
 
   if (
     !cart ||
@@ -1698,17 +1695,13 @@ function renderCart() {
       </div>
       `;
 
-
     if (totalContainer) {
       totalContainer.innerHTML =
         "";
     }
 
-
     return;
-
   }
-
 
   container.innerHTML =
     cart.map(
@@ -1730,11 +1723,13 @@ function renderCart() {
             <span>
               ${Number(
                 book.price || 0
-              ).toFixed(2)} $
+              ).toLocaleString(
+                "en-US"
+              )}
+              د.ع
             </span>
 
           </div>
-
 
           <button
             class="remove-button"
@@ -1748,8 +1743,11 @@ function renderCart() {
       `
     ).join("");
 
+  // =====================================================
+  // الإجمالي بالدينار العراقي مباشرة
+  // =====================================================
 
-  const total =
+  const totalIQD =
     cart.reduce(
       (sum, book) =>
         sum +
@@ -1759,14 +1757,6 @@ function renderCart() {
       0
     );
 
-
-  const totalIQD =
-    Math.round(
-      total *
-      USD_TO_IQD
-    );
-
-
   if (totalContainer) {
 
     totalContainer.innerHTML = `
@@ -1774,27 +1764,14 @@ function renderCart() {
       <div class="cart-total">
 
         الإجمالي:
-        ${total.toFixed(2)} $
-
-        <br>
-
-        <span
-          style="
-            font-size:14px;
-            color:#777;
-          "
-        >
-          ما يعادل تقريبًا
-          ${totalIQD.toLocaleString(
-            "en-US"
-          )}
-          IQD
-        </span>
+        ${totalIQD.toLocaleString(
+          "en-US"
+        )}
+        د.ع
 
       </div>
 
     `;
-
   }
 
 }
