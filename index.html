@@ -2838,7 +2838,7 @@ async function checkout() {
 
 
   /* ===================================================
-     الزر
+     الزر والرسالة
   =================================================== */
 
   const checkoutButton =
@@ -2864,11 +2864,11 @@ async function checkout() {
 
 
   /* ===================================================
-     المبلغ للعرض فقط
-     الخادم هو الذي يحدد السعر النهائي
+     حساب المبلغ بالدينار العراقي مباشرة
+     لا يوجد تحويل من الدولار
   =================================================== */
 
-  const totalUSD =
+  const totalIQD =
     cart.reduce(
       (sum, book) =>
         sum +
@@ -2876,13 +2876,6 @@ async function checkout() {
           book.price || 0
         ),
       0
-    );
-
-
-  const totalIQD =
-    Math.round(
-      totalUSD *
-      USD_TO_IQD
     );
 
 
@@ -2895,7 +2888,7 @@ async function checkout() {
 
     showStatus(
       status,
-      "تعذر حساب مبلغ الدفع.",
+      "تعذر حساب مبلغ الدفع بالدينار العراقي.",
       "error"
     );
 
@@ -2929,6 +2922,7 @@ async function checkout() {
 
   /* ===================================================
      الطلب
+     الخادم يعيد التحقق من الأسعار من Supabase
   =================================================== */
 
   const requestBody = {
@@ -2940,9 +2934,6 @@ async function checkout() {
           Number(book.id)
 
       })),
-
-    totalUSD:
-      totalUSD,
 
     totalIQD:
       totalIQD
@@ -3126,9 +3117,6 @@ async function checkout() {
         items:
           cart,
 
-        totalUSD:
-          totalUSD,
-
         totalIQD:
           totalIQD,
 
@@ -3143,7 +3131,7 @@ async function checkout() {
 
 
     /* ================================================
-       رسالة
+       رسالة نجاح
     ================================================ */
 
     showStatus(
@@ -3168,7 +3156,7 @@ async function checkout() {
 
 
     /* ================================================
-       الانتقال
+       الانتقال إلى Wayl
     ================================================ */
 
     setTimeout(
@@ -3229,6 +3217,7 @@ async function checkout() {
   }
 
 }
+
 
 
 /* =====================================================
