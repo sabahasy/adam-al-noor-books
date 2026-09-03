@@ -152,10 +152,9 @@ export default async function handler(req, res) {
     }
 
     // =====================================================
-    // إعدادات
+    // إعدادات Wayl
+    // السعر في قاعدة البيانات = دينار عراقي مباشرة
     // =====================================================
-
-    const USD_TO_IQD = 1310;
 
     const webhookUrl =
       "https://project-akmpg.vercel.app/api/wayl-webhook";
@@ -238,34 +237,39 @@ export default async function handler(req, res) {
         });
       }
 
-      const price =
+      const priceIQD =
         Number(book.price);
 
       if (
-        !Number.isFinite(price) ||
-        price <= 0
+        !Number.isFinite(priceIQD) ||
+        priceIQD <= 0
       ) {
         return res.status(400).json({
           error:
             `سعر الكتاب غير صحيح: ${book.title_ar}`
         });
       }
+
+      if (
+        !Number.isInteger(priceIQD)
+      ) {
+        return res.status(400).json({
+          error:
+            `سعر الكتاب يجب أن يكون رقمًا صحيحًا بالدينار العراقي: ${book.title_ar}`
+        });
+      }
     }
 
     // =====================================================
     // عناصر Wayl
+    // السعر = IQD مباشرة
     // =====================================================
 
     const lineItem =
       orderedBooks.map(book => {
 
-        const priceUSD =
-          Number(book.price);
-
         const amountIQD =
-          Math.round(
-            priceUSD * USD_TO_IQD
-          );
+          Number(book.price);
 
         return {
           label:
@@ -282,20 +286,13 @@ export default async function handler(req, res) {
       });
 
     // =====================================================
-    // الإجمالي
+    // الإجمالي بالدينار العراقي
     // =====================================================
 
     const totalIQD =
       lineItem.reduce(
         (sum, item) =>
           sum + Number(item.amount),
-        0
-      );
-
-    const totalUSD =
-      orderedBooks.reduce(
-        (sum, book) =>
-          sum + Number(book.price),
         0
       );
 
@@ -354,7 +351,8 @@ export default async function handler(req, res) {
 
       return res.status(500).json({
         error: "تعذر إنشاء الطلب.",
-        details: orderError.message
+        details:
+          orderError.message
       });
     }
 
@@ -515,7 +513,8 @@ export default async function handler(req, res) {
       await supabaseAdmin
         .from("orders")
         .update({
-          status: "failed"
+          status:
+            "failed"
         })
         .eq(
           "id",
@@ -568,7 +567,8 @@ export default async function handler(req, res) {
       await supabaseAdmin
         .from("orders")
         .update({
-          status: "failed"
+          status:
+            "failed"
         })
         .eq(
           "id",
@@ -590,12 +590,7 @@ export default async function handler(req, res) {
 
     // =====================================================
     // حفظ بيانات Wayl في orders
-    //
-    // ملاحظة:
-    // نحاول حفظ البيانات إذا كانت الأعمدة موجودة.
-    // إذا لم تكن موجودة لا نوقف الدفع.
     // =====================================================
-
 
     const waylOrderUpdate = {
 
@@ -626,11 +621,11 @@ export default async function handler(req, res) {
         waylSaveError
       );
 
-      // لا نفشل الدفع بسبب أعمدة غير موجودة
       console.log(
         "تم إنشاء رابط Wayl بنجاح، وسيتم الاعتماد على customParameter/referenceId."
       );
     }
+
     // =====================================================
     // النجاح
     // =====================================================
@@ -646,9 +641,6 @@ export default async function handler(req, res) {
 
         referenceId:
           referenceId,
-
-        totalUSD:
-          totalUSD,
 
         totalIQD:
           totalIQD
@@ -668,9 +660,6 @@ export default async function handler(req, res) {
 
       total:
         totalIQD,
-
-      totalUSD:
-        totalUSD,
 
       currency:
         "IQD",
