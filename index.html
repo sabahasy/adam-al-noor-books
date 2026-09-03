@@ -894,7 +894,6 @@ function renderBooks(
     return;
   }
 
-
   if (
     !Array.isArray(list) ||
     list.length === 0
@@ -907,9 +906,7 @@ function renderBooks(
     `;
 
     return;
-
   }
-
 
   container.innerHTML =
     list.map(book => {
@@ -920,7 +917,6 @@ function renderBooks(
             Number(item.id) ===
             Number(book.id)
         );
-
 
       const cover =
         book.cover_url
@@ -935,7 +931,6 @@ function renderBooks(
             >
           `
           : "📖";
-
 
       return `
 
@@ -972,7 +967,10 @@ function renderBooks(
             <div class="price">
               ${Number(
                 book.price || 0
-              ).toFixed(2)} $
+              ).toLocaleString(
+                "en-US"
+              )}
+              د.ع
             </div>
 
             <button
