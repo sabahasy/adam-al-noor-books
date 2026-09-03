@@ -2859,98 +2859,111 @@ async function checkUser() {
 
   async function loginUser() {
 
-    const email =
-      document.getElementById("loginEmail")
-        .value.trim();
+  const email =
+    document.getElementById("loginEmail")
+      .value.trim();
 
-    const password =
-      document.getElementById("loginPassword")
-        .value;
+  const password =
+    document.getElementById("loginPassword")
+      .value;
 
-    if (!email || !password) {
+  if (!email || !password) {
 
-      showStatus(
-        "loginStatus",
-        "أدخل البريد الإلكتروني وكلمة المرور.",
-        "error"
-      );
+    showStatus(
+      "loginStatus",
+      "أدخل البريد الإلكتروني وكلمة المرور.",
+      "error"
+    );
 
-      return;
-
-    }
-
-    try {
-
-      const response =
-        await fetch(
-          `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-          {
-
-            method: "POST",
-
-            headers: {
-
-              "Content-Type":
-                "application/json",
-
-              apikey:
-                SUPABASE_KEY
-
-            },
-
-            body: JSON.stringify({
-
-              email,
-
-              password
-
-            })
-
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error_description ||
-          data.msg ||
-          "فشل تسجيل الدخول"
-        );
-
-      }
-
-      if (data.access_token) {
-
-        localStorage.setItem(
-          "sb-access-token",
-          data.access_token
-        );
-
-      }
-
-      showLoggedUser(data.user);
-
-      showStatus(
-        "loginStatus",
-        "تم تسجيل الدخول بنجاح.",
-        "success"
-      );
-
-    } catch (error) {
-
-      showStatus(
-        "loginStatus",
-        error.message,
-        "error"
-      );
-
-    }
+    return;
 
   }
 
+  try {
+
+    const response =
+      await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            apikey:
+              SUPABASE_KEY
+
+          },
+
+          body: JSON.stringify({
+
+            email,
+
+            password
+
+          })
+
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error_description ||
+        data.msg ||
+        "فشل تسجيل الدخول"
+      );
+
+    }
+
+    if (!data.access_token) {
+
+      throw new Error(
+        "لم يتم الحصول على جلسة تسجيل الدخول."
+      );
+
+    }
+
+    localStorage.setItem(
+      "sb-access-token",
+      data.access_token
+    );
+
+    if (data.refresh_token) {
+
+      localStorage.setItem(
+        "sb-refresh-token",
+        data.refresh_token
+      );
+
+    }
+
+    showLoggedUser(data.user);
+
+    showStatus(
+      "loginStatus",
+      "تم تسجيل الدخول بنجاح.",
+      "success"
+    );
+
+  } catch (error) {
+
+    showStatus(
+      "loginStatus",
+      error.message,
+      "error"
+    );
+
+  }
+
+  }
+    
   async function signupUser() {
 
     const email =
