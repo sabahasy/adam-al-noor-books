@@ -3398,153 +3398,222 @@ async function checkUser() {
 
   async function checkout() {
 
-    if (!cart.length) {
+  if (!cart.length) {
 
-      showStatus(
-        "checkoutStatus",
-        "السلة فارغة.",
-        "error"
+    showStatus(
+      "checkoutStatus",
+      "السلة فارغة.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  let token =
+    getAccessToken();
+
+  if (!token) {
+
+    showStatus(
+      "checkoutStatus",
+      "يجب تسجيل الدخول أولاً لإتمام الشراء.",
+      "error"
+    );
+
+    showPage("account");
+
+    return;
+
+  }
+
+  const items =
+    cart.map(book => ({
+      id: Number(book.id)
+    }));
+
+  const totalIQD =
+    cart.reduce(
+      (sum, book) =>
+        sum + Number(book.price || 0),
+      0
+    );
+
+  if (!items.length || totalIQD <= 0) {
+
+    showStatus(
+      "checkoutStatus",
+      "بيانات السلة غير صحيحة.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const button =
+    document.getElementById(
+      "checkoutButton"
+    );
+
+  button.disabled = true;
+
+  button.textContent =
+    "جاري تجهيز الدفع...";
+
+  try {
+
+    // التحقق من الجلسة الحالية
+    let userResponse =
+      await fetch(
+        `${SUPABASE_URL}/auth/v1/user`,
+        {
+
+          headers: {
+
+            apikey:
+              SUPABASE_KEY,
+
+            Authorization:
+              `Bearer ${token}`
+
+          }
+
+        }
       );
 
-      return;
+    // إذا انتهت الجلسة نحاول تجديدها
+    if (!userResponse.ok) {
 
-    }
+      token =
+        await refreshAccessToken();
 
-    const token =
-      getAccessToken();
+      if (!token) {
 
-    if (!token) {
+        throw new Error(
+          "انتهت جلسة تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى."
+        );
 
-      showStatus(
-        "checkoutStatus",
-        "يجب تسجيل الدخول أولاً لإتمام الشراء.",
-        "error"
-      );
+      }
 
-      showPage("account");
-
-      return;
-
-    }
-
-    const items =
-      cart.map(book => ({
-
-        id:
-          Number(book.id)
-
-      }));
-
-    const totalIQD =
-      cart.reduce(
-        (sum, book) =>
-          sum + Number(book.price || 0),
-        0
-      );
-
-    if (!items.length || totalIQD <= 0) {
-
-      showStatus(
-        "checkoutStatus",
-        "بيانات السلة غير صحيحة.",
-        "error"
-      );
-
-      return;
-
-    }
-
-    const button =
-      document.getElementById(
-        "checkoutButton"
-      );
-
-    button.disabled = true;
-
-    button.textContent =
-      "جاري تجهيز الدفع...";
-
-    try {
-
-      const response =
+      userResponse =
         await fetch(
-          "/api/create-payment",
+          `${SUPABASE_URL}/auth/v1/user`,
           {
-
-            method: "POST",
 
             headers: {
 
-              "Content-Type":
-                "application/json",
+              apikey:
+                SUPABASE_KEY,
 
               Authorization:
                 `Bearer ${token}`
 
-            },
-
-            body: JSON.stringify({
-
-              items,
-
-              totalIQD
-
-            })
+            }
 
           }
         );
 
-      const data =
-        await response.json();
+    }
 
-      if (!response.ok) {
+    if (!userResponse.ok) {
 
-        throw new Error(
-          data.error ||
-          "تعذر إنشاء عملية الدفع"
-        );
-
-      }
-
-      if (!data.paymentUrl) {
-
-        throw new Error(
-          "لم يتم الحصول على رابط الدفع"
-        );
-
-      }
-
-      localStorage.setItem(
-        "pendingOrder",
-        JSON.stringify({
-
-          orderId:
-            data.orderId,
-
-          totalIQD
-
-        })
+      localStorage.removeItem(
+        "sb-access-token"
       );
 
-      window.location.href =
-        data.paymentUrl;
-
-    } catch (error) {
-
-      showStatus(
-        "checkoutStatus",
-        error.message,
-        "error"
+      localStorage.removeItem(
+        "sb-refresh-token"
       );
 
-      button.disabled = false;
+      showLogin();
 
-      button.textContent =
-        "إتمام الشراء";
+      throw new Error(
+        "انتهت جلسة تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى."
+      );
 
     }
 
+    // إنشاء عملية الدفع
+    const response =
+      await fetch(
+        "/api/create-payment",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${token}`
+
+          },
+
+          body: JSON.stringify({
+
+            items,
+
+            totalIQD
+
+          })
+
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "تعذر إنشاء عملية الدفع"
+      );
+
+    }
+
+    if (!data.paymentUrl) {
+
+      throw new Error(
+        "لم يتم الحصول على رابط الدفع"
+      );
+
+    }
+
+    localStorage.setItem(
+      "pendingOrder",
+      JSON.stringify({
+
+        orderId:
+          data.orderId,
+
+        totalIQD
+
+      })
+    );
+
+    window.location.href =
+      data.paymentUrl;
+
+  } catch (error) {
+
+    showStatus(
+      "checkoutStatus",
+      error.message,
+      "error"
+    );
+
+    button.disabled = false;
+
+    button.textContent =
+      "إتمام الشراء";
+
   }
+
+        }
 
   /* =====================================================
      START
