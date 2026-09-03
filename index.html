@@ -1966,7 +1966,7 @@ const CURRENCY = "IQD";
 
       return `
 
-        <article class="book">
+        <article class="book" onclick="openBookDetails(${realIndex})">
 
           <div class="book-cover-wrap">
 
@@ -2040,14 +2040,14 @@ const CURRENCY = "IQD";
 
                 <button
                   class="btn btn-cart"
-                  onclick="addToCart(${realIndex})"
+                  onclick="event.stopPropagation(); addToCart(${realIndex})"
                 >
                   🛒
                 </button>
 
                 <button
                   class="btn btn-buy"
-                  onclick="buyNow(${realIndex})"
+                  onclick="event.stopPropagation(); buyNow(${realIndex})"
                 >
                   شراء
                 </button>
