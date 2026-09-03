@@ -3461,8 +3461,10 @@ const CURRENCY = "IQD";
         );
 
 
-      const data =
-        await response.json();
+      const data = await response.json();
+
+console.log("PAYMENT RESPONSE:", data);
+console.log("PAYMENT STATUS:", response.status);
 
 
       if (!response.ok) {
