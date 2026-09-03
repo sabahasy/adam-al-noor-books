@@ -2477,47 +2477,28 @@ const CURRENCY = "IQD";
 
 
   function buyNow(index) {
+  const book = books[index];
 
-    const book =
-      books[index];
+  if (!book) return;
 
-    if (!book) return;
+  const exists = cart.some(
+    item => String(item.id) === String(book.id)
+  );
 
+  if (!exists) {
+    cart.push({
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      price: book.price,
+      cover_url: book.cover_url
+    });
+  }
 
-    const exists =
-      cart.some(
-        item =>
-          String(item.id) === String(book.id)
-      );
-
-
-    if (!exists) {
-
-      cart.push({
-
-        id: book.id,
-
-        title: book.title,
-
-        author: book.author,
-
-        price: book.price,
-
-        cover_url: book.cover_url
-
-      });
-
-    }
-
-
-    saveCart();
-
-    updateCartCount();
-
-    renderCart();
-
-    showPage("cart");
-
+  saveCart();
+  updateCartCount();
+  renderCart();
+  showPage("cart");
   }
 
 
