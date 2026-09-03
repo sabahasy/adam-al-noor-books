@@ -61,8 +61,6 @@
       margin: auto;
     }
 
-    /* ================= HEADER ================= */
-
     header {
       background: rgba(17,17,17,.97);
       color: white;
@@ -155,8 +153,6 @@
       align-items: center;
       justify-content: center;
     }
-
-    /* ================= HERO ================= */
 
     .hero-wrap {
       padding: 28px 0 10px;
@@ -267,8 +263,6 @@
       transform: rotate(-8deg);
     }
 
-    /* ================= FEATURES ================= */
-
     .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -308,8 +302,6 @@
       font-size: 12px;
     }
 
-    /* ================= STATS ================= */
-
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -336,8 +328,6 @@
       color: var(--muted);
       font-size: 13px;
     }
-
-    /* ================= SECTION ================= */
 
     section.store-section {
       padding: 15px 0 45px;
@@ -369,8 +359,6 @@
       font-size: 13px;
     }
 
-    /* ================= SEARCH ================= */
-
     .search-box {
       display: flex;
       gap: 10px;
@@ -391,8 +379,6 @@
       border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(201,162,39,.12);
     }
-
-    /* ================= CATEGORIES ================= */
 
     .categories {
       display: flex;
@@ -424,8 +410,6 @@
       border-color: var(--black);
     }
 
-    /* ================= BOOK GRID ================= */
-
     .books {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -440,6 +424,7 @@
       overflow: hidden;
       position: relative;
       transition: transform .25s, box-shadow .25s;
+      cursor: pointer;
     }
 
     .book:hover {
@@ -561,203 +546,162 @@
     .btn-buy:hover {
       background: var(--gold-dark);
     }
-/* ================= BOOK DETAILS ================= */
 
-.book {
-  cursor: pointer;
-}
+    /* ================= BOOK DETAILS ================= */
 
-.book-details-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.72);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 3000;
-  overflow-y: auto;
-}
+    .book-details-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 3000;
+      overflow-y: auto;
+    }
 
-.book-details-overlay.show {
-  display: flex;
-}
+    .book-details-overlay.show {
+      display: flex;
+    }
 
-.book-details {
-  position: relative;
-  width: min(900px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  background: white;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 25px 80px rgba(0,0,0,.3);
-}
+    .book-details {
+      position: relative;
+      width: min(900px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.3);
+    }
 
-.book-details-close {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 38px;
-  height: 38px;
-  border: 0;
-  border-radius: 50%;
-  background: #f1f1f1;
-  color: #333;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 2;
-}
+    .book-details-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      background: #f1f1f1;
+      color: #333;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 2;
+    }
 
-.book-details-close:hover {
-  background: var(--black);
-  color: white;
-}
+    .book-details-close:hover {
+      background: var(--black);
+      color: white;
+    }
 
-.book-details-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 30px;
-  align-items: start;
-}
+    .book-details-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      align-items: start;
+    }
 
-.book-details-cover {
-  width: 100%;
-  max-height: 390px;
-  object-fit: contain;
-  border-radius: 15px;
-  background: #f5f3ed;
-  box-shadow: 0 12px 30px rgba(0,0,0,.12);
-}
+    .book-details-cover {
+      width: 100%;
+      max-height: 390px;
+      object-fit: contain;
+      border-radius: 15px;
+      background: #f5f3ed;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    }
 
-.book-details-cover-placeholder {
-  height: 350px;
-  border-radius: 15px;
-  background: var(--cream);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 70px;
-}
+    .book-details-cover-placeholder {
+      height: 350px;
+      border-radius: 15px;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+    }
 
-.book-details-category {
-  color: var(--gold-dark);
-  font-size: 13px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
+    .book-details-category {
+      color: var(--gold-dark);
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
 
-.book-details h2 {
-  font-size: 30px;
-  line-height: 1.4;
-  margin-bottom: 8px;
-}
+    .book-details h2 {
+      font-size: 30px;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
 
-.book-details-author {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 12px;
-}
+    .book-details-author {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
 
-.book-details-rating {
-  color: #e0b72e;
-  margin-bottom: 22px;
-}
+    .book-details-rating {
+      color: #e0b72e;
+      margin-bottom: 22px;
+    }
 
-.book-details-description-title {
-  font-size: 17px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
+    .book-details-description-title {
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
 
-.book-details-description {
-  color: #555;
-  font-size: 15px;
-  line-height: 2;
-  white-space: pre-line;
-  min-height: 80px;
-  margin-bottom: 25px;
-}
+    .book-details-description {
+      color: #555;
+      font-size: 15px;
+      line-height: 2;
+      white-space: pre-line;
+      min-height: 80px;
+      margin-bottom: 25px;
+    }
 
-.book-details-bottom {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-}
+    .book-details-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
 
-.book-details-price {
-  font-size: 24px;
-  font-weight: bold;
-  white-space: nowrap;
-}
+    .book-details-price {
+      font-size: 24px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
 
-.book-details-actions {
-  display: flex;
-  gap: 10px;
-}
+    .book-details-actions {
+      display: flex;
+      gap: 10px;
+    }
 
-.book-details-actions button {
-  border: 0;
-  border-radius: 11px;
-  padding: 13px 18px;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .book-details-actions button {
+      border: 0;
+      border-radius: 11px;
+      padding: 13px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.book-details-cart {
-  background: #eeeeee;
-  color: #222;
-}
+    .book-details-cart {
+      background: #eeeeee;
+      color: #222;
+    }
 
-.book-details-buy {
-  background: var(--black);
-  color: white;
-}
+    .book-details-buy {
+      background: var(--black);
+      color: white;
+    }
 
-.book-details-buy:hover {
-  background: var(--gold-dark);
-}
-
-@media (max-width: 650px) {
-  .book-details {
-    padding: 25px 18px;
-    border-radius: 20px;
-  }
-
-  .book-details-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .book-details-cover {
-    max-height: 300px;
-  }
-
-  .book-details-cover-placeholder {
-    height: 250px;
-  }
-
-  .book-details h2 {
-    font-size: 23px;
-  }
-
-  .book-details-bottom {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .book-details-actions {
-    width: 100%;
-  }
-
-  .book-details-actions button {
-    flex: 1;
-  }
-        }
-    /* ================= EMPTY ================= */
+    .book-details-buy:hover {
+      background: var(--gold-dark);
+    }
 
     .empty {
       grid-column: 1 / -1;
@@ -773,8 +717,6 @@
       font-size: 45px;
       margin-bottom: 8px;
     }
-
-    /* ================= PAGES ================= */
 
     .page {
       display: none;
@@ -803,8 +745,6 @@
       font-size: 13px;
       margin-bottom: 20px;
     }
-
-    /* ================= CART ================= */
 
     .cart-list {
       display: grid;
@@ -867,8 +807,6 @@
     .checkout-btn:hover {
       background: var(--gold-dark);
     }
-
-    /* ================= AUTH ================= */
 
     .auth-box {
       max-width: 500px;
@@ -933,8 +871,6 @@
       margin-top: 15px;
     }
 
-    /* ================= LIBRARY ================= */
-
     .library-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -967,8 +903,6 @@
       font-size: 12px;
     }
 
-    /* ================= STATUS ================= */
-
     .status {
       padding: 12px 15px;
       border-radius: 11px;
@@ -993,8 +927,6 @@
       color: var(--danger);
     }
 
-    /* ================= ABOUT ================= */
-
     .about-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1016,8 +948,6 @@
       color: var(--muted);
       font-size: 13px;
     }
-
-    /* ================= FOOTER ================= */
 
     footer {
       background: #111;
@@ -1062,8 +992,6 @@
       color: #888;
       font-size: 11px;
     }
-
-    /* ================= RESPONSIVE ================= */
 
     @media (max-width: 1050px) {
       .books {
@@ -1185,6 +1113,41 @@
       .cart-item {
         align-items: flex-start;
       }
+
+      .book-details {
+        padding: 25px 18px;
+        border-radius: 20px;
+      }
+
+      .book-details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .book-details-cover {
+        max-height: 300px;
+      }
+
+      .book-details-cover-placeholder {
+        height: 250px;
+      }
+
+      .book-details h2 {
+        font-size: 23px;
+      }
+
+      .book-details-bottom {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .book-details-actions {
+        width: 100%;
+      }
+
+      .book-details-actions button {
+        flex: 1;
+      }
     }
 
     @media (max-width: 390px) {
@@ -1241,9 +1204,6 @@
   </div>
 </header>
 
-
-<!-- ================= HOME ================= -->
-
 <main id="homePage" class="page active">
 
   <div class="container">
@@ -1290,9 +1250,6 @@
 
     </div>
 
-
-    <!-- FEATURES -->
-
     <div class="features">
 
       <div class="feature">
@@ -1324,9 +1281,6 @@
 
     </div>
 
-
-    <!-- STATS -->
-
     <div class="stats">
 
       <div class="stat">
@@ -1346,9 +1300,6 @@
 
     </div>
 
-
-    <!-- BOOKS -->
-
     <section class="store-section">
 
       <div class="section-head">
@@ -1361,7 +1312,6 @@
 
       </div>
 
-
       <div class="search-box">
 
         <input
@@ -1372,7 +1322,6 @@
         >
 
       </div>
-
 
       <div id="categories" class="categories">
 
@@ -1406,7 +1355,6 @@
 
       </div>
 
-
       <div id="books" class="books">
 
         <div class="empty">
@@ -1417,9 +1365,6 @@
       </div>
 
     </section>
-
-
-    <!-- ABOUT -->
 
     <section class="store-section">
 
@@ -1458,9 +1403,6 @@
 
 </main>
 
-
-<!-- ================= LIBRARY ================= -->
-
 <section id="libraryPage" class="page">
 
   <div class="container">
@@ -1487,9 +1429,6 @@
   </div>
 
 </section>
-
-
-<!-- ================= CART ================= -->
 
 <section id="cartPage" class="page">
 
@@ -1531,16 +1470,11 @@
 
 </section>
 
-
-<!-- ================= ACCOUNT ================= -->
-
 <section id="accountPage" class="page">
 
   <div class="container">
 
     <div class="panel auth-box">
-
-      <!-- LOGIN -->
 
       <div id="loginBox">
 
@@ -1578,9 +1512,6 @@
 
       </div>
 
-
-      <!-- SIGNUP -->
-
       <div id="signupBox" style="display:none;">
 
         <h2>✨ إنشاء حساب</h2>
@@ -1616,9 +1547,6 @@
         <div id="signupStatus" class="status"></div>
 
       </div>
-
-
-      <!-- USER -->
 
       <div id="userBox" style="display:none;" class="user-box">
 
@@ -1726,7 +1654,6 @@
   </div>
 
 </div>
-<!-- ================= FOOTER ================= -->
 
 <footer>
 
@@ -1745,7 +1672,6 @@
 
     </div>
 
-
     <div>
 
       <div class="footer-title">
@@ -1759,7 +1685,6 @@
       </ul>
 
     </div>
-
 
     <div>
 
@@ -1777,13 +1702,11 @@
 
   </div>
 
-
   <div class="copyright">
     © 2026 آدم النور للكتب الإلكترونية — جميع الحقوق محفوظة
   </div>
 
 </footer>
-
 
 <script>
 
@@ -1792,25 +1715,14 @@
   ===================================================== */
 
   const SUPABASE_URL =
-  "https://smsqjmgbrkgxyhkaitao.supabase.co";
+    "https://smsqjmgbrkgxyhkaitao.supabase.co";
 
-const SUPABASE_KEY =
-  "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
+  const SUPABASE_KEY =
+    "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
 
-const CURRENCY = "IQD";
-
-
-  /*
-    ضع رابط صورة واجهة المتجر هنا لاحقاً.
-
-    مثال:
-    const STORE_BANNER_URL = "https://....jpg";
-
-    إذا تركته فارغاً سيظهر التصميم الداكن الجميل.
-  */
+  const CURRENCY = "IQD";
 
   const STORE_BANNER_URL = "";
-
 
   /* =====================================================
      STATE
@@ -1822,7 +1734,6 @@ const CURRENCY = "IQD";
   let cart = JSON.parse(
     localStorage.getItem("adamAlNoorCart") || "[]"
   );
-
 
   /* =====================================================
      HELPERS
@@ -1839,7 +1750,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function formatPrice(price) {
 
     const number = Number(price || 0);
@@ -1847,7 +1757,6 @@ const CURRENCY = "IQD";
     return `${number.toLocaleString("en-US")} ${CURRENCY}`;
 
   }
-
 
   /* =====================================================
      HERO
@@ -1866,7 +1775,6 @@ const CURRENCY = "IQD";
     hero.classList.add("has-banner");
 
   }
-
 
   function searchFromHero() {
 
@@ -1888,7 +1796,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function syncHeroSearch() {
 
     const search =
@@ -1904,7 +1811,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   /* =====================================================
      BOOKS
@@ -1930,14 +1836,12 @@ const CURRENCY = "IQD";
       return;
     }
 
-
     container.innerHTML = list.map(book => {
 
       const realIndex =
         books.findIndex(
           item => String(item.id) === String(book.id)
         );
-
 
       const title =
         escapeHTML(book.title || "بدون عنوان");
@@ -1953,20 +1857,20 @@ const CURRENCY = "IQD";
           ? escapeHTML(book.cover_url)
           : "";
 
-
       const rating =
         Number(book.rating || 0);
-
 
       const stars =
         rating > 0
           ? "⭐".repeat(Math.min(5, Math.round(rating)))
           : "☆";
 
-
       return `
 
-        <article class="book" onclick="openBookDetails(${realIndex})">
+        <article
+          class="book"
+          onclick="openBookDetails(${realIndex})"
+        >
 
           <div class="book-cover-wrap">
 
@@ -2004,7 +1908,6 @@ const CURRENCY = "IQD";
 
           </div>
 
-
           <div class="book-info">
 
             <div class="book-category">
@@ -2028,13 +1931,11 @@ const CURRENCY = "IQD";
               }
             </div>
 
-
             <div class="book-bottom">
 
               <div class="price">
                 ${formatPrice(book.price)}
               </div>
-
 
               <div class="book-actions">
 
@@ -2066,7 +1967,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   /* =====================================================
      CATEGORIES
   ===================================================== */
@@ -2087,18 +1987,15 @@ const CURRENCY = "IQD";
           }
         );
 
-
       if (!response.ok) return;
 
       const categories =
         await response.json();
 
-
       const container =
         document.getElementById("categories");
 
       if (!container) return;
-
 
       const buttons = [
 
@@ -2129,7 +2026,6 @@ const CURRENCY = "IQD";
 
       ];
 
-
       container.innerHTML =
         buttons.join("");
 
@@ -2144,7 +2040,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   /* =====================================================
      LOAD BOOKS
   ===================================================== */
@@ -2154,7 +2049,6 @@ const CURRENCY = "IQD";
     const container =
       document.getElementById("books");
 
-
     try {
 
       const url =
@@ -2162,7 +2056,6 @@ const CURRENCY = "IQD";
         `?select=id,title_ar,description_ar,author_ar,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at` +
         `&is_available=eq.true` +
         `&order=id.asc`;
-
 
       const response =
         await fetch(url, {
@@ -2178,7 +2071,6 @@ const CURRENCY = "IQD";
 
         });
 
-
       if (!response.ok) {
 
         throw new Error(
@@ -2187,10 +2079,8 @@ const CURRENCY = "IQD";
 
       }
 
-
       const data =
         await response.json();
-
 
       books =
         (data || [])
@@ -2223,23 +2113,19 @@ const CURRENCY = "IQD";
 
         }));
 
-
       currentBooks =
         [...books];
-
 
       const validIds =
         new Set(
           books.map(book => String(book.id))
         );
 
-
       cart =
         cart.filter(
           item =>
             validIds.has(String(item.id))
         );
-
 
       saveCart();
 
@@ -2249,11 +2135,9 @@ const CURRENCY = "IQD";
 
       await loadCategories();
 
-
     } catch (error) {
 
       console.error(error);
-
 
       container.innerHTML = `
 
@@ -2279,7 +2163,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function updateStoreStats() {
 
     const bookCount =
@@ -2288,14 +2171,12 @@ const CURRENCY = "IQD";
     const cartStat =
       document.getElementById("cartStat");
 
-
     if (bookCount) {
 
       bookCount.textContent =
         books.length;
 
     }
-
 
     if (cartStat) {
 
@@ -2305,7 +2186,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   /* =====================================================
      SEARCH
@@ -2321,9 +2201,7 @@ const CURRENCY = "IQD";
         .trim()
         .toLowerCase();
 
-
     syncHeroSearch();
-
 
     if (!query) {
 
@@ -2335,7 +2213,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     currentBooks =
       books.filter(book => {
@@ -2355,11 +2232,9 @@ const CURRENCY = "IQD";
 
       });
 
-
     renderBooks();
 
   }
-
 
   /* =====================================================
      CATEGORY FILTER
@@ -2373,13 +2248,11 @@ const CURRENCY = "IQD";
         btn.classList.remove("active")
       );
 
-
     if (button) {
 
       button.classList.add("active");
 
     }
-
 
     if (category === "all") {
 
@@ -2402,11 +2275,162 @@ const CURRENCY = "IQD";
 
     }
 
-
     renderBooks();
 
   }
 
+  /* =====================================================
+     BOOK DETAILS
+  ===================================================== */
+
+  function openBookDetails(index) {
+
+    const book =
+      books[index];
+
+    if (!book) return;
+
+    const overlay =
+      document.getElementById(
+        "bookDetailsOverlay"
+      );
+
+    if (!overlay) return;
+
+    document.getElementById(
+      "bookDetailsTitle"
+    ).textContent =
+      book.title || "بدون عنوان";
+
+    document.getElementById(
+      "bookDetailsAuthor"
+    ).textContent =
+      book.author || "مؤلف غير معروف";
+
+    document.getElementById(
+      "bookDetailsCategory"
+    ).textContent =
+      book.category || "كتب إلكترونية";
+
+    const rating =
+      Number(book.rating || 0);
+
+    const stars =
+      rating > 0
+        ? "⭐".repeat(
+            Math.min(
+              5,
+              Math.round(rating)
+            )
+          )
+        : "☆";
+
+    document.getElementById(
+      "bookDetailsRating"
+    ).textContent =
+      rating
+        ? `${stars} ${rating}`
+        : stars;
+
+    const description =
+      String(
+        book.description || ""
+      ).trim();
+
+    document.getElementById(
+      "bookDetailsDescription"
+    ).textContent =
+      description
+        ? description
+        : "لا يوجد وصف متاح لهذا الكتاب حالياً.";
+
+    document.getElementById(
+      "bookDetailsPrice"
+    ).textContent =
+      formatPrice(book.price);
+
+    const coverContainer =
+      document.getElementById(
+        "bookDetailsCover"
+      );
+
+    if (book.cover_url) {
+
+      coverContainer.innerHTML = `
+
+        <img
+          class="book-details-cover"
+          src="${escapeHTML(book.cover_url)}"
+          alt="${escapeHTML(book.title || "كتاب")}"
+          onerror="this.style.display='none'"
+        >
+
+      `;
+
+    } else {
+
+      coverContainer.innerHTML = `
+
+        <div class="book-details-cover-placeholder">
+          📚
+        </div>
+
+      `;
+
+    }
+
+    const cartButton =
+      document.getElementById(
+        "bookDetailsCart"
+      );
+
+    const buyButton =
+      document.getElementById(
+        "bookDetailsBuy"
+      );
+
+    cartButton.onclick =
+      function(event) {
+
+        event.stopPropagation();
+
+        addToCart(index);
+
+      };
+
+    buyButton.onclick =
+      function(event) {
+
+        event.stopPropagation();
+
+        buyNow(index);
+
+        closeBookDetails();
+
+      };
+
+    overlay.classList.add("show");
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+  function closeBookDetails() {
+
+    const overlay =
+      document.getElementById(
+        "bookDetailsOverlay"
+      );
+
+    if (!overlay) return;
+
+    overlay.classList.remove("show");
+
+    document.body.style.overflow =
+      "";
+
+  }
 
   /* =====================================================
      CART
@@ -2421,7 +2445,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function addToCart(index) {
 
     const book =
@@ -2429,13 +2452,11 @@ const CURRENCY = "IQD";
 
     if (!book) return;
 
-
     const exists =
       cart.some(
         item =>
           String(item.id) === String(book.id)
       );
-
 
     if (exists) {
 
@@ -2451,7 +2472,6 @@ const CURRENCY = "IQD";
 
     }
 
-
     cart.push({
 
       id: book.id,
@@ -2465,7 +2485,6 @@ const CURRENCY = "IQD";
       cover_url: book.cover_url
 
     });
-
 
     saveCart();
 
@@ -2475,32 +2494,46 @@ const CURRENCY = "IQD";
 
   }
 
-
   function buyNow(index) {
-  const book = books[index];
 
-  if (!book) return;
+    const book =
+      books[index];
 
-  const exists = cart.some(
-    item => String(item.id) === String(book.id)
-  );
+    if (!book) return;
 
-  if (!exists) {
-    cart.push({
-      id: book.id,
-      title: book.title,
-      author: book.author,
-      price: book.price,
-      cover_url: book.cover_url
-    });
+    const exists =
+      cart.some(
+        item =>
+          String(item.id) === String(book.id)
+      );
+
+    if (!exists) {
+
+      cart.push({
+
+        id: book.id,
+
+        title: book.title,
+
+        author: book.author,
+
+        price: book.price,
+
+        cover_url: book.cover_url
+
+      });
+
+    }
+
+    saveCart();
+
+    updateCartCount();
+
+    renderCart();
+
+    showPage("cart");
+
   }
-
-  saveCart();
-  updateCartCount();
-  renderCart();
-  showPage("cart");
-  }
-
 
   function renderCart() {
 
@@ -2510,9 +2543,7 @@ const CURRENCY = "IQD";
     const totalElement =
       document.getElementById("cartTotal");
 
-
     if (!container) return;
-
 
     if (!cart.length) {
 
@@ -2536,7 +2567,6 @@ const CURRENCY = "IQD";
 
       `;
 
-
       if (totalElement) {
 
         totalElement.textContent =
@@ -2547,7 +2577,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     container.innerHTML =
       cart.map((item, index) => {
@@ -2568,7 +2597,6 @@ const CURRENCY = "IQD";
 
             </div>
 
-
             <button
               class="remove-btn"
               onclick="removeFromCart(${index})"
@@ -2582,14 +2610,12 @@ const CURRENCY = "IQD";
 
       }).join("");
 
-
     const total =
       cart.reduce(
         (sum, item) =>
           sum + Number(item.price || 0),
         0
       );
-
 
     if (totalElement) {
 
@@ -2599,7 +2625,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   function removeFromCart(index) {
 
@@ -2613,7 +2638,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function updateCartCount() {
 
     const count =
@@ -2622,14 +2646,12 @@ const CURRENCY = "IQD";
     const stat =
       document.getElementById("cartStat");
 
-
     if (count) {
 
       count.textContent =
         cart.length;
 
     }
-
 
     if (stat) {
 
@@ -2639,7 +2661,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   /* =====================================================
      PAGES
@@ -2653,12 +2674,10 @@ const CURRENCY = "IQD";
         element.classList.remove("active")
       );
 
-
     const target =
       document.getElementById(
         page + "Page"
       );
-
 
     if (target) {
 
@@ -2666,19 +2685,16 @@ const CURRENCY = "IQD";
 
     }
 
-
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
-
 
     if (page === "cart") {
 
       renderCart();
 
     }
-
 
     if (page === "library") {
 
@@ -2687,7 +2703,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   /* =====================================================
      AUTH
@@ -2705,7 +2720,6 @@ const CURRENCY = "IQD";
 
     ];
 
-
     for (const key of keys) {
 
       const value =
@@ -2715,17 +2729,14 @@ const CURRENCY = "IQD";
 
     }
 
-
     return null;
 
   }
-
 
   async function checkUser() {
 
     const token =
       getAccessToken();
-
 
     if (!token) {
 
@@ -2734,7 +2745,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     try {
 
@@ -2755,7 +2765,6 @@ const CURRENCY = "IQD";
           }
         );
 
-
       if (!response.ok) {
 
         showLogin();
@@ -2764,13 +2773,10 @@ const CURRENCY = "IQD";
 
       }
 
-
       const user =
         await response.json();
 
-
       showLoggedUser(user);
-
 
     } catch (error) {
 
@@ -2782,7 +2788,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   async function loginUser() {
 
     const email =
@@ -2792,7 +2797,6 @@ const CURRENCY = "IQD";
     const password =
       document.getElementById("loginPassword")
         .value;
-
 
     if (!email || !password) {
 
@@ -2805,7 +2809,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     try {
 
@@ -2837,10 +2840,8 @@ const CURRENCY = "IQD";
           }
         );
 
-
       const data =
         await response.json();
-
 
       if (!response.ok) {
 
@@ -2852,7 +2853,6 @@ const CURRENCY = "IQD";
 
       }
 
-
       if (data.access_token) {
 
         localStorage.setItem(
@@ -2862,7 +2862,6 @@ const CURRENCY = "IQD";
 
       }
 
-
       showLoggedUser(data.user);
 
       showStatus(
@@ -2870,7 +2869,6 @@ const CURRENCY = "IQD";
         "تم تسجيل الدخول بنجاح.",
         "success"
       );
-
 
     } catch (error) {
 
@@ -2884,7 +2882,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   async function signupUser() {
 
     const email =
@@ -2894,7 +2891,6 @@ const CURRENCY = "IQD";
     const password =
       document.getElementById("signupPassword")
         .value;
-
 
     if (!email || !password) {
 
@@ -2907,7 +2903,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     try {
 
@@ -2939,10 +2934,8 @@ const CURRENCY = "IQD";
           }
         );
 
-
       const data =
         await response.json();
-
 
       if (!response.ok) {
 
@@ -2953,7 +2946,6 @@ const CURRENCY = "IQD";
         );
 
       }
-
 
       if (data.access_token) {
 
@@ -2974,7 +2966,6 @@ const CURRENCY = "IQD";
 
       }
 
-
     } catch (error) {
 
       showStatus(
@@ -2987,7 +2978,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function showLoggedUser(user) {
 
     document.getElementById("loginBox")
@@ -2999,10 +2989,8 @@ const CURRENCY = "IQD";
     document.getElementById("userBox")
       .style.display = "block";
 
-
     const email =
       document.getElementById("userEmail");
-
 
     if (email) {
 
@@ -3012,7 +3000,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   function logoutUser() {
 
@@ -3028,11 +3015,9 @@ const CURRENCY = "IQD";
       "access_token"
     );
 
-
     showLogin();
 
   }
-
 
   function showLogin() {
 
@@ -3047,7 +3032,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   function showSignup() {
 
     document.getElementById("loginBox")
@@ -3061,7 +3045,6 @@ const CURRENCY = "IQD";
 
   }
 
-
   /* =====================================================
      STATUS
   ===================================================== */
@@ -3073,7 +3056,6 @@ const CURRENCY = "IQD";
 
     if (!element) return;
 
-
     element.textContent =
       message;
 
@@ -3081,7 +3063,6 @@ const CURRENCY = "IQD";
       "status show " + type;
 
   }
-
 
   /* =====================================================
      LIBRARY
@@ -3092,13 +3073,10 @@ const CURRENCY = "IQD";
     const container =
       document.getElementById("libraryItems");
 
-
     if (!container) return;
-
 
     const token =
       getAccessToken();
-
 
     if (!token) {
 
@@ -3133,7 +3111,6 @@ const CURRENCY = "IQD";
 
     }
 
-
     container.innerHTML = `
 
       <div class="empty">
@@ -3143,11 +3120,10 @@ const CURRENCY = "IQD";
         </div>
 
         جاري تحميل مكتبتك...
-        
+
       </div>
 
     `;
-
 
     try {
 
@@ -3169,7 +3145,6 @@ const CURRENCY = "IQD";
           }
         );
 
-
       if (!response.ok) {
 
         throw new Error(
@@ -3178,10 +3153,8 @@ const CURRENCY = "IQD";
 
       }
 
-
       const items =
         await response.json();
-
 
       if (!items.length) {
 
@@ -3203,13 +3176,11 @@ const CURRENCY = "IQD";
 
       }
 
-
       container.innerHTML =
         items.map(item => {
 
           const book =
             item.books || {};
-
 
           return `
 
@@ -3242,11 +3213,9 @@ const CURRENCY = "IQD";
 
         }).join("");
 
-
     } catch (error) {
 
       console.error(error);
-
 
       container.innerHTML = `
 
@@ -3266,12 +3235,10 @@ const CURRENCY = "IQD";
 
   }
 
-
   async function openPDF(bookId) {
 
     const token =
       getAccessToken();
-
 
     if (!token) {
 
@@ -3280,7 +3247,6 @@ const CURRENCY = "IQD";
       return;
 
     }
-
 
     try {
 
@@ -3311,10 +3277,8 @@ const CURRENCY = "IQD";
           }
         );
 
-
       const data =
         await response.json();
-
 
       if (!response.ok) {
 
@@ -3325,7 +3289,6 @@ const CURRENCY = "IQD";
 
       }
 
-
       if (!data.url) {
 
         throw new Error(
@@ -3334,12 +3297,10 @@ const CURRENCY = "IQD";
 
       }
 
-
       window.open(
         data.url,
         "_blank"
       );
-
 
     } catch (error) {
 
@@ -3348,7 +3309,6 @@ const CURRENCY = "IQD";
     }
 
   }
-
 
   /* =====================================================
      CHECKOUT
@@ -3368,10 +3328,8 @@ const CURRENCY = "IQD";
 
     }
 
-
     const token =
       getAccessToken();
-
 
     if (!token) {
 
@@ -3387,7 +3345,6 @@ const CURRENCY = "IQD";
 
     }
 
-
     const items =
       cart.map(book => ({
 
@@ -3396,14 +3353,12 @@ const CURRENCY = "IQD";
 
       }));
 
-
     const totalIQD =
       cart.reduce(
         (sum, book) =>
           sum + Number(book.price || 0),
         0
       );
-
 
     if (!items.length || totalIQD <= 0) {
 
@@ -3417,18 +3372,15 @@ const CURRENCY = "IQD";
 
     }
 
-
     const button =
       document.getElementById(
         "checkoutButton"
       );
 
-
     button.disabled = true;
 
     button.textContent =
       "جاري تجهيز الدفع...";
-
 
     try {
 
@@ -3460,12 +3412,8 @@ const CURRENCY = "IQD";
           }
         );
 
-
-      const data = await response.json();
-
-console.log("PAYMENT RESPONSE:", data);
-console.log("PAYMENT STATUS:", response.status);
-
+      const data =
+        await response.json();
 
       if (!response.ok) {
 
@@ -3476,7 +3424,6 @@ console.log("PAYMENT STATUS:", response.status);
 
       }
 
-
       if (!data.paymentUrl) {
 
         throw new Error(
@@ -3484,7 +3431,6 @@ console.log("PAYMENT STATUS:", response.status);
         );
 
       }
-
 
       localStorage.setItem(
         "pendingOrder",
@@ -3498,10 +3444,8 @@ console.log("PAYMENT STATUS:", response.status);
         })
       );
 
-
       window.location.href =
         data.paymentUrl;
-
 
     } catch (error) {
 
@@ -3511,7 +3455,6 @@ console.log("PAYMENT STATUS:", response.status);
         "error"
       );
 
-
       button.disabled = false;
 
       button.textContent =
@@ -3520,7 +3463,6 @@ console.log("PAYMENT STATUS:", response.status);
     }
 
   }
-
 
   /* =====================================================
      START
@@ -3539,6 +3481,5 @@ console.log("PAYMENT STATUS:", response.status);
   checkUser();
 
 </script>
-
 </body>
 </html>
