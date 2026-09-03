@@ -2710,100 +2710,31 @@
 
   function getAccessToken() {
 
-  const token =
-    localStorage.getItem("sb-access-token");
+    const keys = [
 
-  return token || null;
-
-  }
-}
-
-async function refreshAccessToken() {
-
-  const refreshToken =
-    localStorage.getItem("sb-refresh-token");
-
-  if (!refreshToken) {
-    return null;
-  }
-
-  try {
-
-    const response =
-      await fetch(
-        `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
-        {
-
-          method: "POST",
-
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            apikey:
-              SUPABASE_KEY
-
-          },
-
-          body: JSON.stringify({
-
-            refresh_token:
-              refreshToken
-
-          })
-
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if (!response.ok || !data.access_token) {
-
-      localStorage.removeItem(
-        "sb-access-token"
-      );
-
-      localStorage.removeItem(
-        "sb-refresh-token"
-      );
-
-      return null;
-
-    }
-
-    localStorage.setItem(
       "sb-access-token",
-      data.access_token
-    );
 
-    if (data.refresh_token) {
+      "supabase_access_token",
 
-      localStorage.setItem(
-        "sb-refresh-token",
-        data.refresh_token
-      );
+      "access_token"
+
+    ];
+
+    for (const key of keys) {
+
+      const value =
+        localStorage.getItem(key);
+
+      if (value) return value;
 
     }
-
-    return data.access_token;
-
-  } catch (error) {
-
-    console.error(
-      "REFRESH TOKEN ERROR:",
-      error
-    );
 
     return null;
 
   }
 
-}
+  async function checkUser() {
 
-async function checkUser() {
-  
     const token =
       getAccessToken();
 
@@ -2859,111 +2790,98 @@ async function checkUser() {
 
   async function loginUser() {
 
-  const email =
-    document.getElementById("loginEmail")
-      .value.trim();
+    const email =
+      document.getElementById("loginEmail")
+        .value.trim();
 
-  const password =
-    document.getElementById("loginPassword")
-      .value;
+    const password =
+      document.getElementById("loginPassword")
+        .value;
 
-  if (!email || !password) {
+    if (!email || !password) {
 
-    showStatus(
-      "loginStatus",
-      "أدخل البريد الإلكتروني وكلمة المرور.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  try {
-
-    const response =
-      await fetch(
-        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-        {
-
-          method: "POST",
-
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            apikey:
-              SUPABASE_KEY
-
-          },
-
-          body: JSON.stringify({
-
-            email,
-
-            password
-
-          })
-
-        }
+      showStatus(
+        "loginStatus",
+        "أدخل البريد الإلكتروني وكلمة المرور.",
+        "error"
       );
 
-    const data =
-      await response.json();
+      return;
 
-    if (!response.ok) {
+    }
 
-      throw new Error(
-        data.error_description ||
-        data.msg ||
-        "فشل تسجيل الدخول"
+    try {
+
+      const response =
+        await fetch(
+          `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              apikey:
+                SUPABASE_KEY
+
+            },
+
+            body: JSON.stringify({
+
+              email,
+
+              password
+
+            })
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error_description ||
+          data.msg ||
+          "فشل تسجيل الدخول"
+        );
+
+      }
+
+      if (data.access_token) {
+
+        localStorage.setItem(
+          "sb-access-token",
+          data.access_token
+        );
+
+      }
+
+      showLoggedUser(data.user);
+
+      showStatus(
+        "loginStatus",
+        "تم تسجيل الدخول بنجاح.",
+        "success"
+      );
+
+    } catch (error) {
+
+      showStatus(
+        "loginStatus",
+        error.message,
+        "error"
       );
 
     }
 
-    if (!data.access_token) {
-
-      throw new Error(
-        "لم يتم الحصول على جلسة تسجيل الدخول."
-      );
-
-    }
-
-    localStorage.setItem(
-      "sb-access-token",
-      data.access_token
-    );
-
-    if (data.refresh_token) {
-
-      localStorage.setItem(
-        "sb-refresh-token",
-        data.refresh_token
-      );
-
-    }
-
-    showLoggedUser(data.user);
-
-    showStatus(
-      "loginStatus",
-      "تم تسجيل الدخول بنجاح.",
-      "success"
-    );
-
-  } catch (error) {
-
-    showStatus(
-      "loginStatus",
-      error.message,
-      "error"
-    );
-
   }
 
-  }
-    
   async function signupUser() {
 
     const email =
@@ -3398,222 +3316,153 @@ async function checkUser() {
 
   async function checkout() {
 
-  if (!cart.length) {
+    if (!cart.length) {
 
-    showStatus(
-      "checkoutStatus",
-      "السلة فارغة.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  let token =
-    getAccessToken();
-
-  if (!token) {
-
-    showStatus(
-      "checkoutStatus",
-      "يجب تسجيل الدخول أولاً لإتمام الشراء.",
-      "error"
-    );
-
-    showPage("account");
-
-    return;
-
-  }
-
-  const items =
-    cart.map(book => ({
-      id: Number(book.id)
-    }));
-
-  const totalIQD =
-    cart.reduce(
-      (sum, book) =>
-        sum + Number(book.price || 0),
-      0
-    );
-
-  if (!items.length || totalIQD <= 0) {
-
-    showStatus(
-      "checkoutStatus",
-      "بيانات السلة غير صحيحة.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  const button =
-    document.getElementById(
-      "checkoutButton"
-    );
-
-  button.disabled = true;
-
-  button.textContent =
-    "جاري تجهيز الدفع...";
-
-  try {
-
-    // التحقق من الجلسة الحالية
-    let userResponse =
-      await fetch(
-        `${SUPABASE_URL}/auth/v1/user`,
-        {
-
-          headers: {
-
-            apikey:
-              SUPABASE_KEY,
-
-            Authorization:
-              `Bearer ${token}`
-
-          }
-
-        }
+      showStatus(
+        "checkoutStatus",
+        "السلة فارغة.",
+        "error"
       );
 
-    // إذا انتهت الجلسة نحاول تجديدها
-    if (!userResponse.ok) {
+      return;
 
-      token =
-        await refreshAccessToken();
+    }
 
-      if (!token) {
+    const token =
+      getAccessToken();
 
-        throw new Error(
-          "انتهت جلسة تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى."
-        );
+    if (!token) {
 
-      }
+      showStatus(
+        "checkoutStatus",
+        "يجب تسجيل الدخول أولاً لإتمام الشراء.",
+        "error"
+      );
 
-      userResponse =
+      showPage("account");
+
+      return;
+
+    }
+
+    const items =
+      cart.map(book => ({
+
+        id:
+          Number(book.id)
+
+      }));
+
+    const totalIQD =
+      cart.reduce(
+        (sum, book) =>
+          sum + Number(book.price || 0),
+        0
+      );
+
+    if (!items.length || totalIQD <= 0) {
+
+      showStatus(
+        "checkoutStatus",
+        "بيانات السلة غير صحيحة.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    const button =
+      document.getElementById(
+        "checkoutButton"
+      );
+
+    button.disabled = true;
+
+    button.textContent =
+      "جاري تجهيز الدفع...";
+
+    try {
+
+      const response =
         await fetch(
-          `${SUPABASE_URL}/auth/v1/user`,
+          "/api/create-payment",
           {
+
+            method: "POST",
 
             headers: {
 
-              apikey:
-                SUPABASE_KEY,
+              "Content-Type":
+                "application/json",
 
               Authorization:
                 `Bearer ${token}`
 
-            }
+            },
+
+            body: JSON.stringify({
+
+              items,
+
+              totalIQD
+
+            })
 
           }
         );
 
-    }
+      const data =
+        await response.json();
 
-    if (!userResponse.ok) {
+      if (!response.ok) {
 
-      localStorage.removeItem(
-        "sb-access-token"
+        throw new Error(
+          data.error ||
+          "تعذر إنشاء عملية الدفع"
+        );
+
+      }
+
+      if (!data.paymentUrl) {
+
+        throw new Error(
+          "لم يتم الحصول على رابط الدفع"
+        );
+
+      }
+
+      localStorage.setItem(
+        "pendingOrder",
+        JSON.stringify({
+
+          orderId:
+            data.orderId,
+
+          totalIQD
+
+        })
       );
 
-      localStorage.removeItem(
-        "sb-refresh-token"
+      window.location.href =
+        data.paymentUrl;
+
+    } catch (error) {
+
+      showStatus(
+        "checkoutStatus",
+        error.message,
+        "error"
       );
 
-      showLogin();
+      button.disabled = false;
 
-      throw new Error(
-        "انتهت جلسة تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى."
-      );
-
-    }
-
-    // إنشاء عملية الدفع
-    const response =
-      await fetch(
-        "/api/create-payment",
-        {
-
-          method: "POST",
-
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            Authorization:
-              `Bearer ${token}`
-
-          },
-
-          body: JSON.stringify({
-
-            items,
-
-            totalIQD
-
-          })
-
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "تعذر إنشاء عملية الدفع"
-      );
+      button.textContent =
+        "إتمام الشراء";
 
     }
-
-    if (!data.paymentUrl) {
-
-      throw new Error(
-        "لم يتم الحصول على رابط الدفع"
-      );
-
-    }
-
-    localStorage.setItem(
-      "pendingOrder",
-      JSON.stringify({
-
-        orderId:
-          data.orderId,
-
-        totalIQD
-
-      })
-    );
-
-    window.location.href =
-      data.paymentUrl;
-
-  } catch (error) {
-
-    showStatus(
-      "checkoutStatus",
-      error.message,
-      "error"
-    );
-
-    button.disabled = false;
-
-    button.textContent =
-      "إتمام الشراء";
 
   }
-
-        }
 
   /* =====================================================
      START
