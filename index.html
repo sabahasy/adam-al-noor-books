@@ -998,21 +998,42 @@
         grid-template-columns: repeat(3, 1fr);
       }
     }
+@media (max-width: 800px) {
+    .header-inner {
+  flex-direction: column;
+  padding: 5px 0;
+  gap: 3px;
+}
 
-    @media (max-width: 800px) {
-      .header-inner {
-        flex-direction: column;
-        padding: 5px 0;
-      }
+.brand {
+  width: 100%;
+  justify-content: center;
+}
 
-      .brand {
-        width: 100%;
-        justify-content: center;
-      }
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  border-radius: 10px;
+}
 
-      nav {
-        width: 100%;
-      }
+.brand-text strong {
+  font-size: 15px;
+}
+
+.brand-text span {
+  font-size: 10px;
+}
+
+nav {
+  width: 100%;
+  gap: 2px;
+}
+
+.nav-btn {
+  padding: 6px 9px;
+  font-size: 12px;
+}
 
       .hero {
         padding: 38px 25px;
