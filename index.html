@@ -998,42 +998,6 @@
         grid-template-columns: repeat(3, 1fr);
       }
     }
-@media (max-width: 800px) {
-    .header-inner {
-  flex-direction: column;
-  padding: 5px 0;
-  gap: 3px;
-}
-
-.brand {
-  width: 100%;
-  justify-content: center;
-}
-
-.brand-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
-  border-radius: 10px;
-}
-
-.brand-text strong {
-  font-size: 15px;
-}
-
-.brand-text span {
-  font-size: 10px;
-}
-
-nav {
-  width: 100%;
-  gap: 2px;
-}
-
-.nav-btn {
-  padding: 6px 9px;
-  font-size: 12px;
-}
 
       .hero {
         padding: 38px 25px;
@@ -1064,6 +1028,42 @@ nav {
         width: min(100% - 20px, 1200px);
       }
 
+      @media (max-width: 800px) {
+  .header-inner {
+    flex-direction: column;
+    padding: 8px 0;
+    gap: 6px;
+  }
+
+  .brand {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 11px;
+  }
+
+  .brand-text strong {
+    font-size: 16px;
+  }
+
+  .brand-text span {
+    font-size: 10px;
+  }
+
+  nav {
+    width: 100%;
+    gap: 4px;
+  }
+
+  .nav-btn {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
       .hero-wrap {
         padding-top: 10px;
       }
