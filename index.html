@@ -999,6 +999,21 @@
       }
     }
 
+    @media (max-width: 800px) {
+      .header-inner {
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: center;
+      }
+
+      nav {
+        width: 100%;
+      }
+
       .hero {
         padding: 38px 25px;
         min-height: 390px;
@@ -1026,43 +1041,8 @@
     @media (max-width: 650px) {
       .container {
         width: min(100% - 20px, 1200px);
-     }
-@media (max-width: 800px) {
-      .header-inner {
-  flex-direction: column;
-  padding: 5px 0;
-  gap: 3px;
-}
+      }
 
-.brand {
-  width: 100%;
-  justify-content: center;
-}
-
-.brand-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
-  border-radius: 10px;
-}
-
-.brand-text strong {
-  font-size: 15px;
-}
-
-.brand-text span {
-  font-size: 10px;
-}
-
-nav {
-  width: 100%;
-  gap: 2px;
-}
-
-.nav-btn {
-  padding: 6px 9px;
-  font-size: 12px;
-}
       .hero-wrap {
         padding-top: 10px;
       }
