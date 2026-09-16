@@ -3845,15 +3845,17 @@ async function downloadPDF(filePath) {
 
   setupStoreBanner();
 
-  renderBooks();
+renderBooks();
 
-  updateCartCount();
+updateCartCount();
 
-  renderCart();
+renderCart();
 
-  loadBooks();
+sendAnalyticsEvent("visitor");
 
-  checkUser();
+loadBooks();
+
+checkUser();
 
 </script>
 </body>
