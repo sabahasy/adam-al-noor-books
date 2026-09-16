@@ -3399,30 +3399,45 @@ nav {
     }
 
     const blob =
-      await response.blob();
+  await response.blob();
 
-    const url =
-      URL.createObjectURL(blob);
+if (!blob || blob.size === 0) {
+  throw new Error(
+    "ملف الكتاب فارغ أو لم يتم تحميله"
+  );
+}
 
-    const link =
-      document.createElement("a");
+const url =
+  URL.createObjectURL(blob);
 
-    link.href =
-      url;
+const link =
+  document.createElement("a");
 
-    link.download =
-      filePath
-        .split("/")
-        .pop() ||
-        "book.pdf";
+link.href =
+  url;
 
-    document.body.appendChild(link);
+link.setAttribute(
+  "download",
+  filePath
+    .split("/")
+    .pop() ||
+    "book.pdf"
+);
 
-    link.click();
+link.style.display =
+  "none";
 
-    link.remove();
+document.body.appendChild(link);
 
-    URL.revokeObjectURL(url);
+link.click();
+
+setTimeout(() => {
+
+  link.remove();
+
+  URL.revokeObjectURL(url);
+
+}, 2000);
 
   } catch (error) {
 
