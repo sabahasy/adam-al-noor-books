@@ -3351,6 +3351,59 @@ async function downloadPDF(filePath) {
 
   }
 
+  /*
+   * إظهار رسالة جارٍ التنزيل
+   */
+  const downloadMessage =
+    document.createElement("div");
+
+  downloadMessage.textContent =
+    "⏳ جارٍ تنزيل الكتاب… يرجى الانتظار";
+
+  downloadMessage.style.position =
+    "fixed";
+
+  downloadMessage.style.top =
+    "50%";
+
+  downloadMessage.style.left =
+    "50%";
+
+  downloadMessage.style.transform =
+    "translate(-50%, -50%)";
+
+  downloadMessage.style.zIndex =
+    "99999";
+
+  downloadMessage.style.background =
+    "#111";
+
+  downloadMessage.style.color =
+    "#fff";
+
+  downloadMessage.style.padding =
+    "18px 25px";
+
+  downloadMessage.style.borderRadius =
+    "12px";
+
+  downloadMessage.style.fontSize =
+    "16px";
+
+  downloadMessage.style.fontWeight =
+    "bold";
+
+  downloadMessage.style.textAlign =
+    "center";
+
+  downloadMessage.style.boxShadow =
+    "0 5px 25px rgba(0,0,0,.3)";
+
+  document.body.appendChild(
+    downloadMessage
+  );
+
+
   try {
 
     const response =
@@ -3455,6 +3508,11 @@ async function downloadPDF(filePath) {
     link.click();
 
     /*
+     * إزالة رسالة الانتظار
+     */
+    downloadMessage.remove();
+
+    /*
      * ننتظر قليلًا قبل حذف الرابط
      */
     setTimeout(() => {
@@ -3470,6 +3528,11 @@ async function downloadPDF(filePath) {
     }, 5000);
 
   } catch (error) {
+
+    /*
+     * إزالة رسالة الانتظار عند حدوث خطأ
+     */
+    downloadMessage.remove();
 
     console.error(
       "DOWNLOAD ERROR:",
