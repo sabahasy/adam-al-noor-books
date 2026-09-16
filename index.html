@@ -3373,23 +3373,17 @@ nav {
           body: JSON.stringify({
 
             filePath:
-              filePath,
-
-            mode:
-              "download"
+              filePath
 
           })
 
         }
       );
 
+    const data =
+      await response.json();
+
     if (!response.ok) {
-
-      let data = {};
-
-      try {
-        data = await response.json();
-      } catch {}
 
       throw new Error(
         data.error ||
@@ -3398,56 +3392,50 @@ nav {
 
     }
 
-    const blob =
-  await response.blob();
+    if (!data.url) {
 
-if (!blob || blob.size === 0) {
-  throw new Error(
-    "ملف الكتاب فارغ أو لم يتم تحميله"
-  );
-}
+      throw new Error(
+        "لم يتم العثور على رابط الكتاب"
+      );
 
-const url =
-  URL.createObjectURL(blob);
+    }
 
-const link =
-  document.createElement("a");
+    const link =
+      document.createElement("a");
 
-link.href =
-  url;
+    link.href =
+      data.url;
 
-link.setAttribute(
-  "download",
-  filePath
-    .split("/")
-    .pop() ||
-    "book.pdf"
-);
+    link.download =
+      filePath
+        .split("/")
+        .pop() ||
+        "book.pdf";
 
-link.style.display =
-  "none";
+    link.target =
+      "_self";
 
-document.body.appendChild(link);
+    link.rel =
+      "noopener";
 
-link.click();
+    document.body.appendChild(link);
 
-setTimeout(() => {
+    link.click();
 
-  link.remove();
-
-  URL.revokeObjectURL(url);
-
-}, 2000);
+    link.remove();
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "DOWNLOAD ERROR:",
+      error
+    );
 
     alert(error.message);
 
   }
 
-  }
+              }
 
   /* =====================================================
      CHECKOUT
