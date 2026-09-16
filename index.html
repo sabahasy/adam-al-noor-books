@@ -1779,6 +1779,140 @@ nav {
     return `${number.toLocaleString("en-US")} ${CURRENCY}`;
 
   }
+  /* =====================================================
+   ANALYTICS
+===================================================== */
+
+function getVisitorId() {
+
+  let visitorId =
+    localStorage.getItem("adamAlNoorVisitorId");
+
+  if (!visitorId) {
+
+    visitorId =
+      "visitor_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .substring(2, 12);
+
+    localStorage.setItem(
+      "adamAlNoorVisitorId",
+      visitorId
+    );
+
+  }
+
+  return visitorId;
+
+}
+
+function getSessionId() {
+
+  let sessionId =
+    sessionStorage.getItem("adamAlNoorSessionId");
+
+  if (!sessionId) {
+
+    sessionId =
+      "session_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .substring(2, 12);
+
+    sessionStorage.setItem(
+      "adamAlNoorSessionId",
+      sessionId
+    );
+
+  }
+
+  return sessionId;
+
+}
+
+async function sendAnalyticsEvent(
+  eventType,
+  bookId = null
+) {
+
+  try {
+
+    const data = {
+
+      event_type:
+        eventType,
+
+      visitor_id:
+        getVisitorId(),
+
+      session_id:
+        getSessionId()
+
+    };
+
+    if (bookId !== null) {
+
+      data.book_id =
+        Number(bookId);
+
+    }
+
+    const response =
+      await fetch(
+        `${SUPABASE_URL}/functions/v1/record-analytics`,
+        {
+
+          method: "POST",
+
+          headers: {
+
+            apikey:
+              SUPABASE_KEY,
+
+            "Content-Type":
+              "application/json",
+
+            Accept:
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify(data)
+
+        }
+      );
+
+    if (!response.ok) {
+
+      console.error(
+        "Analytics HTTP Error:",
+        response.status
+      );
+
+      return false;
+
+    }
+
+    return true;
+
+  } catch (error) {
+
+    console.error(
+      "Analytics Error:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
 
   /* =====================================================
      HERO
@@ -2311,6 +2445,10 @@ nav {
       books[index];
 
     if (!book) return;
+    sendAnalyticsEvent(
+  "book_view",
+  book.id
+);
 
     const overlay =
       document.getElementById(
