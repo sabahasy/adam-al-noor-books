@@ -3223,11 +3223,18 @@ nav {
               </p>
 
               <button
-                class="pdf-btn"
-                onclick='openPDF(${JSON.stringify(book.pdf_url || "")})'
-              >
-                📄 فتح الكتاب
-              </button>
+  class="pdf-btn"
+  onclick='openPDF(${JSON.stringify(book.pdf_url || "")})'
+>
+  📄 فتح الكتاب
+</button>
+
+<button
+  class="pdf-btn"
+  onclick='downloadPDF(${JSON.stringify(book.pdf_url || "")})'
+>
+  ⬇️ تحميل الكتاب
+</button>
 
             </div>
 
@@ -3329,6 +3336,93 @@ nav {
       alert(error.message);
 
     }
+
+  }
+  async function downloadPDF(filePath) {
+
+  const token =
+    getAccessToken();
+
+  if (!token) {
+
+    showPage("account");
+
+    return;
+
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/library-pdf",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${token}`
+
+          },
+
+          body: JSON.stringify({
+
+            filePath:
+              filePath
+
+          })
+
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "تعذر تحميل الكتاب"
+      );
+
+    }
+
+    if (!data.url) {
+
+      throw new Error(
+        "لم يتم العثور على رابط التحميل"
+      );
+
+    }
+
+    const link =
+      document.createElement("a");
+
+    link.href =
+      data.url;
+
+    link.download =
+      "";
+
+    link.target =
+      "_blank";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
 
   }
 
