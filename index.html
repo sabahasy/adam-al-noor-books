@@ -3224,7 +3224,7 @@ nav {
 
               <button
                 class="pdf-btn"
-                onclick="openPDF(${item.book_id})"
+                onclick='openPDF(${JSON.stringify(book.pdf_url || "")})'
               >
                 📄 فتح الكتاب
               </button>
@@ -3257,7 +3257,7 @@ nav {
 
   }
 
-  async function openPDF(bookId) {
+  async function openPDF(filePath) {
 
     const token =
       getAccessToken();
@@ -3291,10 +3291,10 @@ nav {
 
             body: JSON.stringify({
 
-              bookId:
-                Number(bookId)
+  filePath:
+    filePath
 
-            })
+})
 
           }
         );
