@@ -3338,7 +3338,7 @@ nav {
     }
 
   }
-  async function downloadPDF(filePath) {
+async function downloadPDF(filePath) {
 
   const token =
     getAccessToken();
@@ -3383,68 +3383,31 @@ nav {
         }
       );
 
+    const data =
+      await response.json();
+
     if (!response.ok) {
 
-      let message =
-        "تعذر تحميل الكتاب";
-
-      try {
-
-        const data =
-          await response.json();
-
-        message =
-          data.error ||
-          message;
-
-      } catch {}
-
-      throw new Error(message);
+      throw new Error(
+        data.error ||
+        "تعذر تحميل الكتاب"
+      );
 
     }
 
-    const blob =
-      await response.blob();
-
-    if (!blob || blob.size === 0) {
+    if (!data.url) {
 
       throw new Error(
-        "لم يتم استلام ملف الكتاب"
+        "لم يتم العثور على رابط التحميل"
       );
 
     }
 
-    const downloadUrl =
-      URL.createObjectURL(blob);
-
-    const link =
-      document.createElement("a");
-
-    link.href =
-      downloadUrl;
-
-    link.download =
-      filePath
-        .split("/")
-        .pop() ||
-        "book.pdf";
-
-    link.style.display =
-      "none";
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    setTimeout(() => {
-
-      link.remove();
-
-      URL.revokeObjectURL(
-        downloadUrl
-      );
-
-    }, 3000);
+    /*
+     * فتح رابط التحميل المباشر
+     */
+    window.location.href =
+      data.url;
 
   } catch (error) {
 
