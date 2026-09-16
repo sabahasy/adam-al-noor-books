@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed"
@@ -6,8 +7,11 @@ export default async function handler(req, res) {
   }
 
   try {
+
     const token =
-      req.headers.authorization?.replace("Bearer ", "").trim();
+      req.headers.authorization
+        ?.replace("Bearer ", "")
+        .trim();
 
     if (!token) {
       return res.status(401).json({
@@ -21,10 +25,14 @@ export default async function handler(req, res) {
         : req.body;
 
     let filePath =
-      String(body?.filePath || "").trim();
+      String(
+        body?.filePath || ""
+      ).trim();
 
     const mode =
-      String(body?.mode || "view").trim();
+      String(
+        body?.mode || "view"
+      ).trim();
 
     if (!filePath) {
       return res.status(400).json({
@@ -32,129 +40,243 @@ export default async function handler(req, res) {
       });
     }
 
-    /*
-     * If the database contains a complete Supabase signed URL,
-     * extract only the storage object path from it.
-     */
-    if (/^https?:\/\//i.test(filePath)) {
-      try {
-        const url = new URL(filePath);
 
-        const match = url.pathname.match(
-          /\/storage\/v1\/object\/(?:sign|public)\/books\/(.+)$/i
-        );
+    /*
+     * إذا كان pdf_url رابط Supabase كامل
+     * نستخرج منه مسار الملف فقط.
+     */
+    if (
+      /^https?:\/\//i.test(filePath)
+    ) {
+
+      try {
+
+        const url =
+          new URL(filePath);
+
+        const match =
+          url.pathname.match(
+            /\/storage\/v1\/object\/(?:sign|public)\/books\/(.+)$/i
+          );
 
         if (match?.[1]) {
-          filePath = decodeURIComponent(match[1]);
+
+          filePath =
+            decodeURIComponent(
+              match[1]
+            );
+
         }
-      } catch (e) {
-        console.error("PDF URL PARSE ERROR:", e);
+
+      } catch (error) {
+
+        console.error(
+          "PDF URL PARSE ERROR:",
+          error
+        );
+
       }
+
     }
 
+
+    /*
+     * تنظيف مسار الملف
+     */
     const cleanPath =
       filePath
         .replace(/^\/+/, "")
-        .replace(/^books\//i, "");
+        .replace(/^books\//i, "")
+        .split("?")[0];
+
 
     if (!cleanPath) {
+
       return res.status(400).json({
         error: "Invalid PDF path"
       });
+
     }
 
-    const encodedPath = cleanPath
-      .split("/")
-      .map(segment => encodeURIComponent(segment))
-      .join("/");
 
+    /*
+     * ترميز كل جزء من المسار
+     */
+    const encodedPath =
+      cleanPath
+        .split("/")
+        .map(
+          segment =>
+            encodeURIComponent(
+              segment
+            )
+        )
+        .join("/");
+
+
+    /*
+     * إنشاء Signed URL جديد
+     */
     const storageUrl =
       `${process.env.SUPABASE_URL}` +
       `/storage/v1/object/sign/books/${encodedPath}`;
 
-    console.log("LIBRARY PDF PATH:", cleanPath);
+
+    console.log(
+      "LIBRARY PDF PATH:",
+      cleanPath
+    );
+
 
     const response =
-      await fetch(storageUrl, {
-        method: "POST",
+      await fetch(
+        storageUrl,
+        {
 
-        headers: {
-          "apikey":
-            process.env.SUPABASE_SERVICE_ROLE_KEY,
+          method: "POST",
 
-          "Authorization":
-            `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+          headers: {
 
-          "Content-Type":
-            "application/json"
-        },
+            apikey:
+              process.env
+                .SUPABASE_SERVICE_ROLE_KEY,
 
-        body: JSON.stringify({
-          expiresIn: 3600
-        })
-      });
+            Authorization:
+              `Bearer ${
+                process.env
+                  .SUPABASE_SERVICE_ROLE_KEY
+              }`,
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify({
+              expiresIn: 3600
+            })
+
+        }
+      );
+
 
     const text =
       await response.text();
 
+
     if (!response.ok) {
+
       console.error(
         "SUPABASE SIGNED URL ERROR:",
         response.status,
         text
       );
 
-      return res.status(response.status).json({
-        error: "Could not create signed URL",
-        details: text
+      return res.status(
+        response.status
+      ).json({
+
+        error:
+          "Could not create signed URL",
+
+        details:
+          text
+
       });
+
     }
+
 
     let data;
 
     try {
-      data = JSON.parse(text);
+
+      data =
+        JSON.parse(text);
+
     } catch {
+
       return res.status(500).json({
-        error: "Invalid response from Supabase"
+        error:
+          "Invalid response from Supabase"
       });
+
     }
+
 
     const signedURL =
       data?.signedURL ||
       data?.signedUrl ||
       data?.signed_url;
 
+
     if (!signedURL) {
+
       return res.status(500).json({
-        error: "No signed URL returned"
+        error:
+          "No signed URL returned"
       });
+
     }
+
 
     const finalUrl =
       signedURL.startsWith("http")
         ? signedURL
         : `${process.env.SUPABASE_URL}/storage/v1${signedURL}`;
 
+
     /*
-     * VIEW
-     * Keep the existing behavior.
+     * ============================
+     * فتح الكتاب
+     * ============================
      */
     if (mode !== "download") {
+
       return res.status(200).json({
-        url: finalUrl
+        url:
+          finalUrl
       });
+
     }
 
+
     /*
-     * DOWNLOAD
-     * Fetch the PDF from Supabase and send it
-     * directly to the customer's browser as a download.
+     * ============================
+     * تحميل الكتاب
+     * ============================
+     *
+     * نضيف download إلى رابط Supabase
+     * حتى يطلب من Storage تنزيل الملف.
+     */
+    const downloadUrl =
+      new URL(finalUrl);
+
+    const fileName =
+      cleanPath
+        .split("/")
+        .pop() ||
+        "book.pdf";
+
+
+    downloadUrl.searchParams.set(
+      "download",
+      fileName
+    );
+
+
+    /*
+     * نجلب الملف من Supabase
      */
     const pdfResponse =
-      await fetch(finalUrl);
+      await fetch(
+        downloadUrl.toString()
+      );
+
 
     if (!pdfResponse.ok) {
+
       const errorText =
         await pdfResponse.text();
 
@@ -164,22 +286,47 @@ export default async function handler(req, res) {
         errorText
       );
 
-      return res.status(pdfResponse.status).json({
-        error: "تعذر تحميل الكتاب"
+      return res.status(
+        pdfResponse.status
+      ).json({
+
+        error:
+          "تعذر تحميل الكتاب"
+
       });
+
     }
+
 
     const pdfBuffer =
       Buffer.from(
         await pdfResponse.arrayBuffer()
       );
 
-    const fileName =
-      cleanPath
-        .split("/")
-        .pop() ||
+
+    if (!pdfBuffer.length) {
+
+      return res.status(500).json({
+        error:
+          "ملف الكتاب فارغ"
+      });
+
+    }
+
+
+    /*
+     * اسم الملف
+     */
+    const safeFileName =
+      fileName
+        .replace(/["\r\n]/g, "")
+        .trim() ||
         "book.pdf";
 
+
+    /*
+     * إرسال PDF للمتصفح كتحميل
+     */
     res.setHeader(
       "Content-Type",
       "application/pdf"
@@ -187,7 +334,7 @@ export default async function handler(req, res) {
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${fileName.replace(/"/g, "")}"`
+      `attachment; filename="${safeFileName}"`
     );
 
     res.setHeader(
@@ -195,20 +342,32 @@ export default async function handler(req, res) {
       pdfBuffer.length
     );
 
-    return res.status(200).send(
-      pdfBuffer
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate"
     );
 
+
+    return res
+      .status(200)
+      .send(pdfBuffer);
+
+
   } catch (error) {
+
     console.error(
       "LIBRARY PDF API ERROR:",
       error
     );
 
     return res.status(500).json({
+
       error:
         error?.message ||
         "Internal server error"
+
     });
+
   }
+
 }
