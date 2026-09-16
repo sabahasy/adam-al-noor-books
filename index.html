@@ -1888,16 +1888,30 @@ async function sendAnalyticsEvent(
         }
       );
 
-    if (!response.ok) {
+    const responseText =
+  await response.text();
 
-      console.error(
-        "Analytics HTTP Error:",
-        response.status
-      );
+console.log(
+  "Analytics:",
+  eventType,
+  bookId,
+  response.status,
+  responseText
+);
 
-      return false;
+if (!response.ok) {
 
-    }
+  console.error(
+    "Analytics HTTP Error:",
+    response.status,
+    responseText
+  );
+
+  return false;
+
+}
+
+return true;
 
     return true;
 
