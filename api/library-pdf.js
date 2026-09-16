@@ -23,6 +23,9 @@ export default async function handler(req, res) {
     let filePath =
       String(body?.filePath || "").trim();
 
+    const mode =
+      String(body?.mode || "view").trim();
+
     if (!filePath) {
       return res.status(400).json({
         error: "filePath is required"
@@ -60,10 +63,6 @@ export default async function handler(req, res) {
       });
     }
 
-    /*
-     * Encode each path segment separately.
-     * This keeps "/" as a path separator.
-     */
     const encodedPath = cleanPath
       .split("/")
       .map(segment => encodeURIComponent(segment))
@@ -137,9 +136,68 @@ export default async function handler(req, res) {
         ? signedURL
         : `${process.env.SUPABASE_URL}/storage/v1${signedURL}`;
 
-    return res.status(200).json({
-      url: finalUrl
-    });
+    /*
+     * VIEW
+     * Keep the existing behavior.
+     */
+    if (mode !== "download") {
+      return res.status(200).json({
+        url: finalUrl
+      });
+    }
+
+    /*
+     * DOWNLOAD
+     * Fetch the PDF from Supabase and send it
+     * directly to the customer's browser as a download.
+     */
+    const pdfResponse =
+      await fetch(finalUrl);
+
+    if (!pdfResponse.ok) {
+      const errorText =
+        await pdfResponse.text();
+
+      console.error(
+        "PDF DOWNLOAD ERROR:",
+        pdfResponse.status,
+        errorText
+      );
+
+      return res.status(pdfResponse.status).json({
+        error: "تعذر تحميل الكتاب"
+      });
+    }
+
+    const pdfBuffer =
+      Buffer.from(
+        await pdfResponse.arrayBuffer()
+      );
+
+    const fileName =
+      cleanPath
+        .split("/")
+        .pop() ||
+        "book.pdf";
+
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${fileName.replace(/"/g, "")}"`
+    );
+
+    res.setHeader(
+      "Content-Length",
+      pdfBuffer.length
+    );
+
+    return res.status(200).send(
+      pdfBuffer
+    );
 
   } catch (error) {
     console.error(
