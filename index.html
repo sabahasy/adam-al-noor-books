@@ -2038,9 +2038,9 @@ return true;
       return `
 
         <article
-          class="book"
-          onclick="openBookDetails(${realIndex})"
-        >
+  class="book"
+  onclick="sendAnalyticsEvent('book_view', books[${realIndex}].id); openBookDetails(${realIndex})"
+>
 
           <div class="book-cover-wrap">
 
