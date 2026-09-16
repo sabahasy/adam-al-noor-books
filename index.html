@@ -3373,17 +3373,23 @@ nav {
           body: JSON.stringify({
 
             filePath:
-              filePath
+              filePath,
+
+            mode:
+              "download"
 
           })
 
         }
       );
 
-    const data =
-      await response.json();
-
     if (!response.ok) {
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch {}
 
       throw new Error(
         data.error ||
@@ -3392,25 +3398,23 @@ nav {
 
     }
 
-    if (!data.url) {
+    const blob =
+      await response.blob();
 
-      throw new Error(
-        "لم يتم العثور على رابط التحميل"
-      );
-
-    }
+    const url =
+      URL.createObjectURL(blob);
 
     const link =
       document.createElement("a");
 
     link.href =
-      data.url;
+      url;
 
     link.download =
-      "";
-
-    link.target =
-      "_blank";
+      filePath
+        .split("/")
+        .pop() ||
+        "book.pdf";
 
     document.body.appendChild(link);
 
@@ -3418,7 +3422,11 @@ nav {
 
     link.remove();
 
+    URL.revokeObjectURL(url);
+
   } catch (error) {
+
+    console.error(error);
 
     alert(error.message);
 
