@@ -1629,9 +1629,19 @@ nav {
         ></div>
 
         <div
-          id="bookDetailsRating"
-          class="book-details-rating"
-        ></div>
+  id="bookDetailsRating"
+  class="book-details-rating"
+>
+  <div class="rating-stars" id="ratingStars">
+    <button type="button" onclick="selectRating(1)">⭐</button>
+    <button type="button" onclick="selectRating(2)">⭐</button>
+    <button type="button" onclick="selectRating(3)">⭐</button>
+    <button type="button" onclick="selectRating(4)">⭐</button>
+    <button type="button" onclick="selectRating(5)">⭐</button>
+  </div>
+
+  <div id="ratingMessage"></div>
+        </div>
 
         <div class="book-details-description-title">
           📝 وصف الكتاب
@@ -1751,11 +1761,13 @@ nav {
   ===================================================== */
 
   let books = [];
-  let currentBooks = [];
+let currentBooks = [];
 
-  let cart = JSON.parse(
-    localStorage.getItem("adamAlNoorCart") || "[]"
-  );
+let currentRatingBookId = null;
+
+let cart = JSON.parse(
+  localStorage.getItem("adamAlNoorCart") || "[]"
+);
 
   /* =====================================================
      HELPERS
