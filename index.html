@@ -2551,7 +2551,19 @@ const detailsRating =
 
 const detailsRatingCount =
   Number(book.ratingCount || 0);
+const filledStars =
+  Math.round(detailsRating);
 
+const emptyStars =
+  5 - filledStars;
+
+const ratingStarsDisplay =
+  "⭐".repeat(
+    Math.min(5, filledStars)
+  ) +
+  "☆".repeat(
+    Math.max(0, emptyStars)
+  );
 const ratingMessage =
   document.getElementById(
     "ratingMessage"
@@ -2560,9 +2572,9 @@ const ratingMessage =
 if (ratingMessage) {
 
   ratingMessage.textContent =
-    detailsRatingCount > 0
-      ? `⭐ ${detailsRating.toFixed(1)} — ${detailsRatingCount} تقييم`
-      : "⭐ لا توجد تقييمات بعد";
+  detailsRatingCount > 0
+    ? `${ratingStarsDisplay}  ${detailsRating.toFixed(1)} — ${detailsRatingCount} تقييم`
+    : "☆ ☆ ☆ ☆ ☆  لا توجد تقييمات بعد";
 
     }
     const description =
