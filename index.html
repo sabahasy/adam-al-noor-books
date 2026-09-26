@@ -3407,12 +3407,14 @@ if (ratingMessage) {
     try {
 
       const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/analytics-stats`,
+        `${SUPABASE_URL}/functions/v1/analytics-stats?t=${Date.now()}`,
         {
           method: "GET",
+          cache: "no-store",
           headers: {
             apikey: SUPABASE_KEY,
-            Accept: "application/json"
+            Accept: "application/json",
+            "Cache-Control": "no-cache"
           }
         }
       );
