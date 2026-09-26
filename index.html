@@ -1189,6 +1189,426 @@ nav {
         flex-direction: column;
       }
     }
+  
+/* =====================================================
+   ADAM AL NOOR — PREMIUM STOREFRONT POLISH
+   Visual-only enhancements + contact/support section
+===================================================== */
+
+body {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(201,162,39,.10), transparent 28%),
+    linear-gradient(180deg, #fbfaf7 0%, #f5f3ed 100%);
+}
+
+header {
+  background: rgba(12, 15, 18, .94);
+  border-bottom: 1px solid rgba(201,162,39,.22);
+  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+}
+
+.header-inner {
+  min-height: 82px;
+}
+
+.brand-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #e7c94e, #b88918);
+  border: 1px solid rgba(255,255,255,.24);
+  box-shadow: 0 8px 24px rgba(201,162,39,.28);
+}
+
+.brand-text strong {
+  font-size: 19px;
+  letter-spacing: .2px;
+}
+
+.brand-text span {
+  color: #d0d0d0;
+  font-size: 11px;
+}
+
+.nav-btn {
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.nav-btn:hover {
+  background: rgba(201,162,39,.10);
+  border-color: rgba(201,162,39,.22);
+  color: #f5d86b;
+}
+
+.hero-wrap {
+  padding-top: 32px;
+}
+
+.hero {
+  min-height: 470px;
+  border: 1px solid rgba(201,162,39,.28);
+  background:
+    radial-gradient(circle at 80% 15%, rgba(201,162,39,.22), transparent 28%),
+    radial-gradient(circle at 15% 80%, rgba(255,255,255,.06), transparent 30%),
+    linear-gradient(135deg, #0d1014, #24282d 62%, #111316);
+  box-shadow: 0 24px 70px rgba(0,0,0,.20);
+}
+
+.hero-label {
+  background: rgba(201,162,39,.12);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+.hero h1 {
+  text-shadow: 0 5px 25px rgba(0,0,0,.25);
+}
+
+.hero-search {
+  border: 1px solid rgba(201,162,39,.18);
+  padding: 7px;
+}
+
+.hero-search button {
+  min-height: 48px;
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+
+.hero-search button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(201,162,39,.28);
+  background: #d7b438;
+}
+
+.features,
+.stats {
+  gap: 18px;
+}
+
+.feature,
+.stat,
+.about-card,
+.panel {
+  border-color: rgba(31,31,31,.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.045);
+}
+
+.feature {
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+
+.feature::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .65;
+}
+
+.feature:hover {
+  transform: translateY(-3px);
+  border-color: rgba(201,162,39,.30);
+  box-shadow: 0 15px 35px rgba(0,0,0,.07);
+}
+
+.feature-icon {
+  background: linear-gradient(145deg, #fbf5dc, #f1ead0);
+  border: 1px solid rgba(201,162,39,.18);
+}
+
+.stat {
+  background: linear-gradient(180deg, #fff, #fbfaf6);
+}
+
+.stat strong {
+  color: #161616;
+}
+
+.section-head {
+  margin-bottom: 24px;
+}
+
+.section-title small {
+  letter-spacing: .4px;
+}
+
+.section-title h2 {
+  letter-spacing: -.3px;
+}
+
+.search-box input {
+  border-color: rgba(31,31,31,.10);
+  box-shadow: 0 7px 22px rgba(0,0,0,.035);
+}
+
+.category-btn {
+  box-shadow: 0 3px 10px rgba(0,0,0,.025);
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background: linear-gradient(135deg, #171717, #2a2a2a);
+  border-color: #171717;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+
+.book {
+  border-color: rgba(31,31,31,.08);
+  box-shadow: 0 8px 28px rgba(0,0,0,.045);
+}
+
+.book:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 45px rgba(0,0,0,.13);
+  border-color: rgba(201,162,39,.28);
+}
+
+.book-cover-wrap {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(201,162,39,.10), transparent 45%),
+    linear-gradient(145deg, #efede5, #fff);
+}
+
+.book-cover {
+  box-shadow: 0 10px 28px rgba(0,0,0,.13);
+}
+
+.book-badge {
+  background: linear-gradient(135deg, #171717, #303030);
+  border: 1px solid rgba(201,162,39,.28);
+}
+
+.btn,
+.book-details-actions button,
+.checkout-btn,
+.auth-form button,
+.pdf-btn {
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+
+.btn-buy,
+.book-details-buy,
+.checkout-btn,
+.auth-form button,
+.pdf-btn {
+  background: linear-gradient(135deg, #151515, #292929);
+}
+
+.btn-buy:hover,
+.book-details-buy:hover,
+.checkout-btn:hover,
+.auth-form button:hover,
+.pdf-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #a98216, #c9a227);
+  box-shadow: 0 9px 20px rgba(169,130,22,.22);
+}
+
+.book-details-overlay {
+  background: rgba(7,9,11,.80);
+  backdrop-filter: blur(7px);
+}
+
+.book-details {
+  border: 1px solid rgba(201,162,39,.20);
+  box-shadow: 0 30px 90px rgba(0,0,0,.42);
+}
+
+.book-details-cover {
+  box-shadow: 0 15px 35px rgba(0,0,0,.16);
+}
+
+.book-details-bottom {
+  border-top-color: rgba(31,31,31,.10);
+}
+
+.support-section {
+  margin: 8px 0 42px;
+}
+
+.support-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 25px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(201,162,39,.30);
+  background:
+    radial-gradient(circle at 85% 20%, rgba(201,162,39,.18), transparent 28%),
+    linear-gradient(135deg, #fffdf6, #f7f2df);
+  box-shadow: 0 15px 40px rgba(0,0,0,.07);
+}
+
+.support-card::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  left: -80px;
+  bottom: -100px;
+  border-radius: 50%;
+  background: rgba(201,162,39,.10);
+}
+
+.support-icon {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  border-radius: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: linear-gradient(145deg, #e7c94e, #b88918);
+  box-shadow: 0 10px 25px rgba(201,162,39,.25);
+}
+
+.support-content {
+  position: relative;
+}
+
+.support-content small {
+  color: var(--gold-dark);
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.support-content h3 {
+  font-size: 21px;
+  margin-bottom: 4px;
+}
+
+.support-content p {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.support-email {
+  color: #252525;
+  font-size: 13px;
+  font-weight: bold;
+  direction: ltr;
+  unicode-bidi: plaintext;
+}
+
+.support-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 145px;
+  padding: 12px 18px;
+  border-radius: 13px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+}
+
+.support-action:hover {
+  background: var(--gold-dark);
+  color: #111;
+  transform: translateY(-1px);
+}
+
+footer {
+  margin-top: 50px;
+  background:
+    radial-gradient(circle at 80% 0%, rgba(201,162,39,.10), transparent 25%),
+    linear-gradient(145deg, #0b0d10, #17191c);
+  border-top: 1px solid rgba(201,162,39,.18);
+}
+
+.footer-inner {
+  padding: 48px 0 30px;
+}
+
+.footer-brand {
+  color: #f4d76a;
+  font-size: 21px;
+}
+
+.footer-contact {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 11px;
+  background: rgba(201,162,39,.08);
+  border: 1px solid rgba(201,162,39,.18);
+  color: #eee;
+  font-size: 12px;
+}
+
+.footer-contact:hover {
+  background: rgba(201,162,39,.16);
+  color: #f5d86b;
+}
+
+footer li {
+  transition: color .2s, transform .2s;
+}
+
+footer li:hover {
+  color: #eee;
+  transform: translateX(-3px);
+}
+
+.copyright {
+  border-top-color: rgba(255,255,255,.08);
+  padding: 19px 0;
+}
+
+@media (max-width: 800px) {
+  .support-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .support-action {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero {
+    min-height: 430px;
+    padding: 32px 24px;
+  }
+
+  .hero h1 {
+    font-size: 35px;
+  }
+
+  .support-card {
+    padding: 21px;
+    gap: 14px;
+  }
+
+  .support-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 24px;
+  }
+
+  .support-content h3 {
+    font-size: 18px;
+  }
+}
+
   </style>
 </head>
 
@@ -1687,6 +2107,7 @@ nav {
 
 </div>
 
+
 <footer>
 
   <div class="container footer-inner">
@@ -1702,6 +2123,13 @@ nav {
         اكتشف، اقرأ، وتعلّم.
       </p>
 
+      <a
+        class="footer-contact"
+        href="mailto:candyamaar@gmail.com?subject=تواصل%20مع%20آدم%20النور"
+      >
+        ✉️ candyamaar@gmail.com
+      </a>
+
     </div>
 
     <div>
@@ -1712,7 +2140,7 @@ nav {
 
       <ul>
         <li>📚 الكتب الإلكترونية</li>
-        <li>📖 مكتبتي</li>
+        <li>📖 مكتبتك الرقمية</li>
         <li>🛒 سلة المشتريات</li>
       </ul>
 
@@ -1721,13 +2149,14 @@ nav {
     <div>
 
       <div class="footer-title">
-        الخدمات
+        الخدمات والدعم
       </div>
 
       <ul>
         <li>📄 كتب PDF</li>
         <li>⚡ وصول رقمي سريع</li>
         <li>🔒 دفع إلكتروني</li>
+        <li>💬 دعم واستفسارات</li>
       </ul>
 
     </div>
@@ -1739,6 +2168,7 @@ nav {
   </div>
 
 </footer>
+
 
 <script>
 
