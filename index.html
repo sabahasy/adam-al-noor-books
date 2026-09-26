@@ -2040,12 +2040,15 @@ return true;
           : "";
 
       const rating =
-        Number(book.rating || 0);
+  Number(book.averageRating || 0);
 
-      const stars =
-        rating > 0
-          ? "⭐".repeat(Math.min(5, Math.round(rating)))
-          : "☆";
+const ratingCount =
+  Number(book.ratingCount || 0);
+
+const stars =
+  rating > 0
+    ? "⭐".repeat(Math.min(5, Math.round(rating)))
+    : "☆";
 
       return `
 
@@ -2105,13 +2108,13 @@ return true;
             </div>
 
             <div class="rating">
-              <span>${stars}</span>
-              ${
-                rating
-                ? ` ${rating}`
-                : ""
-              }
-            </div>
+  <span>${stars}</span>
+  ${
+    ratingCount > 0
+      ? ` ${rating.toFixed(1)} (${ratingCount} تقييم)`
+      : ""
+  }
+</div>
 
             <div class="book-bottom">
 
