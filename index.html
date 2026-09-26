@@ -2622,24 +2622,31 @@ return true;
         }
       );
 
-    if (!response.ok) {
+  if (!response.ok) {
 
-      const errorText =
-        await response.text();
+  const errorText =
+    await response.text();
 
-      console.error(
-        "Rating Error:",
-        response.status,
-        errorText
-      );
+  console.error(
+    "Rating Error:",
+    response.status,
+    errorText
+  );
 
-      document.getElementById(
-        "ratingMessage"
-      ).textContent =
-        "⚠️ تعذر حفظ التقييم";
+  if (response.status === 409) {
+    document.getElementById(
+      "ratingMessage"
+    ).textContent =
+      "❤️ لقد قيّمت هذا الكتاب مسبقًا";
+  } else {
+    document.getElementById(
+      "ratingMessage"
+    ).textContent =
+      "⚠️ تعذر حفظ التقييم";
+  }
 
-      return;
-    }
+  return;
+  }
 
     document.getElementById(
       "ratingMessage"
