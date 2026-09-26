@@ -2546,7 +2546,25 @@ ratingCount:
       "bookDetailsCategory"
     ).textContent =
       book.category || "كتب إلكترونية";
+const detailsRating =
+  Number(book.averageRating || 0);
 
+const detailsRatingCount =
+  Number(book.ratingCount || 0);
+
+const ratingMessage =
+  document.getElementById(
+    "ratingMessage"
+  );
+
+if (ratingMessage) {
+
+  ratingMessage.textContent =
+    detailsRatingCount > 0
+      ? `⭐ ${detailsRating.toFixed(1)} — ${detailsRatingCount} تقييم`
+      : "⭐ لا توجد تقييمات بعد";
+
+    }
     const description =
       String(
         book.description || ""
