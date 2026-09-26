@@ -2262,10 +2262,43 @@ return true;
       }
 
       const data =
-        await response.json();
+  await response.json();
 
-      books =
-        (data || [])
+const ratingsResponse =
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/book_ratings?select=book_id,rating`,
+    {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization:
+          `Bearer ${SUPABASE_KEY}`
+      }
+    }
+  );
+
+const ratingsData =
+  ratingsResponse.ok
+    ? await ratingsResponse.json()
+    : [];
+
+const ratingsByBook = {};
+
+(ratingsData || []).forEach(item => {
+
+  const bookId =
+    String(item.book_id);
+
+  if (!ratingsByBook[bookId]) {
+    ratingsByBook[bookId] = [];
+  }
+
+  ratingsByBook[bookId].push(
+    Number(item.rating)
+  );
+});
+
+books =
+  (data || [])
         .filter(book => book.is_available === true)
         .map(book => ({
 
@@ -2282,6 +2315,18 @@ return true;
           price: book.price,
 
           rating: book.rating,
+
+averageRating:
+  ratingsByBook[String(book.id)]
+    ? ratingsByBook[String(book.id)]
+        .reduce((sum, value) => sum + value, 0) /
+      ratingsByBook[String(book.id)].length
+    : 0,
+
+ratingCount:
+  ratingsByBook[String(book.id)]
+    ? ratingsByBook[String(book.id)].length
+    : 0,
 
           cover_url: book.cover_url,
 
