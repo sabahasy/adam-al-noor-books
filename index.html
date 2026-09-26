@@ -2520,10 +2520,6 @@ ratingCount:
 
     if (!book) return;
     currentRatingBookId = book.id;
-    sendAnalyticsEvent(
-  "book_view",
-  book.id
-);
 
     const overlay =
       document.getElementById(
