@@ -2489,7 +2489,7 @@ const stars =
 
         <article
   class="book"
-  onclick="sendAnalyticsEvent('book_view', books[${realIndex}].id); openBookDetails(${realIndex})"
+  onclick="openBookDetails(${realIndex})"
 >
 
           <div class="book-cover-wrap">
@@ -2954,6 +2954,10 @@ ratingCount:
       books[index];
 
     if (!book) return;
+
+    // Count every actual book-details opening in one reliable place.
+    sendAnalyticsEvent("book_view", book.id);
+
     currentRatingBookId = book.id;
 
     const overlay =
