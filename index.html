@@ -2956,7 +2956,7 @@ ratingCount:
     if (!book) return;
 
     // Count every actual book-details opening in one reliable place.
-    sendAnalyticsEvent("book_view", book.id);
+    sendAnalyticsEvent("book_view", book.id).then(() => loadStoreStats());
 
     currentRatingBookId = book.id;
 
