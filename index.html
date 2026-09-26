@@ -1731,13 +1731,18 @@ footer li:hover {
       </div>
 
       <div class="stat">
-        <strong id="cartStat">0</strong>
-        <span>في سلة المشتريات</span>
+        <strong id="visitorCount">0</strong>
+        <span>زائر للمتجر</span>
       </div>
 
       <div class="stat">
-        <strong>PDF</strong>
-        <span>كتب إلكترونية</span>
+        <strong id="viewCount">0</strong>
+        <span>مشاهدة للكتب</span>
+      </div>
+
+      <div class="stat">
+        <strong id="cartStat">0</strong>
+        <span>في سلة المشتريات</span>
       </div>
 
     </div>
@@ -3393,6 +3398,49 @@ if (ratingMessage) {
 
   }
 
+  async function loadStoreStats() {
+
+    try {
+
+      const response = await fetch(
+        `${SUPABASE_URL}/functions/v1/analytics-stats`,
+        {
+          method: "GET",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Accept: "application/json"
+          }
+        }
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      const visitorCount =
+        document.getElementById("visitorCount");
+
+      const viewCount =
+        document.getElementById("viewCount");
+
+      if (visitorCount) {
+        visitorCount.textContent =
+          Number(data.visitors || 0).toLocaleString("en-US");
+      }
+
+      if (viewCount) {
+        viewCount.textContent =
+          Number(data.views || 0).toLocaleString("en-US");
+      }
+
+    } catch (error) {
+
+      console.error("Store stats error:", error);
+
+    }
+
+  }
+
   function updateCartCount() {
 
     const count =
@@ -4449,6 +4497,8 @@ renderCart();
 sendAnalyticsEvent("visitor");
 
 loadBooks();
+
+loadStoreStats();
 
 checkUser();
 
