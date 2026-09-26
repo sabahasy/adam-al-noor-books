@@ -3456,6 +3456,23 @@ if (ratingMessage) {
 
       console.error("Store stats error:", error);
 
+      const fallbackKey = "adamAlNoorLocalVisits";
+      const fallbackCount =
+        Number(localStorage.getItem(fallbackKey) || 0) + 1;
+
+      localStorage.setItem(
+        fallbackKey,
+        String(fallbackCount)
+      );
+
+      const visitorCount =
+        document.getElementById("visitorCount");
+
+      if (visitorCount) {
+        visitorCount.textContent =
+          fallbackCount.toLocaleString("en-US");
+      }
+
     }
 
   }
@@ -4514,7 +4531,6 @@ updateCartCount();
 renderCart();
 
 sendAnalyticsEvent("visitor");
-sendAnalyticsEvent("store_view");
 sendAnalyticsEvent("store_view");
 
 loadBooks();
