@@ -2499,26 +2499,6 @@ return true;
     ).textContent =
       book.category || "كتب إلكترونية";
 
-    const rating =
-      Number(book.rating || 0);
-
-    const stars =
-      rating > 0
-        ? "⭐".repeat(
-            Math.min(
-              5,
-              Math.round(rating)
-            )
-          )
-        : "☆";
-
-    document.getElementById(
-      "bookDetailsRating"
-    ).textContent =
-      rating
-        ? `${stars} ${rating}`
-        : stars;
-
     const description =
       String(
         book.description || ""
