@@ -1792,36 +1792,25 @@ footer li:hover {
       </div>
 
       <div id="categories" class="categories">
-
-        <button
-          class="category-btn active"
-          onclick="filterCategory('all', this)"
-        >
-          جميع الكتب
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('التاريخ', this)"
-        >
-          التاريخ
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('الحضارات', this)"
-        >
-          الحضارات
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('الروايات', this)"
-        >
-          الروايات
-        </button>
-
-      </div>
+      <button class="category-btn active" onclick="filterCategory('all', this)">
+        جميع الكتب
+      </button>
+      <button class="category-btn" onclick="filterCategory('التاريخ', this)">
+        التاريخ
+      </button>
+      <button class="category-btn" onclick="filterCategory('الروايات', this)">
+        الروايات
+      </button>
+      <button class="category-btn" onclick="filterCategory('التنمية الذاتية', this)">
+        التنمية الذاتية
+      </button>
+      <button class="category-btn" onclick="filterCategory('التربية وقصص الاطفال', this)">
+        التربية وقصص الاطفال
+      </button>
+      <button class="category-btn" onclick="filterCategory('الملزمات الدراسية', this)">
+        الملزمات الدراسية
+      </button>
+    </div>
 
       <div id="books" class="books">
 
@@ -2619,61 +2608,35 @@ const stars =
 
   async function loadCategories() {
 
+    const fallbackCategories = [
+      { id: 1, name_ar: "التاريخ" },
+      { id: 2, name_ar: "التنمية الذاتية" },
+      { id: 3, name_ar: "الروايات" },
+      { id: 4, name_ar: "التربية وقصص الاطفال" },
+      { id: 5, name_ar: "الملزمات الدراسية" }
+    ];
+
+    let categories = fallbackCategories;
+
     try {
 
       const response =
         await fetch(
-          `${SUPABASE_URL}/rest/v1/categories?select=id,name_ar&order=id.asc`,
+          \`${SUPABASE_URL}/rest/v1/categories?select=id,name_ar&order=id.asc\`,
           {
             headers: {
-              apikey: SUPABASE_KEY,
-              Authorization:
-                `Bearer ${SUPABASE_KEY}`
+              apikey: SUPABASE_KEY
             }
           }
         );
 
-      if (!response.ok) return;
+      if (response.ok) {
+        const data = await response.json();
 
-      const categories =
-        await response.json();
-
-      const container =
-        document.getElementById("categories");
-
-      if (!container) return;
-
-      const buttons = [
-
-        `
-          <button
-            class="category-btn active"
-            onclick="filterCategory('all', this)"
-          >
-            جميع الكتب
-          </button>
-        `,
-
-        ...categories.map(category => {
-
-          const name =
-            escapeHTML(category.name_ar);
-
-          return `
-            <button
-              class="category-btn"
-              onclick="filterCategory('${name}', this)"
-            >
-              ${name}
-            </button>
-          `;
-
-        })
-
-      ];
-
-      container.innerHTML =
-        buttons.join("");
+        if (Array.isArray(data) && data.length) {
+          categories = data;
+        }
+      }
 
     } catch (error) {
 
@@ -2683,6 +2646,58 @@ const stars =
       );
 
     }
+
+    const categoryMap = {};
+
+    categories.forEach(category => {
+      categoryMap[String(category.id)] =
+        category.name_ar;
+    });
+
+    books.forEach(book => {
+      book.category =
+        categoryMap[String(book.category_id)] ||
+        "كتب إلكترونية";
+    });
+
+    currentBooks = [...books];
+
+    const container =
+      document.getElementById("categories");
+
+    if (!container) return;
+
+    const buttons = [
+
+      `
+        <button
+          class="category-btn active"
+          onclick="filterCategory('all', this)"
+        >
+          جميع الكتب
+        </button>
+      `,
+
+      ...categories.map(category => {
+
+        const name =
+          escapeHTML(category.name_ar);
+
+        return `
+          <button
+            class="category-btn"
+            onclick="filterCategory('${name}', this)"
+          >
+            ${name}
+          </button>
+        `;
+
+      })
+
+    ];
+
+    container.innerHTML =
+      buttons.join("");
 
   }
 
