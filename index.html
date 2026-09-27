@@ -2638,6 +2638,21 @@ const stars =
       const categories =
         await response.json();
 
+      // Map each book's category_id to its Arabic category name.
+      const categoryMap = {};
+      (categories || []).forEach(category => {
+        categoryMap[String(category.id)] = category.name_ar;
+      });
+
+      books.forEach(book => {
+        book.category =
+          categoryMap[String(book.category_id)] ||
+          "كتب إلكترونية";
+      });
+
+      currentBooks = [...books];
+      renderBooks();
+
       const container =
         document.getElementById("categories");
 
