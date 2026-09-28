@@ -1925,6 +1925,10 @@ footer li:hover {
         إتمام الشراء
       </button>
 
+      <div style="margin-top: 8px; text-align: center; font-size: 13px; color: #777;">
+        ⏳ عند الضغط على الدفع، يرجى الانتظار 5 ثوانٍ حتى يتم تجهيز عملية الدفع.
+      </div>
+
       <div id="checkoutStatus" class="status"></div>
 
     </div>
@@ -4503,7 +4507,7 @@ async function downloadPDF(filePath) {
 
     const paymentTimeout = setTimeout(() => {
       controller.abort();
-    }, 20000);
+    }, 5000);
 
     try {
 
