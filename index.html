@@ -4499,6 +4499,12 @@ async function downloadPDF(filePath) {
     button.textContent =
       "جاري تجهيز الدفع...";
 
+    const controller = new AbortController();
+
+    const paymentTimeout = setTimeout(() => {
+      controller.abort();
+    }, 20000);
+
     try {
 
       const response =
@@ -4524,7 +4530,10 @@ async function downloadPDF(filePath) {
 
               totalIQD
 
-            })
+            }),
+
+            signal:
+              controller.signal
 
           }
         );
@@ -4566,9 +4575,14 @@ async function downloadPDF(filePath) {
 
     } catch (error) {
 
+      const message =
+        error?.name === "AbortError"
+          ? "انتهى وقت انتظار الدفع. قد يكون الطلب قد تم إنشاؤه بالفعل؛ تحقق من حالة العملية قبل إعادة المحاولة."
+          : error.message;
+
       showStatus(
         "checkoutStatus",
-        error.message,
+        message,
         "error"
       );
 
@@ -4576,6 +4590,12 @@ async function downloadPDF(filePath) {
 
       button.textContent =
         "إتمام الشراء";
+
+    } finally {
+
+      clearTimeout(
+        paymentTimeout
+      );
 
     }
 
