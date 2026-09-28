@@ -3448,40 +3448,26 @@ if (ratingMessage) {
     try {
 
       const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/analytics-stats?t=${Date.now()}`,
+        `${SUPABASE_URL}/rest/v1/rpc/get_public_analytics_counts`,
         {
-          method: "GET",
+          method: "POST",
           cache: "no-store",
           headers: {
             apikey: SUPABASE_KEY,
+            "Content-Type": "application/json",
             Accept: "application/json",
             "Cache-Control": "no-cache"
-          }
+          },
+          body: "{}"
         }
       );
 
       if (!response.ok) {
-        const fallbackKey = "adamAlNoorLocalVisits";
-        const fallbackCount =
-          Number(localStorage.getItem(fallbackKey) || 0) + 1;
-
-        localStorage.setItem(
-          fallbackKey,
-          String(fallbackCount)
-        );
-
-        const visitorCount =
-          document.getElementById("visitorCount");
-
-        if (visitorCount) {
-          visitorCount.textContent =
-            fallbackCount.toLocaleString("en-US");
-        }
-
-        return;
+        throw new Error(`Analytics stats HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      const result = await response.json();
+      const data = Array.isArray(result) ? result[0] : result;
 
       const visitorCount =
         document.getElementById("visitorCount");
@@ -3491,33 +3477,24 @@ if (ratingMessage) {
 
       if (visitorCount) {
         visitorCount.textContent =
-          Number(data.visitors || 0).toLocaleString("en-US");
+          Number(data?.visitors || 0).toLocaleString("en-US");
       }
 
       if (viewCount) {
         viewCount.textContent =
-          Number(data.views || 0).toLocaleString("en-US");
+          Number(data?.views || 0).toLocaleString("en-US");
       }
 
     } catch (error) {
 
       console.error("Store stats error:", error);
 
-      const fallbackKey = "adamAlNoorLocalVisits";
-      const fallbackCount =
-        Number(localStorage.getItem(fallbackKey) || 0) + 1;
-
-      localStorage.setItem(
-        fallbackKey,
-        String(fallbackCount)
-      );
-
       const visitorCount =
         document.getElementById("visitorCount");
 
       if (visitorCount) {
         visitorCount.textContent =
-          fallbackCount.toLocaleString("en-US");
+          "—";
       }
 
     }
