@@ -495,6 +495,12 @@
       color: #e0b72e;
     }
 
+    .book-sales {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
     .book-bottom {
       display: flex;
       align-items: center;
@@ -2566,6 +2572,10 @@ const stars =
   }
 </div>
 
+            <div class="book-sales">
+              بيع ${book.soldCount || 0}
+            </div>
+
             <div class="book-bottom">
 
               <div class="price">
@@ -2760,6 +2770,32 @@ const ratingsData =
     ? await ratingsResponse.json()
     : [];
 
+const salesResponse =
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/rpc/get_public_book_sales_counts`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: "{}"
+    }
+  );
+
+const salesData =
+  salesResponse.ok
+    ? await salesResponse.json()
+    : [];
+
+const salesByBook = {};
+
+(salesData || []).forEach(item => {
+  salesByBook[String(item.book_id)] =
+    Number(item.sales_count || 0);
+});
+
 const ratingsByBook = {};
 
 (ratingsData || []).forEach(item => {
@@ -2806,6 +2842,9 @@ ratingCount:
   ratingsByBook[String(book.id)]
     ? ratingsByBook[String(book.id)].length
     : 0,
+
+soldCount:
+  salesByBook[String(book.id)] || 0,
 
           cover_url: book.cover_url,
 
