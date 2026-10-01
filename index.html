@@ -62,6 +62,57 @@
       margin: auto;
     }
 
+    .store-clock-bar {
+      background: linear-gradient(135deg, #111111, #242424);
+      color: #fff;
+      border-bottom: 1px solid rgba(201,162,39,.28);
+      text-align: center;
+      padding: 7px 15px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: .2px;
+    }
+
+    .store-clock {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      direction: rtl;
+    }
+
+    .store-clock-time {
+      color: #e6ca61;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+      min-width: 88px;
+    }
+
+    .store-clock-date {
+      color: #d0d0d0;
+      font-size: 11px;
+      font-weight: normal;
+    }
+
+    @media (max-width: 520px) {
+      .store-clock-bar {
+        padding: 6px 10px;
+      }
+
+      .store-clock {
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .store-clock-time {
+        font-size: 14px;
+      }
+
+      .store-clock-date {
+        font-size: 10px;
+      }
+    }
+
     header {
       background: rgba(17,17,17,.97);
       color: white;
@@ -1936,6 +1987,14 @@ footer li:hover {
 
 <body>
 
+<div class="store-clock-bar" aria-label="الوقت الحالي في العراق">
+  <div class="store-clock">
+    <span>🕐 وقت متجر آدم النور</span>
+    <span id="storeClockTime" class="store-clock-time">--:--:--</span>
+    <span id="storeClockDate" class="store-clock-date"></span>
+  </div>
+</div>
+
 <header>
   <div class="container header-inner">
 
@@ -2801,6 +2860,56 @@ return true;
   }
 
 }
+
+  /* =====================================================
+     LIVE STORE CLOCK
+  ===================================================== */
+
+  function updateStoreClock() {
+
+    const timeElement =
+      document.getElementById("storeClockTime");
+
+    const dateElement =
+      document.getElementById("storeClockDate");
+
+    if (!timeElement || !dateElement) return;
+
+    const now =
+      new Date();
+
+    const time =
+      new Intl.DateTimeFormat("ar-IQ", {
+        timeZone: "Asia/Baghdad",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      }).format(now);
+
+    const date =
+      new Intl.DateTimeFormat("ar-IQ", {
+        timeZone: "Asia/Baghdad",
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(now);
+
+    timeElement.textContent =
+      time;
+
+    dateElement.textContent =
+      date;
+
+  }
+
+  updateStoreClock();
+
+  setInterval(
+    updateStoreClock,
+    1000
+  );
 
   /* =====================================================
      HERO
