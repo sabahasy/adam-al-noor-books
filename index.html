@@ -3157,8 +3157,8 @@ return true;
   function setupBookDragHandles(container) {
     if (!canManageBookOrder()) return;
 
-    container.querySelectorAll(".book").forEach(card => {
-      const bookId = String(card.dataset.bookId || "");
+    container.querySelectorAll(".book-drag-handle").forEach(handle => {
+      const bookId = String(handle.dataset.bookId || "");
       if (!bookId) return;
 
       let holdTimer = null;
@@ -3166,7 +3166,7 @@ return true;
       let startX = 0;
       let startY = 0;
       let active = false;
-      let movedDuringDrag = false;
+      let didDrag = false;
 
       const clearHold = () => {
         if (holdTimer) {
@@ -3175,57 +3175,57 @@ return true;
         }
       };
 
-      const cleanup = async () => {
+      const finish = async () => {
         const wasActive = active;
         clearHold();
-        card.classList.remove("dragging");
+
+        const card = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
+        if (card) card.classList.remove("dragging");
         container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
+
         active = false;
         pointerId = null;
 
         if (wasActive) {
-          setBookOrderStatus("⏳ جارٍ حفظ ترتيب الكتب...");
           await saveBookOrder();
         }
       };
 
-      card.addEventListener("pointerdown", event => {
+      handle.addEventListener("pointerdown", event => {
         if (!canManageBookOrder()) return;
-
-        const interactive = event.target.closest("a, button, input, textarea, select");
-        if (interactive && !event.target.closest(".book-drag-handle")) return;
 
         event.preventDefault();
         event.stopPropagation();
+
         startX = event.clientX;
         startY = event.clientY;
         pointerId = event.pointerId;
-        movedDuringDrag = false;
+        didDrag = false;
         clearHold();
 
         holdTimer = setTimeout(() => {
           active = true;
-          card.classList.add("dragging");
-          setBookOrderStatus("✋ اسحب الكتاب الآن وضعه في المكان المطلوب.");
-          try { card.setPointerCapture(event.pointerId); } catch {}
-        }, 450);
+          const card = handle.closest(".book");
+          if (card) card.classList.add("dragging");
+          setBookOrderStatus("✋ تم تفعيل السحب — حرّك الكتاب إلى المكان المطلوب.");
+          try {
+            handle.setPointerCapture(event.pointerId);
+          } catch {}
+        }, 500);
       });
 
-      card.addEventListener("pointermove", event => {
+      handle.addEventListener("pointermove", event => {
         if (event.pointerId !== pointerId) return;
 
-        const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
-
-        if (!active && moved > 10) {
-          clearHold();
+        if (!active) {
+          const movedBeforeHold = Math.hypot(event.clientX - startX, event.clientY - startY);
+          if (movedBeforeHold > 12) clearHold();
           return;
         }
 
-        if (!active) return;
-
         event.preventDefault();
         event.stopPropagation();
-        movedDuringDrag = true;
+        didDrag = true;
 
         const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".book");
         if (!target || !container.contains(target)) return;
@@ -3233,14 +3233,14 @@ return true;
         const targetId = String(target.dataset.bookId || "");
         if (!targetId || targetId === bookId) return;
 
+        const currentCard = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
+        if (!currentCard) return;
+
         const rect = target.getBoundingClientRect();
         const insertAfter = event.clientY > rect.top + rect.height / 2;
 
         container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
         target.classList.add("drop-target");
-
-        const currentCard = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
-        if (!currentCard) return;
 
         if (insertAfter) {
           if (target.nextSibling !== currentCard) {
@@ -3253,25 +3253,29 @@ return true;
         }
       });
 
-      card.addEventListener("pointerup", event => {
+      handle.addEventListener("pointerup", event => {
         if (event.pointerId !== pointerId) return;
         event.preventDefault();
         event.stopPropagation();
-        cleanup();
+        finish();
       });
 
-      card.addEventListener("pointercancel", event => {
+      handle.addEventListener("pointercancel", event => {
         if (event.pointerId !== pointerId) return;
-        cleanup();
+        finish();
       });
 
-      card.addEventListener("click", event => {
-        if (movedDuringDrag) {
+      handle.addEventListener("lostpointercapture", () => {
+        if (pointerId !== null) finish();
+      });
+
+      handle.addEventListener("click", event => {
+        if (didDrag) {
           event.preventDefault();
           event.stopPropagation();
-          movedDuringDrag = false;
+          didDrag = false;
         }
-      }, true);
+      });
     });
   }
 
