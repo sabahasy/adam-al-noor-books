@@ -3133,24 +3133,35 @@ return true;
     if (!isManager || !managerAccessToken || !canManageBookOrder()) return;
     setBookOrderStatus("⏳ جارٍ حفظ ترتيب الكتب...");
     try {
-      const responses = await Promise.all(currentBooks.map((book, index) =>
-        fetch(SUPABASE_URL + "/rest/v1/books?id=eq." + encodeURIComponent(book.id), {
-          method: "PATCH",
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: "Bearer " + managerAccessToken,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal"
-          },
-          body: JSON.stringify({ display_order: index })
-        })
-      ));
-      const failed = responses.find(response => !response.ok);
-      if (failed) throw new Error("HTTP " + failed.status);
+      // نحفظ بالتتابع بدل إرسال عشرات طلبات PATCH في اللحظة نفسها.
+      // هذا يمنع فشل الحفظ بسبب كثرة الطلبات المتزامنة.
+      for (let index = 0; index < currentBooks.length; index++) {
+        const book = currentBooks[index];
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/books?id=eq." + encodeURIComponent(book.id),
+          {
+            method: "PATCH",
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: "Bearer " + managerAccessToken,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify({ display_order: index })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status + " عند الكتاب رقم " + (index + 1));
+        }
+
+        setBookOrderStatus("⏳ جارٍ حفظ الترتيب... " + (index + 1) + "/" + currentBooks.length);
+      }
+
       setBookOrderStatus("✅ تم حفظ ترتيب الكتب بنجاح.");
     } catch (error) {
       console.error("Book order save error:", error);
-      setBookOrderStatus("⚠️ تعذر حفظ الترتيب. حاول مرة أخرى.");
+      setBookOrderStatus("⚠️ تعذر حفظ الترتيب: " + (error?.message || "خطأ غير معروف"));
     }
   }
 
