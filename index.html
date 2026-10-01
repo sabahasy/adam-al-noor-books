@@ -3712,53 +3712,18 @@ soldCount:
           return aOrder - bOrder || Number(a.id) - Number(b.id);
         });
       } else {
-        const featuredBookMatchers = [
-          ["أسرار السلام الداخلي"],
-          ["أسرار الفراعنة والسومريين"],
-          ["أدولف هيتلر"],
-          ["سلسلة آدم الصغير", "سلسلة قصص آدم لتربية الأطفال", "آدم الصغير المؤمن"],
-          ["ملزمة الأحيــاء للسادس العلمـي", "ملزمة الأحياء للسادس", "ملزمة الاحياء للسادس"],
-          ["سلسلة الحديقة الجميلة"]
-        ];
+        const featuredBookIds = [9, 54, 31, 44, 12, 65];
+        const featuredIdSet = new Set(featuredBookIds);
 
-        function normalizeBookTitle(value) {
-          return String(value || "")
-            .toLowerCase()
-            .replace(/[ًٌٍَُِّْـ]/g, "")
-            .replace(/[أإآ]/g, "ا")
-            .replace(/ى/g, "ي")
-            .replace(/ة/g, "ه")
-            .replace(/[^؀-ۿa-z0-9]+/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-        }
+        const featuredBooks = featuredBookIds
+          .map(id => books.find(book => Number(book.id) === id))
+          .filter(Boolean);
 
-        const featuredTitles =
-          featuredBookMatchers.map(group =>
-            group.map(normalizeBookTitle)
-          );
+        const remainingBooks = books.filter(
+          book => !featuredIdSet.has(Number(book.id))
+        );
 
-        const featuredBooks = [];
-        const remainingBooks = [];
-
-        books.forEach(book => {
-          const title = normalizeBookTitle(book.title);
-
-          const featuredIndex =
-            featuredTitles.findIndex((group, index) =>
-              !featuredBooks[index] &&
-              group.some(keyword => title.includes(keyword))
-            );
-
-          if (featuredIndex >= 0) {
-            featuredBooks[featuredIndex] = book;
-          } else {
-            remainingBooks.push(book);
-          }
-        });
-
-        books =
-          featuredBooks.filter(Boolean).concat(remainingBooks);
+        books = featuredBooks.concat(remainingBooks);
       }
 
       currentBooks = [...books];
