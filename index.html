@@ -521,6 +521,49 @@
       border-color: var(--black);
     }
 
+    .books-more-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 22px 0 6px;
+    }
+
+    .books-more-btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 28px;
+      background: linear-gradient(135deg, var(--black), #2d2d2d);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.14);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .books-more-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 11px 24px rgba(0,0,0,.18);
+    }
+
+    .books-more-btn .more-finger {
+      display: inline-block;
+      margin-right: 7px;
+      font-size: 21px;
+      animation: moreBooksFinger 1.3s ease-in-out infinite;
+    }
+
+    @keyframes moreBooksFinger {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    .books-more-hint {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
     .books {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2969,12 +3012,19 @@ return true;
      BOOKS
   ===================================================== */
 
+  const BOOKS_INITIAL_LIMIT = 6;
+  const BOOKS_LOAD_STEP = 6;
+  let visibleBooksCount = BOOKS_INITIAL_LIMIT;
+
   function renderBooks(list = currentBooks) {
 
     const container =
       document.getElementById("books");
 
     if (!container) return;
+
+    const oldMoreWrap = container.parentNode.querySelector(".books-more-wrap");
+    if (oldMoreWrap) oldMoreWrap.remove();
 
     if (!list.length) {
 
@@ -2989,7 +3039,9 @@ return true;
       return;
     }
 
-    container.innerHTML = list.map(book => {
+    const visibleList = list.slice(0, visibleBooksCount);
+
+    container.innerHTML = visibleList.map(book => {
 
       const realIndex =
         books.findIndex(
@@ -3125,6 +3177,20 @@ const stars =
 
     }).join("");
 
+    const moreWrap = document.createElement("div");
+    moreWrap.className = "books-more-wrap";
+
+    if (list.length > visibleBooksCount) {
+      moreWrap.innerHTML =
+        '<div><button class="books-more-btn" type="button" onclick="showMoreBooks()">عرض مزيد من الكتب <span class="more-finger" aria-hidden="true">👇</span></button><div class="books-more-hint">اضغط لعرض 6 كتب إضافية</div></div>';
+    }
+
+    container.parentNode.insertBefore(moreWrap, container.nextSibling);
+  }
+
+  function showMoreBooks() {
+    visibleBooksCount += BOOKS_LOAD_STEP;
+    renderBooks(currentBooks);
   }
 
   /* =====================================================
@@ -3472,12 +3538,15 @@ soldCount:
 
       currentBooks =
         [...books];
+      visibleBooksCount = BOOKS_INITIAL_LIMIT;
 
       renderBooks();
 
       return;
 
     }
+
+    visibleBooksCount = BOOKS_INITIAL_LIMIT;
 
     currentBooks =
       books.filter(book => {
@@ -3535,6 +3604,8 @@ soldCount:
       button.classList.add("active");
 
     }
+
+    visibleBooksCount = BOOKS_INITIAL_LIMIT;
 
     if (category === "all") {
 
