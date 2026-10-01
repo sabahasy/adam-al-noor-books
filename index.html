@@ -3107,8 +3107,8 @@ return true;
     manager.className = "book-order-manager";
     manager.innerHTML =
       '<strong>🔐 تحكم المدير في ترتيب الكتب</strong>' +
-      '<span><span class="manager-finger" aria-hidden="true">☝️</span> اضغط مطولًا على علامة السحب ثم حرّك الكتاب إلى المكان الذي تريده.</span>' +
-      '<span id="bookOrderStatus" class="book-order-status">سيتم حفظ الترتيب تلقائيًا.</span>';
+      '<span><span class="manager-finger" aria-hidden="true">☝️</span> تظهر لك جميع الكتب هنا — اضغط مطولًا على علامة السحب واسحب أي كتاب إلى مكان كتاب آخر، مثل نقل رقم 1 إلى رقم 3 أو رقم 6 إلى رقم 22.</span>' +
+      '<span id="bookOrderStatus" class="book-order-status">سيتم حفظ الترتيب تلقائيًا بعد الانتهاء من السحب.</span>';
     container.parentNode.insertBefore(manager, container);
   }
 
@@ -3321,7 +3321,9 @@ return true;
       return;
     }
 
-    const visibleList = list.slice(0, visibleBooksCount);
+    const visibleList = canManageBookOrder()
+      ? list
+      : list.slice(0, visibleBooksCount);
 
     container.innerHTML = visibleList.map(book => {
 
@@ -3471,7 +3473,7 @@ const stars =
     const moreWrap = document.createElement("div");
     moreWrap.className = "books-more-wrap";
 
-    if (list.length > visibleBooksCount) {
+    if (!canManageBookOrder() && list.length > visibleBooksCount) {
       moreWrap.innerHTML =
         '<div><button class="books-more-btn" type="button" onclick="showMoreBooks()">عرض مزيد من الكتب <span class="more-finger" aria-hidden="true">👇</span></button><div class="books-more-hint">اضغط لعرض المزيد من الكتب</div></div>';
     }
