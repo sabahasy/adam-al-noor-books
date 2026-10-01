@@ -381,6 +381,48 @@
       box-shadow: 0 0 0 3px rgba(201,162,39,.12);
     }
 
+    .categories-guide {
+      margin: 10px 0 8px;
+      padding: 15px 18px;
+      border: 1px solid rgba(201,162,39,.28);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #fffdf7, #f7f1df);
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,.04);
+    }
+
+    .categories-guide-title {
+      color: var(--black);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .categories-guide-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .categories-guide-text strong {
+      display: block;
+      color: var(--gold-dark);
+      margin-top: 2px;
+    }
+
+    .categories-guide-arrow {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+      margin-top: 5px;
+      animation: categoryArrowBounce 1.4s ease-in-out infinite;
+    }
+
+    @keyframes categoryArrowBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
     .categories {
       display: flex;
       gap: 9px;
@@ -2031,6 +2073,15 @@ footer li:hover {
           oninput="searchBooks()"
         >
 
+      </div>
+
+      <div class="categories-guide" aria-label="إرشادات اختيار فئة الكتب">
+        <div class="categories-guide-title">📚 ابحث عن كتابك بسهولة</div>
+        <div class="categories-guide-text">
+          هل تبحث عن كتاب للأطفال، التاريخ، التنمية، أو الكتب الدراسية؟
+          <strong>✨ اختر الفئة المناسبة لك لتصل إلى كتابك المفضل بسرعة.</strong>
+        </div>
+        <span class="categories-guide-arrow" aria-hidden="true">👇</span>
       </div>
 
       <div id="categories" class="categories">
