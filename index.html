@@ -3095,7 +3095,7 @@ return true;
   function canManageBookOrder() {
     if (!isManager) return false;
     if (!currentBooks.length || currentBooks.length !== books.length) return false;
-    return currentBooks.every((book, index) => String(book.id) === String(books[index]?.id));
+    return true;
   }
 
   function renderBookOrderManager(container) {
@@ -4583,7 +4583,8 @@ if (ratingMessage) {
       if (!response.ok) return;
 
       const profiles = await response.json();
-      isManager = profiles?.[0]?.role === "admin";
+      const managerRole = String(profiles?.[0]?.role || "").trim().toLowerCase();
+      isManager = managerRole === "admin";
       if (isManager) managerAccessToken = token;
       renderBooks();
     } catch (error) {
