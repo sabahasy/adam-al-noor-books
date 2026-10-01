@@ -4705,6 +4705,7 @@ async function loginUser() {
       }
 
       showLoggedUser(data.user);
+      await checkManagerAccess(data.user?.id, data.access_token);
 
       showStatus(
         "loginStatus",
