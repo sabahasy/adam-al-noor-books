@@ -1762,6 +1762,116 @@ footer li:hover {
   }
 }
 
+
+    /* ================= OTHER ADAM AL NOOR STORES ================= */
+
+    .other-stores {
+      margin-bottom: 24px;
+      padding: 22px;
+      border-radius: 20px;
+      border: 1px solid rgba(201,162,39,.28);
+      background:
+        radial-gradient(circle at 90% 10%, rgba(201,162,39,.13), transparent 30%),
+        linear-gradient(135deg, #fffdf7, #f7f1df);
+      box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+
+    .other-stores-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 7px;
+      color: #171717;
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    .other-stores-intro {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .store-links {
+      display: grid;
+      gap: 9px;
+    }
+
+    .store-link {
+      display: block;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(31,31,31,.08);
+      transition: .2s;
+    }
+
+    .store-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(201,162,39,.35);
+      box-shadow: 0 7px 18px rgba(0,0,0,.06);
+    }
+
+    .store-link strong {
+      display: block;
+      color: #222;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .store-link-url {
+      display: block;
+      color: #9a7412;
+      font-size: 11px;
+      direction: ltr;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    .crypto-notice {
+      margin-top: 17px;
+      padding: 15px 16px;
+      border-radius: 15px;
+      background: #171717;
+      color: #fff;
+      border: 1px solid rgba(201,162,39,.35);
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+    }
+
+    .crypto-notice strong {
+      display: block;
+      color: #f4d76a;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .crypto-notice p {
+      color: #ddd;
+      font-size: 12px;
+      line-height: 1.9;
+      margin: 0 0 8px;
+    }
+
+    .crypto-link {
+      display: block;
+      color: #f4d76a;
+      font-size: 12px;
+      font-weight: bold;
+      direction: ltr;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    @media (max-width: 520px) {
+      .other-stores {
+        padding: 18px;
+      }
+
+      .other-stores-title {
+        font-size: 17px;
+      }
+    }
+
   </style>
 </head>
 
@@ -2067,6 +2177,69 @@ footer li:hover {
   <div class="container">
 
     <div class="panel auth-box">
+
+
+      <div class="other-stores">
+
+        <div class="other-stores-title">
+          🌐 متاجر آدم النور
+        </div>
+
+        <div class="other-stores-intro">
+          يمكنك أيضًا زيارة متاجرنا الأخرى واختيار المتجر المناسب لك:
+        </div>
+
+        <div class="store-links">
+
+          <a
+            class="store-link"
+            href="https://project-akmpg.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>🔹 المتجر الأول</strong>
+            <span class="store-link-url">https://project-akmpg.vercel.app/</span>
+          </a>
+
+          <a
+            class="store-link"
+            href="https://adamalnoorbooks.thewayl.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>🔹 المتجر الثاني</strong>
+            <span class="store-link-url">https://adamalnoorbooks.thewayl.com/</span>
+          </a>
+
+          <a
+            class="store-link"
+            href="https://adamalnoor.sellix.cx/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>🔹 المتجر الثالث</strong>
+            <span class="store-link-url">https://adamalnoor.sellix.cx/</span>
+          </a>
+
+        </div>
+
+        <div class="crypto-notice">
+          <strong>💰 الدفع بالكريبتو أو USDT</strong>
+          <p>
+            إذا كنت ترغب بالدفع باستخدام العملات الرقمية أو USDT،
+            يمكنك إتمام عملية الشراء من متجر آدم النور المخصص لذلك:
+          </p>
+          <a
+            class="crypto-link"
+            href="https://adamalnoor.sellix.cx/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://adamalnoor.sellix.cx/
+          </a>
+        </div>
+
+      </div>
 
       <div id="loginBox">
 
