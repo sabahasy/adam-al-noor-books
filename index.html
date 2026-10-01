@@ -423,6 +423,23 @@
       50% { transform: translateY(5px); }
     }
 
+    .category-count-summary {
+      margin: 10px 0 4px;
+      padding: 11px 15px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fffdf7, #f7f1df);
+      border: 1px solid rgba(201,162,39,.24);
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      box-shadow: 0 5px 16px rgba(0,0,0,.035);
+    }
+
+    .category-count-summary strong {
+      color: var(--gold-dark);
+      font-size: 15px;
+    }
+
     .categories {
       display: flex;
       gap: 9px;
@@ -2105,6 +2122,10 @@ footer li:hover {
       </button>
     </div>
 
+      <div id="categoryCountSummary" class="category-count-summary" aria-live="polite">
+        📚 <strong>جميع الكتب</strong> — متوفر حاليًا <strong>عدد الكتب</strong>
+      </div>
+
       <div id="books" class="books">
 
         <div class="empty">
@@ -3265,6 +3286,11 @@ soldCount:
 
       await loadCategories();
 
+      updateCategoryCountSummary(
+        "all",
+        books.length
+      );
+
     } catch (error) {
 
       console.error(error);
@@ -3370,6 +3396,23 @@ soldCount:
      CATEGORY FILTER
   ===================================================== */
 
+  function updateCategoryCountSummary(category, count) {
+
+    const summary =
+      document.getElementById("categoryCountSummary");
+
+    if (!summary) return;
+
+    const categoryName =
+      category === "all"
+        ? "جميع الكتب"
+        : category;
+
+    summary.innerHTML =
+      `📚 <strong>${escapeHTML(categoryName)}</strong> — عدد الكتب في هذه الفئة: <strong>${Number(count).toLocaleString("ar-IQ")}</strong> كتابًا`;
+
+  }
+
   function filterCategory(category, button) {
 
     document
@@ -3406,6 +3449,11 @@ soldCount:
     }
 
     renderBooks();
+
+    updateCategoryCountSummary(
+      category,
+      currentBooks.length
+    );
 
   }
 
