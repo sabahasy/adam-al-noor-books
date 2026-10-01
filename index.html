@@ -3439,6 +3439,57 @@ soldCount:
 
         }));
 
+      /* =====================================================
+         FEATURED BOOKS — ترتيب مختار من إدارة المتجر
+      ===================================================== */
+
+      const featuredBookMatchers = [
+        ["أسرار السلام الداخلي"],
+        ["ملزمة الاحياء للسادس", "ملزمة الأحياء للسادس"],
+        ["أدولف هيتلر"],
+        ["سلسلة آدم الصغير", "سلسلة ادم الصغير"],
+        ["أسرار الفراعنة", "اسرار الفراعنة"],
+        ["سلسلة الحديقة الجميلة"]
+      ];
+
+      function normalizeBookTitle(value) {
+        return String(value || "")
+          .toLowerCase()
+          .replace(/[ًٌٍَُِّْـ]/g, "")
+          .replace(/[أإآ]/g, "ا")
+          .replace(/ى/g, "ي")
+          .replace(/ة/g, "ه")
+          .replace(/[^؀-ۿa-z0-9]+/g, " ")
+          .replace(/s+/g, " ")
+          .trim();
+      }
+
+      const featuredTitles =
+        featuredBookMatchers.map(group =>
+          group.map(normalizeBookTitle)
+        );
+
+      const featuredBooks = [];
+      const remainingBooks = [];
+
+      books.forEach(book => {
+        const title = normalizeBookTitle(book.title);
+
+        const featuredIndex =
+          featuredTitles.findIndex(group =>
+            group.some(keyword => title.includes(keyword))
+          );
+
+        if (featuredIndex >= 0) {
+          featuredBooks[featuredIndex] = book;
+        } else {
+          remainingBooks.push(book);
+        }
+      });
+
+      books =
+        featuredBooks.filter(Boolean).concat(remainingBooks);
+
       currentBooks =
         [...books];
 
