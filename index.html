@@ -3152,7 +3152,15 @@ return true;
         );
 
         if (!response.ok) {
-          throw new Error("HTTP " + response.status + " عند الكتاب رقم " + (index + 1));
+          let errorDetails = "";
+          try {
+            errorDetails = await response.text();
+          } catch {}
+          throw new Error(
+            "HTTP " + response.status +
+            " عند الكتاب رقم " + (index + 1) +
+            (errorDetails ? ": " + errorDetails : "")
+          );
         }
 
         setBookOrderStatus("⏳ جارٍ حفظ الترتيب... " + (index + 1) + "/" + currentBooks.length);
