@@ -3321,9 +3321,7 @@ return true;
       return;
     }
 
-    const visibleList = canManageBookOrder()
-      ? list
-      : list.slice(0, visibleBooksCount);
+    const visibleList = list.slice(0, visibleBooksCount);
 
     container.innerHTML = visibleList.map(book => {
 
@@ -3473,7 +3471,7 @@ const stars =
     const moreWrap = document.createElement("div");
     moreWrap.className = "books-more-wrap";
 
-    if (!canManageBookOrder() && list.length > visibleBooksCount) {
+    if (list.length > visibleBooksCount) {
       moreWrap.innerHTML =
         '<div><button class="books-more-btn" type="button" onclick="showMoreBooks()">عرض مزيد من الكتب <span class="more-finger" aria-hidden="true">👇</span></button><div class="books-more-hint">اضغط لعرض المزيد من الكتب</div></div>';
     }
