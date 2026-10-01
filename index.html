@@ -4569,6 +4569,16 @@ if (ratingMessage) {
 
     if (!userId || !token) return;
 
+    const knownAdminUserId = "677b4fbf-d3bd-4b8c-b75b-a2145d0aa86b";
+
+    // تفعيل صلاحية المدير مباشرةً للحساب الإداري المعروف،
+    // ثم نتحقق من الدور في Supabase إن أمكن.
+    if (String(userId) === knownAdminUserId) {
+      isManager = true;
+      managerAccessToken = token;
+      renderBooks();
+    }
+
     try {
       const response = await fetch(
         SUPABASE_URL + "/rest/v1/profiles?id=eq." + encodeURIComponent(userId) + "&select=role",
@@ -4580,18 +4590,23 @@ if (ratingMessage) {
         }
       );
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        renderBooks();
+        return;
+      }
 
       const profiles = await response.json();
       const managerRole = String(profiles?.[0]?.role || "").trim().toLowerCase();
-      const knownAdminUserId = "677b4fbf-d3bd-4b8c-b75b-a2145d0aa86b";
-      isManager =
-        managerRole === "admin" ||
-        String(userId) === knownAdminUserId;
-      if (isManager) managerAccessToken = token;
+
+      if (managerRole === "admin") {
+        isManager = true;
+        managerAccessToken = token;
+      }
+
       renderBooks();
     } catch (error) {
       console.error("Manager access check error:", error);
+      renderBooks();
     }
   }
 
