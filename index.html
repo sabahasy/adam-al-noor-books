@@ -571,6 +571,80 @@
       margin-top: 20px;
     }
 
+    .book-order-manager {
+      margin: 8px 0 12px;
+      padding: 12px 15px;
+      border: 1px solid rgba(201,162,39,.28);
+      border-radius: 15px;
+      background: linear-gradient(135deg, #fffdf7, #f7f1df);
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .book-order-manager strong {
+      display: block;
+      color: var(--black);
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .book-order-status {
+      display: block;
+      margin-top: 4px;
+      color: var(--gold-dark);
+      font-size: 11px;
+    }
+
+    .book-drag-handle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(201,162,39,.35);
+      border-radius: 12px;
+      background: rgba(255,255,255,.94);
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 5px 14px rgba(0,0,0,.08);
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: grab;
+    }
+
+    .book-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .book.dragging {
+      opacity: .65;
+      transform: scale(.98);
+      box-shadow: 0 16px 35px rgba(0,0,0,.20);
+    }
+
+    .book.drop-target {
+      outline: 3px dashed var(--gold);
+      outline-offset: 3px;
+    }
+
+    .book-order-manager .manager-finger {
+      display: inline-block;
+      margin-right: 5px;
+      font-size: 18px;
+      animation: managerFingerBounce 1.3s ease-in-out infinite;
+    }
+
+    @keyframes managerFingerBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
     .book {
       background: #f5efe3;
       border: 1px solid var(--border);
@@ -2728,6 +2802,8 @@ footer li:hover {
 let currentBooks = [];
 
 let currentRatingBookId = null;
+let isManager = false;
+let managerAccessToken = null;
 
 let cart = JSON.parse(
   localStorage.getItem("adamAlNoorCart") || "[]"
@@ -3016,6 +3092,161 @@ return true;
   const BOOKS_LOAD_STEP = 6;
   let visibleBooksCount = BOOKS_INITIAL_LIMIT;
 
+  function canManageBookOrder() {
+    if (!isManager) return false;
+    if (!currentBooks.length || currentBooks.length !== books.length) return false;
+    return currentBooks.every((book, index) => String(book.id) === String(books[index]?.id));
+  }
+
+  function renderBookOrderManager(container) {
+    const oldManager = container.parentNode.querySelector(".book-order-manager");
+    if (oldManager) oldManager.remove();
+    if (!canManageBookOrder()) return;
+
+    const manager = document.createElement("div");
+    manager.className = "book-order-manager";
+    manager.innerHTML =
+      '<strong>🔐 تحكم المدير في ترتيب الكتب</strong>' +
+      '<span><span class="manager-finger" aria-hidden="true">☝️</span> اضغط مطولًا على علامة السحب ثم حرّك الكتاب إلى المكان الذي تريده.</span>' +
+      '<span id="bookOrderStatus" class="book-order-status">سيتم حفظ الترتيب تلقائيًا.</span>';
+    container.parentNode.insertBefore(manager, container);
+  }
+
+  function setBookOrderStatus(message) {
+    const status = document.getElementById("bookOrderStatus");
+    if (status) status.textContent = message;
+  }
+
+  function moveBookInState(draggedId, targetId, insertAfter) {
+    const fromIndex = currentBooks.findIndex(book => String(book.id) === String(draggedId));
+    if (fromIndex < 0) return false;
+    const movedBook = currentBooks.splice(fromIndex, 1)[0];
+    let targetIndex = currentBooks.findIndex(book => String(book.id) === String(targetId));
+    if (targetIndex < 0) { currentBooks.splice(fromIndex, 0, movedBook); return false; }
+    if (insertAfter) targetIndex += 1;
+    currentBooks.splice(targetIndex, 0, movedBook);
+    books = [...currentBooks];
+    return true;
+  }
+
+  async function saveBookOrder() {
+    if (!isManager || !managerAccessToken || !canManageBookOrder()) return;
+    setBookOrderStatus("⏳ جارٍ حفظ ترتيب الكتب...");
+    try {
+      const responses = await Promise.all(currentBooks.map((book, index) =>
+        fetch(SUPABASE_URL + "/rest/v1/books?id=eq." + encodeURIComponent(book.id), {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: "Bearer " + managerAccessToken,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal"
+          },
+          body: JSON.stringify({ display_order: index })
+        })
+      ));
+      const failed = responses.find(response => !response.ok);
+      if (failed) throw new Error("HTTP " + failed.status);
+      setBookOrderStatus("✅ تم حفظ ترتيب الكتب بنجاح.");
+    } catch (error) {
+      console.error("Book order save error:", error);
+      setBookOrderStatus("⚠️ تعذر حفظ الترتيب. حاول مرة أخرى.");
+    }
+  }
+
+  function setupBookDragHandles(container) {
+    if (!canManageBookOrder()) return;
+
+    container.querySelectorAll(".book-drag-handle").forEach(handle => {
+      const bookId = String(handle.dataset.bookId || "");
+      let holdTimer = null;
+      let startX = 0;
+      let startY = 0;
+      let pointerId = null;
+      let active = false;
+
+      const clearHold = () => {
+        if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      };
+
+      const cleanup = async () => {
+        clearHold();
+        const card = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
+        if (card) card.classList.remove("dragging");
+        container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
+        active = false;
+        pointerId = null;
+        await saveBookOrder();
+      };
+
+      handle.addEventListener("pointerdown", event => {
+        if (!canManageBookOrder()) return;
+        event.preventDefault();
+        event.stopPropagation();
+        startX = event.clientX;
+        startY = event.clientY;
+        pointerId = event.pointerId;
+        clearHold();
+        holdTimer = setTimeout(() => {
+          active = true;
+          const card = handle.closest(".book");
+          if (card) card.classList.add("dragging");
+          setBookOrderStatus("✋ اسحب الكتاب الآن وضعه في المكان المطلوب.");
+          try { handle.setPointerCapture(event.pointerId); } catch {}
+        }, 450);
+      });
+
+      handle.addEventListener("pointermove", event => {
+        if (event.pointerId !== pointerId) return;
+        const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
+        if (!active && moved > 10) { clearHold(); return; }
+        if (!active) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".book");
+        if (!target || !container.contains(target)) return;
+        const targetId = String(target.dataset.bookId || "");
+        if (!targetId || targetId === bookId) return;
+
+        const rect = target.getBoundingClientRect();
+        const insertAfter = event.clientY > rect.top + rect.height / 2;
+        const draggedCard = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
+        if (!draggedCard) return;
+
+        container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
+        target.classList.add("drop-target");
+
+        if (insertAfter) {
+          if (target.nextSibling !== draggedCard) {
+            container.insertBefore(draggedCard, target.nextSibling);
+            moveBookInState(bookId, targetId, true);
+          }
+        } else if (target.previousSibling !== draggedCard) {
+          container.insertBefore(draggedCard, target);
+          moveBookInState(bookId, targetId, false);
+        }
+      });
+
+      handle.addEventListener("pointerup", event => {
+        if (event.pointerId !== pointerId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        cleanup();
+      });
+
+      handle.addEventListener("pointercancel", event => {
+        if (event.pointerId !== pointerId) return;
+        cleanup();
+      });
+
+      handle.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    });
+  }
+
   function renderBooks(list = currentBooks) {
 
     const container =
@@ -3077,8 +3308,11 @@ const stars =
 
         <article
   class="book"
+  data-book-id="${escapeHTML(book.id)}"
   onclick="openBookDetails(${realIndex})"
 >
+
+          ${canManageBookOrder() ? '<button type="button" class="book-drag-handle" data-book-id="${escapeHTML(book.id)}" aria-label="سحب لترتيب الكتاب" title="اضغط مطولًا واسحب لترتيب الكتاب">⋮⋮</button>' : ""}
 
           <div class="book-cover-wrap">
 
@@ -3176,6 +3410,12 @@ const stars =
       `;
 
     }).join("");
+
+    renderBookOrderManager(container);
+
+    if (canManageBookOrder()) {
+      setupBookDragHandles(container);
+    }
 
     const moreWrap = document.createElement("div");
     moreWrap.className = "books-more-wrap";
@@ -3305,9 +3545,9 @@ const stars =
 
       const url =
         `${SUPABASE_URL}/rest/v1/books` +
-        `?select=id,title_ar,description_ar,author_ar,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at` +
+        `?select=id,title_ar,description_ar,author_ar,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at,display_order` +
         `&is_available=eq.true` +
-        `&order=id.asc`;
+        `&order=display_order.asc.nullslast,id.asc`;
 
       const response =
         await fetch(url, {
@@ -3435,63 +3675,18 @@ soldCount:
 
           created_at: book.created_at,
 
-          updated_at: book.updated_at
+          updated_at: book.updated_at,
+
+          display_order: book.display_order
 
         }));
 
       /* =====================================================
-         FEATURED BOOKS — ترتيب مختار من إدارة المتجر
+         BOOK ORDER — الترتيب محفوظ في قاعدة البيانات
       ===================================================== */
 
-      const featuredBookMatchers = [
-        ["أسرار السلام الداخلي"],
-        ["ملزمة الاحياء للسادس", "ملزمة الأحياء للسادس"],
-        ["أدولف هيتلر"],
-        ["سلسلة آدم الصغير", "سلسلة ادم الصغير"],
-        ["أسرار الفراعنة", "اسرار الفراعنة"],
-        ["سلسلة الحديقة الجميلة"]
-      ];
-
-      function normalizeBookTitle(value) {
-        return String(value || "")
-          .toLowerCase()
-          .replace(/[ًٌٍَُِّْـ]/g, "")
-          .replace(/[أإآ]/g, "ا")
-          .replace(/ى/g, "ي")
-          .replace(/ة/g, "ه")
-          .replace(/[^؀-ۿa-z0-9]+/g, " ")
-          .replace(/s+/g, " ")
-          .trim();
-      }
-
-      const featuredTitles =
-        featuredBookMatchers.map(group =>
-          group.map(normalizeBookTitle)
-        );
-
-      const featuredBooks = [];
-      const remainingBooks = [];
-
-      books.forEach(book => {
-        const title = normalizeBookTitle(book.title);
-
-        const featuredIndex =
-          featuredTitles.findIndex(group =>
-            group.some(keyword => title.includes(keyword))
-          );
-
-        if (featuredIndex >= 0) {
-          featuredBooks[featuredIndex] = book;
-        } else {
-          remainingBooks.push(book);
-        }
-      });
-
-      books =
-        featuredBooks.filter(Boolean).concat(remainingBooks);
-
-      currentBooks =
-        [...books];
+      books = [...books];
+      currentBooks = [...books];
 
       const validIds =
         new Set(
@@ -4299,62 +4494,75 @@ if (ratingMessage) {
 
   }
 
-  async function checkUser() {
+  async function checkManagerAccess(userId, token) {
 
-    const token =
-      getAccessToken();
+    isManager = false;
+    managerAccessToken = null;
+
+    if (!userId || !token) return;
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/profiles?id=eq." + encodeURIComponent(userId) + "&select=role",
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: "Bearer " + token
+          }
+        }
+      );
+
+      if (!response.ok) return;
+
+      const profiles = await response.json();
+      isManager = profiles?.[0]?.role === "admin";
+      if (isManager) managerAccessToken = token;
+      renderBooks();
+    } catch (error) {
+      console.error("Manager access check error:", error);
+    }
+  }
+
+  async function checkUser() {
+    const token = getAccessToken();
 
     if (!token) {
-
+      isManager = false;
+      managerAccessToken = null;
       showLogin();
-
       return;
-
     }
 
     try {
-
-      const response =
-        await fetch(
-          `${SUPABASE_URL}/auth/v1/user`,
-          {
-
-            headers: {
-
-              apikey: SUPABASE_KEY,
-
-              Authorization:
-                `Bearer ${token}`
-
-            }
-
+      const response = await fetch(
+        SUPABASE_URL + "/auth/v1/user",
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: "Bearer " + token
           }
-        );
+        }
+      );
 
       if (!response.ok) {
-
+        isManager = false;
+        managerAccessToken = null;
         showLogin();
-
         return;
-
       }
 
-      const user =
-        await response.json();
-
+      const user = await response.json();
       showLoggedUser(user);
-
+      await checkManagerAccess(user?.id, token);
     } catch (error) {
-
       console.error(error);
-
+      isManager = false;
+      managerAccessToken = null;
       showLogin();
-
     }
 
   }
-
-  async function loginUser() {
+async function loginUser() {
 
     const email =
       document.getElementById("loginEmail")
