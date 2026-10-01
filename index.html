@@ -633,6 +633,33 @@
       outline-offset: 3px;
     }
 
+    .book-order-toggle-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 6px;
+    }
+
+    .book-order-toggle-btn {
+      border: 1px solid rgba(201,162,39,.38);
+      border-radius: 13px;
+      padding: 10px 22px;
+      background: linear-gradient(135deg, #111111, #2d2d2d);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .book-order-toggle-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 9px 20px rgba(0,0,0,.16);
+    }
+
+    .book-order-toggle-btn:active {
+      transform: translateY(0);
+    }
+
     .book-order-list {
       margin-top: 12px;
       display: grid;
@@ -3186,6 +3213,23 @@ return true;
     return true;
   }
 
+  function toggleBookOrderList() {
+    if (!isManager) return;
+
+    const list = document.getElementById("bookOrderList");
+    const button = document.getElementById("bookOrderToggleButton");
+
+    if (!list || !button) return;
+
+    const isHidden = list.style.display === "none";
+
+    list.style.display = isHidden ? "grid" : "none";
+    button.setAttribute("aria-expanded", isHidden ? "true" : "false");
+    button.innerHTML = isHidden
+      ? "🔽 إخفاء ترتيب الكتب"
+      : "📚 إظهار ترتيب الكتب";
+  }
+
   function renderBookOrderManager(container) {
     const oldManager = container.parentNode.querySelector(".book-order-manager");
     if (oldManager) oldManager.remove();
@@ -3206,6 +3250,18 @@ return true;
     status.className = "book-order-status";
     status.textContent = "سيتم حفظ الترتيب تلقائيًا بعد الانتهاء من السحب.";
 
+    const toggleWrap = document.createElement("div");
+    toggleWrap.className = "book-order-toggle-wrap";
+
+    const toggleButton = document.createElement("button");
+    toggleButton.id = "bookOrderToggleButton";
+    toggleButton.type = "button";
+    toggleButton.className = "book-order-toggle-btn";
+    toggleButton.setAttribute("aria-expanded", "true");
+    toggleButton.setAttribute("aria-controls", "bookOrderList");
+    toggleButton.textContent = "🔽 إخفاء ترتيب الكتب";
+    toggleButton.onclick = toggleBookOrderList;
+
     const list = document.createElement("div");
     list.id = "bookOrderList";
     list.className = "book-order-list";
@@ -3221,7 +3277,7 @@ return true;
 
       const bookTitle = document.createElement("span");
       bookTitle.className = "book-order-title";
-      bookTitle.textContent = book.title || "بدون عنوان";
+      bookTitle.textContent = book.title || book.title_ar || "بدون عنوان";
 
       const handle = document.createElement("button");
       handle.type = "button";
@@ -3235,11 +3291,13 @@ return true;
       list.appendChild(item);
     });
 
-    manager.append(title, help, status, list);
+    toggleWrap.appendChild(toggleButton);
+    manager.append(title, help, status, toggleWrap, list);
     container.parentNode.insertBefore(manager, container);
 
     setupBookDragHandles(list);
   }
+
 
   function setBookOrderStatus(message) {
     const status = document.getElementById("bookOrderStatus");
