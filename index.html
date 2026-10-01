@@ -3157,97 +3157,121 @@ return true;
   function setupBookDragHandles(container) {
     if (!canManageBookOrder()) return;
 
-    container.querySelectorAll(".book-drag-handle").forEach(handle => {
-      const bookId = String(handle.dataset.bookId || "");
+    container.querySelectorAll(".book").forEach(card => {
+      const bookId = String(card.dataset.bookId || "");
+      if (!bookId) return;
+
       let holdTimer = null;
+      let pointerId = null;
       let startX = 0;
       let startY = 0;
-      let pointerId = null;
       let active = false;
+      let movedDuringDrag = false;
 
       const clearHold = () => {
-        if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+        if (holdTimer) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
       };
 
       const cleanup = async () => {
         const wasActive = active;
         clearHold();
-        const card = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
-        if (card) card.classList.remove("dragging");
+        card.classList.remove("dragging");
         container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
         active = false;
         pointerId = null;
 
         if (wasActive) {
+          setBookOrderStatus("⏳ جارٍ حفظ ترتيب الكتب...");
           await saveBookOrder();
         }
       };
 
-      handle.addEventListener("pointerdown", event => {
+      card.addEventListener("pointerdown", event => {
         if (!canManageBookOrder()) return;
+
+        const interactive = event.target.closest("a, button, input, textarea, select");
+        if (interactive && !event.target.closest(".book-drag-handle")) return;
+
         event.preventDefault();
         event.stopPropagation();
         startX = event.clientX;
         startY = event.clientY;
         pointerId = event.pointerId;
+        movedDuringDrag = false;
         clearHold();
+
         holdTimer = setTimeout(() => {
           active = true;
-          const card = handle.closest(".book");
-          if (card) card.classList.add("dragging");
+          card.classList.add("dragging");
           setBookOrderStatus("✋ اسحب الكتاب الآن وضعه في المكان المطلوب.");
-          try { handle.setPointerCapture(event.pointerId); } catch {}
+          try { card.setPointerCapture(event.pointerId); } catch {}
         }, 450);
       });
 
-      handle.addEventListener("pointermove", event => {
+      card.addEventListener("pointermove", event => {
         if (event.pointerId !== pointerId) return;
+
         const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
-        if (!active && moved > 10) { clearHold(); return; }
+
+        if (!active && moved > 10) {
+          clearHold();
+          return;
+        }
+
         if (!active) return;
+
         event.preventDefault();
         event.stopPropagation();
+        movedDuringDrag = true;
 
         const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".book");
         if (!target || !container.contains(target)) return;
+
         const targetId = String(target.dataset.bookId || "");
         if (!targetId || targetId === bookId) return;
 
         const rect = target.getBoundingClientRect();
         const insertAfter = event.clientY > rect.top + rect.height / 2;
-        const draggedCard = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
-        if (!draggedCard) return;
 
         container.querySelectorAll(".book.drop-target").forEach(item => item.classList.remove("drop-target"));
         target.classList.add("drop-target");
 
+        const currentCard = container.querySelector('.book[data-book-id="' + CSS.escape(bookId) + '"]');
+        if (!currentCard) return;
+
         if (insertAfter) {
-          if (target.nextSibling !== draggedCard) {
-            container.insertBefore(draggedCard, target.nextSibling);
+          if (target.nextSibling !== currentCard) {
+            container.insertBefore(currentCard, target.nextSibling);
             moveBookInState(bookId, targetId, true);
           }
-        } else if (target.previousSibling !== draggedCard) {
-          container.insertBefore(draggedCard, target);
+        } else if (target.previousSibling !== currentCard) {
+          container.insertBefore(currentCard, target);
           moveBookInState(bookId, targetId, false);
         }
       });
 
-      handle.addEventListener("pointerup", event => {
+      card.addEventListener("pointerup", event => {
         if (event.pointerId !== pointerId) return;
         event.preventDefault();
         event.stopPropagation();
         cleanup();
       });
 
-      handle.addEventListener("pointercancel", event => {
+      card.addEventListener("pointercancel", event => {
         if (event.pointerId !== pointerId) return;
         cleanup();
       });
 
-      handle.addEventListener("click", event => {
-        event.preventDefault();
-        event.stopPropagation();
-      });
+      card.addEventListener("click", event => {
+        if (movedDuringDrag) {
+          event.preventDefault();
+          event.stopPropagation();
+          movedDuringDrag = false;
+        }
+      }, true);
     });
   }
 
