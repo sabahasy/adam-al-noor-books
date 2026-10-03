@@ -207,7 +207,26 @@
     }
 
     .hero-wrap {
-      padding: 28px 0 10px;
+      padding: 22px 0 10px;
+    }
+
+    .store-banner {
+      width: 100%;
+      margin-bottom: 18px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #111;
+      border: 1px solid rgba(201,162,39,.22);
+      box-shadow: 0 14px 38px rgba(0,0,0,.16);
+      line-height: 0;
+    }
+
+    .store-banner img {
+      display: block;
+      width: 100%;
+      height: clamp(170px, 24vw, 300px);
+      object-fit: cover;
+      object-position: center;
     }
 
     .hero {
@@ -223,23 +242,6 @@
       align-items: center;
       padding: 55px;
       box-shadow: 0 20px 55px rgba(0,0,0,.18);
-    }
-
-    .hero.has-banner {
-      background-size: cover;
-      background-position: center;
-    }
-
-    .hero.has-banner::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        rgba(0,0,0,.88),
-        rgba(0,0,0,.68),
-        rgba(0,0,0,.25)
-      );
     }
 
     .hero-content {
@@ -2078,6 +2080,15 @@ footer li:hover {
 }
 
 @media (max-width: 520px) {
+  .store-banner {
+    margin-bottom: 14px;
+    border-radius: 17px;
+  }
+
+  .store-banner img {
+    height: 190px;
+  }
+
   .hero {
     min-height: 430px;
     padding: 32px 24px;
@@ -2264,6 +2275,15 @@ footer li:hover {
   <div class="container">
 
     <div class="hero-wrap">
+
+      <div class="store-banner" aria-label="مكتبة آدم النور للكتب الإلكترونية">
+        <img
+          id="storeBannerImage"
+          src=""
+          alt="مكتبة آدم النور للكتب الإلكترونية"
+          loading="eager"
+        >
+      </div>
 
       <div id="heroBanner" class="hero">
 
@@ -3151,15 +3171,12 @@ return true;
 
   function setupStoreBanner() {
 
-    const hero =
-      document.getElementById("heroBanner");
+    const image =
+      document.getElementById("storeBannerImage");
 
-    if (!hero || !STORE_BANNER_URL) return;
+    if (!image || !STORE_BANNER_URL) return;
 
-    hero.style.backgroundImage =
-      `url("${STORE_BANNER_URL}")`;
-
-    hero.classList.add("has-banner");
+    image.src = STORE_BANNER_URL;
 
   }
 
