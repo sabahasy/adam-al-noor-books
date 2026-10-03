@@ -212,6 +212,7 @@
 
     .store-banner {
       width: 100%;
+      aspect-ratio: 16 / 9;
       margin-bottom: 18px;
       border-radius: 22px;
       overflow: hidden;
@@ -224,8 +225,8 @@
     .store-banner img {
       display: block;
       width: 100%;
-      height: clamp(170px, 24vw, 300px);
-      object-fit: cover;
+      height: 100%;
+      object-fit: contain;
       object-position: center;
     }
 
@@ -2086,7 +2087,7 @@ footer li:hover {
   }
 
   .store-banner img {
-    height: 190px;
+    height: 100%;
   }
 
   .hero {
