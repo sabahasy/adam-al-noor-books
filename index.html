@@ -866,6 +866,12 @@
       color: #e0b72e;
     }
 
+    .book-views {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
     .book-sales {
       color: var(--muted);
       font-size: 11px;
@@ -3687,6 +3693,10 @@ const stars =
   }
 </div>
 
+            <div class="book-views">
+              👁️ مشاهدة ${book.viewCount || 0}
+            </div>
+
             <div class="book-sales">
               بيع ${book.soldCount || 0}
             </div>
@@ -3920,11 +3930,37 @@ const salesData =
     ? await salesResponse.json()
     : [];
 
+const viewsResponse =
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/rpc/get_public_book_view_counts`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: "{}"
+    }
+  );
+
+const viewsData =
+  viewsResponse.ok
+    ? await viewsResponse.json()
+    : [];
+
 const salesByBook = {};
 
 (salesData || []).forEach(item => {
   salesByBook[String(item.book_id)] =
     Number(item.sales_count || 0);
+});
+
+const viewsByBook = {};
+
+(viewsData || []).forEach(item => {
+  viewsByBook[String(item.book_id)] =
+    Number(item.views_count || 0);
 });
 
 const ratingsByBook = {};
@@ -3976,6 +4012,9 @@ ratingCount:
 
 soldCount:
   salesByBook[String(book.id)] || 0,
+
+viewCount:
+  viewsByBook[String(book.id)] || 0,
 
           cover_url: book.cover_url,
 
