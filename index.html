@@ -2591,6 +2591,9 @@ footer li:hover {
 .manager-only {
   display: none !important;
 }
+.manager-page.manager-hidden {
+  display: none !important;
+}
 body.manager-theme-active {
   transition: background .35s ease, color .35s ease;
 }
@@ -2737,7 +2740,7 @@ body.manager-theme-active {
         👤 حسابي
       </button>
 
-      <button id="managerNavBtn" class="nav-btn manager-only" onclick="showPage('manager')" style="display:none">
+      <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
         👑 المدير
       </button>
     </nav>
@@ -6468,10 +6471,9 @@ function syncManagerUI() {
   const button = document.getElementById("managerNavBtn");
   const page = document.getElementById("managerPage");
   if (button) {
-    button.classList.toggle("manager-only", !isManager);
     button.style.display = isManager ? "inline-flex" : "none";
   }
-  if (page) page.classList.toggle("manager-only", !isManager);
+  if (page) page.classList.toggle("manager-hidden", !isManager);
 }
 
 function managerOpenSection(section) {
