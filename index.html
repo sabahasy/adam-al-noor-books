@@ -17,6 +17,7 @@
     }
 
     :root {
+      --page-bg: #d8c4a8;
       --black: #111111;
       --black-soft: #1b1b1b;
       --gold: #c9a227;
@@ -34,7 +35,7 @@
 
     body {
       font-family: Arial, "Tahoma", sans-serif;
-      background: #d8c4a8;
+      background: var(--page-bg);
       color: var(--text);
       line-height: 1.7;
     }
@@ -6512,8 +6513,6 @@ async function downloadPDF(filePath) {
 
   setupStoreBanner();
 
-loadStoreTheme();
-
 renderBooks();
 
 updateCartCount();
@@ -6586,6 +6585,9 @@ async function loadStoreTheme() {
     applyStoreTheme(localStorage.getItem("adamNoorStoreTheme") || "classic");
   }
 }
+
+// تحميل الثيم بعد تعريف STORE_THEMES حتى يظهر الثيم المحفوظ للزوار عند فتح المتجر.
+loadStoreTheme();
 
 async function selectStoreTheme(themeId) {
   if (!isManager) {
