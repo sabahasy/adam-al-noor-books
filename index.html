@@ -209,6 +209,32 @@
 
     #homePage.page {
       padding-top: 0;
+      background: var(--page-bg);
+      transition: background .35s ease, color .35s ease;
+    }
+
+    #homePage .feature,
+    #homePage .stat,
+    #homePage .panel,
+    #homePage .about-card,
+    #homePage .empty {
+      background: color-mix(in srgb, var(--page-bg) 72%, white);
+      transition: background .35s ease, border-color .35s ease;
+    }
+
+    #homePage .search-box input,
+    #homePage .category-btn {
+      background: color-mix(in srgb, var(--page-bg) 55%, white);
+      transition: background .35s ease, color .35s ease, border-color .35s ease;
+    }
+
+    #homePage .categories-guide {
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--page-bg) 65%, white),
+        color-mix(in srgb, var(--gold) 12%, var(--page-bg))
+      );
+      transition: background .35s ease;
     }
 
     .hero-wrap {
