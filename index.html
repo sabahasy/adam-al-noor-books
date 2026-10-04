@@ -6608,32 +6608,34 @@ async function selectStoreTheme(themeId) {
   }
 
   try {
-    const response = await fetch(SUPABASE_URL + "/rest/v1/store_settings?id=eq.1", {
-      method: "PATCH",
+    const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/set_store_theme", {
+      method: "POST",
       headers: {
         apikey: SUPABASE_KEY,
         Authorization: "Bearer " + token,
         "Content-Type": "application/json",
-        Accept: "application/json",
-        Prefer: "return=representation"
+        Accept: "application/json"
       },
       body: JSON.stringify({
-        background_id: themeId,
-        updated_at: new Date().toISOString()
+        p_background_id: themeId
       })
     });
 
     const responseText = await response.text();
 
     if (!response.ok) {
-      console.error("Theme save error:", response.status, responseText);
+      console.error("Theme RPC save error:", response.status, responseText);
       throw new Error(responseText || ("HTTP " + response.status));
     }
 
-    if (status) status.textContent = "✅ تم حفظ الخلفية والثيم بنجاح، وستظهر للزوار.";
+    if (status) {
+      status.textContent = "✅ تم حفظ الخلفية بنجاح، وستظهر للزوار.";
+    }
   } catch (error) {
     console.error("Theme save error:", error);
-    if (status) status.textContent = "⚠️ تعذر حفظ الخلفية. تأكد من تسجيل الدخول كمدير ثم حاول مرة أخرى.";
+    if (status) {
+      status.textContent = "⚠️ تعذر حفظ الخلفية. حاول مرة أخرى.";
+    }
   }
 }
 
