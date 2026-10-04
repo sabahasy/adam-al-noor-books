@@ -2706,6 +2706,19 @@ body.manager-theme-active {
 .manager-stats {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;
 }
+.manager-stats-extra { margin-top:10px; }
+.manager-dashboard-grid {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px;
+}
+.manager-dashboard-grid > div {
+  min-width:0; padding:13px; border:1px solid var(--border); border-radius:15px; background:#fff;
+}
+.manager-dashboard-grid h3 { font-size:13px; margin-bottom:9px; }
+.manager-dashboard-grid .manager-list { max-height:260px; }
+@media (max-width: 900px) {
+  .manager-dashboard-grid { grid-template-columns:1fr; }
+}
+
 .manager-stat {
   padding:14px; border-radius:14px; background:var(--cream); text-align:center;
   border:1px solid rgba(201,162,39,.18);
@@ -3092,9 +3105,9 @@ body.manager-theme-active {
       <div class="container">
         <div class="discovery-head">
           <div class="discovery-title">
-            <small>✨ مختارات آدم النور</small>
-            <h2>كتب ننصحك باكتشافها</h2>
-            <p>اختيارات مميزة تظهر لك مباشرة في الصفحة الرئيسية.</p>
+            <small>💰 الأكثر مبيعًا</small>
+            <h2>الكتب الأكثر مبيعًا</h2>
+            <p>ترتيب تلقائي حسب عدد المبيعات الفعلية لكل كتاب.</p>
           </div>
         </div>
         <div id="featuredBooks" class="discovery-grid"></div>
@@ -3608,12 +3621,32 @@ body.manager-theme-active {
 
       <section id="managerAnalyticsSection" class="manager-section">
         <h2>📈 الإحصائيات</h2>
-        <p>الأرقام الحالية الظاهرة في المتجر.</p>
+        <p>الأرقام الحالية الظاهرة في المتجر مع مؤشرات تساعدك على متابعة الأداء بسرعة.</p>
         <div class="manager-stats">
           <div class="manager-stat"><strong id="managerAnalyticsBooks">—</strong><span>📚 الكتب</span></div>
           <div class="manager-stat"><strong id="managerAnalyticsVisitors">—</strong><span>👤 الزوار</span></div>
           <div class="manager-stat"><strong id="managerAnalyticsViews">—</strong><span>👁️ المشاهدات</span></div>
-          <div class="manager-stat"><strong id="managerAnalyticsSales">—</strong><span>🛒 المبيعات</span></div>
+          <div class="manager-stat"><strong id="managerAnalyticsSales">—</strong><span>🛒 الطلبات المدفوعة</span></div>
+        </div>
+        <div class="manager-stats manager-stats-extra">
+          <div class="manager-stat"><strong id="managerSalesTodayCount">—</strong><span>💰 مبيعات اليوم</span></div>
+          <div class="manager-stat"><strong id="managerSalesTodayAmount">—</strong><span>💵 قيمة اليوم</span></div>
+          <div class="manager-stat"><strong id="managerSalesMonthCount">—</strong><span>📅 مبيعات الشهر</span></div>
+          <div class="manager-stat"><strong id="managerSalesMonthAmount">—</strong><span>💵 قيمة الشهر</span></div>
+        </div>
+        <div class="manager-dashboard-grid">
+          <div>
+            <h3>🔥 أكثر الكتب مبيعًا</h3>
+            <div id="managerTopSalesBooks" class="manager-list"></div>
+          </div>
+          <div>
+            <h3>👁️ الأكثر مشاهدة</h3>
+            <div id="managerTopViewsBooks" class="manager-list"></div>
+          </div>
+          <div>
+            <h3>🆕 آخر الكتب المضافة</h3>
+            <div id="managerLatestBooks" class="manager-list"></div>
+          </div>
         </div>
       </section>
 
@@ -5041,9 +5074,9 @@ viewCount:
     const featured = document.getElementById("featuredBooks");
     const mostViewed = document.getElementById("mostViewedBooks");
     if (!books.length) return;
-    const featuredBooks = books.slice(0, 6);
-    if (featured) featured.innerHTML = featuredBooks.map(book => renderDiscoveryCard(book, "✨ مختارات آدم النور")).join("");
-    const mostViewedBooks = [...books].sort((a,b) => Number(b.viewCount || 0) - Number(a.viewCount || 0) || Number(a.id) - Number(b.id)).slice(0, 6);
+    const featuredBooks = [...books].sort((a,b) => Number(b.soldCount || 0) - Number(a.soldCount || 0) || Number(b.viewCount || 0) - Number(a.viewCount || 0) || Number(a.id) - Number(b.id)).slice(0, 6);
+    if (featured) featured.innerHTML = featuredBooks.map(book => renderDiscoveryCard(book, "💰 الأكثر مبيعًا")).join("");
+    const mostViewedBooks = [...books].sort((a,b) => Number(b.viewCount || 0) - Number(a.viewCount || 0) || Number(b.soldCount || 0) - Number(a.soldCount || 0) || Number(a.id) - Number(b.id)).slice(0, 6);
     if (mostViewed) mostViewed.innerHTML = mostViewedBooks.map(book => renderDiscoveryCard(book, "🔥 الأكثر مشاهدة")).join("");
   }
 
@@ -7065,6 +7098,63 @@ async function loadManagerPeopleData() {
     const salesAmount = paidOrders.reduce(
       (sum, o) => sum + Number(o.total_amount || 0), 0
     );
+
+    const now = new Date();
+    const todayKey = now.toLocaleDateString("en-CA");
+    const monthKey = todayKey.slice(0, 7);
+    const paidDate = order => new Date(order.paid_at || order.created_at || 0);
+    const isValidDate = date => !Number.isNaN(date.getTime());
+    const todayOrders = paidOrders.filter(order => {
+      const date = paidDate(order);
+      return isValidDate(date) && date.toLocaleDateString("en-CA") === todayKey;
+    });
+    const monthOrders = paidOrders.filter(order => {
+      const date = paidDate(order);
+      return isValidDate(date) && date.toLocaleDateString("en-CA").slice(0, 7) === monthKey;
+    });
+    const sumOrders = list => list.reduce((sum, order) => sum + Number(order.total_amount || 0), 0);
+
+    const formatIQD = value => Number(value || 0).toLocaleString("ar-IQ") + " د.ع";
+    ["managerSalesTodayCount","managerSalesMonthCount"].forEach((id, index) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = (index === 0 ? todayOrders.length : monthOrders.length).toLocaleString("ar-IQ");
+    });
+    const todayAmountEl = document.getElementById("managerSalesTodayAmount");
+    const monthAmountEl = document.getElementById("managerSalesMonthAmount");
+    if (todayAmountEl) todayAmountEl.textContent = formatIQD(sumOrders(todayOrders));
+    if (monthAmountEl) monthAmountEl.textContent = formatIQD(sumOrders(monthOrders));
+
+    const topSales = [...(books || [])].sort((a,b) =>
+      Number(b.soldCount || 0) - Number(a.soldCount || 0) ||
+      Number(b.viewCount || 0) - Number(a.viewCount || 0)
+    ).slice(0, 10);
+    const topViews = [...(books || [])].sort((a,b) =>
+      Number(b.viewCount || 0) - Number(a.viewCount || 0) ||
+      Number(b.soldCount || 0) - Number(a.soldCount || 0)
+    ).slice(0, 10);
+    const latestBooks = [...(books || [])].sort((a,b) =>
+      new Date(b.created_at || 0) - new Date(a.created_at || 0)
+    ).slice(0, 10);
+
+    const renderManagerBookList = (list, metric, emptyText) => {
+      if (!list.length) return '<div class="manager-list-item"><span>' + emptyText + '</span></div>';
+      return list.map((book, index) => {
+        const value = Number(book[metric] || 0).toLocaleString("ar-IQ");
+        const suffix = metric === "soldCount" ? " بيع" : metric === "viewCount" ? " مشاهدة" : "";
+        return '<div class="manager-list-item"><strong>' + (index + 1) + '. ' + escapeHTML(book.title || "بدون عنوان") + '</strong><span>' + value + suffix + '</span></div>';
+      }).join("");
+    };
+
+    const topSalesEl = document.getElementById("managerTopSalesBooks");
+    const topViewsEl = document.getElementById("managerTopViewsBooks");
+    const latestEl = document.getElementById("managerLatestBooks");
+    if (topSalesEl) topSalesEl.innerHTML = renderManagerBookList(topSales, "soldCount", "لا توجد مبيعات مسجلة بعد.");
+    if (topViewsEl) topViewsEl.innerHTML = renderManagerBookList(topViews, "viewCount", "لا توجد مشاهدات مسجلة بعد.");
+    if (latestEl) {
+      latestEl.innerHTML = latestBooks.length
+        ? latestBooks.map((book, index) => '<div class="manager-list-item"><strong>' + (index + 1) + '. ' + escapeHTML(book.title || "بدون عنوان") + '</strong><span>' + (book.created_at ? new Date(book.created_at).toLocaleDateString("ar-IQ") : "—") + '</span></div>').join("")
+        : '<div class="manager-list-item"><span>لا توجد كتب بعد.</span></div>';
+    }
 
     ["managerSalesCount","managerAnalyticsSales"].forEach(id => {
       const el = document.getElementById(id);
