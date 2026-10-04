@@ -26,9 +26,20 @@ export default async function handler(req, res) {
   });
 
   const data = await response.json();
-  return res.status(response.ok ? 200 : 502).json({
-    ok: Boolean(data.ok),
-    description: data.description || null,
-    webhook: webhookUrl
+  if (!data.ok) {
+    return res.status(response.ok ? 200 : 502).json({
+      ok: false,
+      description: data.description || null,
+      webhook: webhookUrl
+    });
+  }
+
+  const infoResponse = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`);
+  const info = await infoResponse.json();
+
+  return res.status(infoResponse.ok && info.ok ? 200 : 502).json({
+    ok: Boolean(info.ok),
+    description: info.description || null,
+    webhook: info.result || null
   });
 }
