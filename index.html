@@ -3340,6 +3340,7 @@ body.manager-theme-active {
         <div id="managerOrdersList" class="manager-list">
           <div class="manager-list-item"><span>اضغط تحديث البيانات لتحميل الطلبات.</span></div>
         </div>
+        <div id="managerSalesNote" class="manager-note">💰 سيتم حساب المبيعات من الطلبات المدفوعة فعليًا.</div>
       </section>
 
       <section id="managerCustomersSection" class="manager-section">
@@ -6591,10 +6592,21 @@ async function selectStoreTheme(themeId) {
     alert("هذه الميزة للمدير فقط.");
     return;
   }
+
+  const theme = STORE_THEMES[themeId];
+  if (!theme) return;
+
   applyStoreTheme(themeId);
+
   const status = document.getElementById("themeSaveStatus");
   if (status) status.textContent = "⏳ جارٍ حفظ الخلفية للمتجر...";
-  const token = getAccessToken();
+
+  const token = managerAccessToken || getAccessToken();
+  if (!token) {
+    if (status) status.textContent = "⚠️ انتهت جلسة المدير. سجّل الدخول من جديد.";
+    return;
+  }
+
   try {
     const response = await fetch(SUPABASE_URL + "/rest/v1/store_settings?id=eq.1", {
       method: "PATCH",
@@ -6602,15 +6614,26 @@ async function selectStoreTheme(themeId) {
         apikey: SUPABASE_KEY,
         Authorization: "Bearer " + token,
         "Content-Type": "application/json",
-        Prefer: "return=minimal"
+        Accept: "application/json",
+        Prefer: "return=representation"
       },
-      body: JSON.stringify({background_id: themeId, updated_at: new Date().toISOString()})
+      body: JSON.stringify({
+        background_id: themeId,
+        updated_at: new Date().toISOString()
+      })
     });
-    if (!response.ok) throw new Error("تعذر حفظ الخلفية");
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      console.error("Theme save error:", response.status, responseText);
+      throw new Error(responseText || ("HTTP " + response.status));
+    }
+
     if (status) status.textContent = "✅ تم حفظ الخلفية والثيم بنجاح، وستظهر للزوار.";
   } catch (error) {
-    if (status) status.textContent = "⚠️ تعذر حفظ الخلفية حالياً، وبقيت المعاينة على جهازك.";
-    console.error(error);
+    console.error("Theme save error:", error);
+    if (status) status.textContent = "⚠️ تعذر حفظ الخلفية. تأكد من تسجيل الدخول كمدير ثم حاول مرة أخرى.";
   }
 }
 
@@ -6648,65 +6671,123 @@ function managerOpenBookOrdering() {
 
 async function loadManagerPeopleData() {
   if (!isManager) return;
-  const token = getAccessToken();
+
+  const token = managerAccessToken || getAccessToken();
   if (!token) return;
-  const headers = {apikey: SUPABASE_KEY, Authorization:"Bearer " + token};
+
+  const headers = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + token
+  };
+
   try {
     const [ordersRes, profilesRes, libraryRes] = await Promise.all([
-      fetch(SUPABASE_URL + "/rest/v1/orders?select=id,total_amount,status,payment_status,created_at&order=created_at.desc&limit=12",{headers}),
-      fetch(SUPABASE_URL + "/rest/v1/profiles?select=id,full_name,role,created_at&order=created_at.desc&limit=20",{headers}),
+      fetch(SUPABASE_URL + "/rest/v1/orders?select=id,user_id,total_amount,status,payment_status,created_at,paid_at&order=created_at.desc&limit=100",{headers}),
+      fetch(SUPABASE_URL + "/rest/v1/profiles?select=id,full_name,role,created_at&order=created_at.desc&limit=100",{headers}),
       fetch(SUPABASE_URL + "/rest/v1/library?select=id,user_id,book_id,purchased_at&order=purchased_at.desc&limit=100",{headers})
     ]);
+
+    if (!ordersRes.ok) console.error("Orders HTTP:", ordersRes.status, await ordersRes.text());
+    if (!profilesRes.ok) console.error("Profiles HTTP:", profilesRes.status, await profilesRes.text());
+    if (!libraryRes.ok) console.error("Library HTTP:", libraryRes.status, await libraryRes.text());
+
     const orders = ordersRes.ok ? await ordersRes.json() : [];
     const profiles = profilesRes.ok ? await profilesRes.json() : [];
     const library = libraryRes.ok ? await libraryRes.json() : [];
 
     const ordersList = document.getElementById("managerOrdersList");
     if (ordersList) {
-      ordersList.innerHTML = orders.length ? orders.map(o => `
-        <div class="manager-list-item">
-          <strong>طلب #${o.id} — ${Number(o.total_amount||0).toLocaleString("ar-IQ")} د.ع</strong>
-          <span>${o.status || "—"} • ${o.payment_status || "—"} • ${new Date(o.created_at).toLocaleDateString("ar-IQ")}</span>
-        </div>`).join("") : '<div class="manager-list-item"><span>لا توجد طلبات متاحة.</span></div>';
+      ordersList.innerHTML = orders.length
+        ? orders.slice(0, 20).map(o => `
+          <div class="manager-list-item">
+            <strong>طلب #${escapeHTML(o.id)} — ${Number(o.total_amount||0).toLocaleString("ar-IQ")} د.ع</strong>
+            <span>${escapeHTML(o.status || "—")} • ${escapeHTML(o.payment_status || "—")} • ${o.created_at ? new Date(o.created_at).toLocaleDateString("ar-IQ") : "—"}</span>
+          </div>`).join("")
+        : '<div class="manager-list-item"><span>لا توجد طلبات متاحة.</span></div>';
     }
 
-    const customers = profiles.filter(p => p.role !== "admin");
+    const profileCustomers = profiles.filter(p => String(p.role || "").toLowerCase() !== "admin");
+    const orderCustomerIds = [...new Set(
+      orders.map(o => o.user_id).filter(Boolean).map(id => String(id))
+    )];
+
+    const customerIds = [...new Set([
+      ...profileCustomers.map(p => String(p.id)),
+      ...orderCustomerIds
+    ])];
+
     const cc = document.getElementById("managerCustomersCount");
     const lc = document.getElementById("managerLibraryCount");
-    if (cc) cc.textContent = customers.length;
-    if (lc) lc.textContent = library.length;
+    if (cc) cc.textContent = customerIds.length.toLocaleString("ar-IQ");
+    if (lc) lc.textContent = library.length.toLocaleString("ar-IQ");
+
+    const profileMap = new Map(
+      profiles.map(p => [String(p.id), p])
+    );
+
+    const customerRows = customerIds.slice(0, 20).map(id => {
+      const profile = profileMap.get(id);
+      const orderCount = orders.filter(o => String(o.user_id || "") === id).length;
+      return `
+        <div class="manager-list-item">
+          <strong>${escapeHTML(profile?.full_name || "عميل متجر")}</strong>
+          <span>${orderCount} طلب • ${escapeHTML(id.slice(0,8))}…</span>
+        </div>`;
+    });
+
     const list = document.getElementById("managerCustomersList");
-    if (list) list.innerHTML = customers.length ? customers.map(p => `
-      <div class="manager-list-item">
-        <strong>${escapeHTML(p.full_name || "عميل بدون اسم")}</strong>
-        <span>${new Date(p.created_at).toLocaleDateString("ar-IQ")} • ${escapeHTML(String(p.id).slice(0,8))}…</span>
-      </div>`).join("") : '<div class="manager-list-item"><span>لا توجد حسابات عملاء متاحة.</span></div>';
+    if (list) {
+      list.innerHTML = customerRows.length
+        ? customerRows.join("")
+        : '<div class="manager-list-item"><span>لا توجد حسابات عملاء أو طلبات مرتبطة بعد.</span></div>';
+    }
+
+    // المبيعات = الطلبات المدفوعة فعليًا، وليس مجموع مبيعات الكتب المعروض.
+    const paidOrders = orders.filter(o =>
+      String(o.status || "").toLowerCase() === "paid" ||
+      String(o.payment_status || "").toLowerCase() === "paid" ||
+      Boolean(o.paid_at)
+    );
+
+    const salesCount = paidOrders.length;
+    const salesAmount = paidOrders.reduce(
+      (sum, o) => sum + Number(o.total_amount || 0), 0
+    );
+
+    ["managerSalesCount","managerAnalyticsSales"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = salesCount.toLocaleString("ar-IQ");
+    });
+
+    const salesNote = document.getElementById("managerSalesNote");
+    if (salesNote) {
+      salesNote.textContent = "💰 " + salesCount.toLocaleString("ar-IQ") + " طلبًا مدفوعًا — إجمالي " + salesAmount.toLocaleString("ar-IQ") + " د.ع";
+    }
   } catch (error) {
     console.error("Manager data error:", error);
   }
 }
 
-function managerRefresh() {
-  const books = currentBooks?.length || 0;
-  const b = document.getElementById("managerBooksCount");
-  if (b) b.textContent = books;
-  const v = document.getElementById("managerVisitorsCount");
-  const w = document.getElementById("managerViewsCount");
-  const s = document.getElementById("managerSalesCount");
+async function managerRefresh() {
+  if (!isManager) return;
+
+  const booksCount = books?.length || currentBooks?.length || 0;
   const visitor = document.getElementById("visitorCount");
   const views = document.getElementById("viewCount");
-  if (v) v.textContent = visitor?.textContent || "—";
-  if (w) w.textContent = views?.textContent || "—";
-  const sales = currentBooks?.reduce((sum,bk)=>sum + Number(bk.sales_count || bk.sales || 0),0) || 0;
-  if (s) s.textContent = sales.toLocaleString("ar-IQ");
-  const ab = document.getElementById("managerAnalyticsBooks");
-  const av = document.getElementById("managerAnalyticsVisitors");
-  const aw = document.getElementById("managerAnalyticsViews");
-  const ass = document.getElementById("managerAnalyticsSales");
-  if (ab) ab.textContent = books;
-  if (av) av.textContent = visitor?.textContent || "—";
-  if (aw) aw.textContent = views?.textContent || "—";
-  if (ass) ass.textContent = sales.toLocaleString("ar-IQ");
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText("managerBooksCount", booksCount.toLocaleString("ar-IQ"));
+  setText("managerAnalyticsBooks", booksCount.toLocaleString("ar-IQ"));
+  setText("managerVisitorsCount", visitor?.textContent || "—");
+  setText("managerViewsCount", views?.textContent || "—");
+  setText("managerAnalyticsVisitors", visitor?.textContent || "—");
+  setText("managerAnalyticsViews", views?.textContent || "—");
+
+  await loadManagerPeopleData();
 }
 </script>
 </body>
