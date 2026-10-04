@@ -13,6 +13,17 @@ function cleanText(value) {
   return String(value || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
 }
 
+function normalizeSearchText(value) {
+  return cleanText(value)
+    .replace(/[\u0640]/g, "")
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/[إأآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .toLowerCase();
+}
+
 function makeCaption(book) {
   const title = cleanText(book.title_ar || book.title || "كتاب جديد");
   const description = cleanText(book.description_ar || book.description || "");
@@ -32,17 +43,27 @@ ${short}
 export async function findBook(title) {
   const sb = supabaseAdmin();
   const q = cleanText(title);
+  const normalizedQuery = normalizeSearchText(q);
   if (!q) throw new Error("اكتب اسم الكتاب بعد أمر النشر.");
 
+  // عناوين المتجر قد تحتوي على تطويل عربي (مثل: كوالــيس العقــل).
+  // لذلك نطبّع العنوان ثم نبحث داخل النتائج بدل الاعتماد على ilike مباشرة.
   const { data, error } = await sb
     .from("books")
     .select("*")
-    .ilike("title_ar", `%${q}%`)
-    .limit(5);
+    .eq("is_available", true)
+    .order("id", { ascending: false })
+    .limit(500);
 
   if (error) throw new Error("تعذر البحث عن الكتاب: " + error.message);
-  if (!data?.length) throw new Error(`لم أجد كتابًا يطابق: ${q}`);
-  return data[0];
+
+  const matches = (data || []).filter(book => {
+    const normalizedTitle = normalizeSearchText(book.title_ar || book.title || "");
+    return normalizedTitle.includes(normalizedQuery);
+  });
+
+  if (!matches.length) throw new Error("لم أجد كتابًا يطابق: " + q);
+  return matches[0];
 }
 
 async function graph(path, options = {}) {
