@@ -164,6 +164,16 @@
       margin-top: -2px;
     }
 
+    .header-slogan {
+      display: inline-block;
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: .4px;
+      margin-inline-start: 4px;
+      white-space: nowrap;
+    }
+
     nav {
       display: flex;
       align-items: center;
@@ -2952,6 +2962,7 @@ body.manager-theme-active {
       <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
         👑 المدير
       </button>
+      <span class="header-slogan" aria-label="عابر السبيل">عابر🖤السبيل</span>
     </nav>
 
   </div>
@@ -3142,6 +3153,7 @@ body.manager-theme-active {
           <button class="interest-card" onclick="jumpToCategory('التنمية الذاتية')">🌱 التنمية الذاتية</button>
           <button class="interest-card" onclick="jumpToCategory('التربية وقصص الاطفال')">🧸 التربية وقصص الأطفال</button>
           <button class="interest-card" onclick="jumpToCategory('الملزمات الدراسية')">🎓 الملزمات الدراسية</button>
+          <button class="interest-card" onclick="jumpToCategory('الفلسفة')">🧠 الفلسفة</button>
         </div>
       </div>
     </section>
@@ -3196,6 +3208,9 @@ body.manager-theme-active {
       </button>
       <button class="category-btn" onclick="filterCategory('الملزمات الدراسية', this)">
         الملزمات الدراسية
+      </button>
+      <button class="category-btn" onclick="filterCategory('الفلسفة', this)">
+        الفلسفة
       </button>
     </div>
 
