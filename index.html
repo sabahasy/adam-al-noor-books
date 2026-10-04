@@ -6467,7 +6467,10 @@ async function selectStoreTheme(themeId) {
 function syncManagerUI() {
   const button = document.getElementById("managerNavBtn");
   const page = document.getElementById("managerPage");
-  if (button) button.style.display = isManager ? "inline-flex" : "none";
+  if (button) {
+    button.classList.toggle("manager-only", !isManager);
+    button.style.display = isManager ? "inline-flex" : "none";
+  }
   if (page) page.classList.toggle("manager-only", !isManager);
 }
 
