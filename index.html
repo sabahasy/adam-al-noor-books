@@ -5020,7 +5020,7 @@ viewCount:
   function renderDiscoveryCard(book, tag) {
     const index = books.findIndex(item => String(item.id) === String(book.id));
     const cover = book.cover_url
-      ? '<img src="' + escapeHTML(book.cover_url) + '" alt="' + escapeHTML(book.title || "غلاف الكتاب") + '" loading="lazy">';
+      ? '<img src="' + escapeHTML(book.cover_url) + '" alt="' + escapeHTML(book.title || "غلاف الكتاب") + '" loading="lazy">'
       : '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:38px;border-radius:8px;background:var(--cream)">📚</div>';
     return '<article class="discovery-card" onclick="openBookDetails(' + index + ')">' +
       '<div class="discovery-cover">' + cover + '</div>' +
