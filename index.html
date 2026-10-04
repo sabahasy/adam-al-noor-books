@@ -3254,6 +3254,153 @@ body.manager-theme-active {
 </div>
 
 
+
+<!-- ================= MANAGER CONTROL CENTER ================= -->
+<main id="managerPage" class="page manager-page manager-hidden">
+  <div class="container">
+    <div class="manager-shell">
+
+      <div class="manager-head">
+        <div class="manager-lock">🔐 لوحة خاصة بالمدير فقط</div>
+        <h1>👑 مركز تحكم آدم النور</h1>
+        <p>إدارة المتجر، الكتب، الطلبات، العملاء، الإحصائيات، المظهر والروابط من مكان واحد.</p>
+      </div>
+
+      <div class="manager-grid">
+        <button class="manager-card" onclick="managerOpenSection('overview')">
+          <div class="manager-card-icon">📊</div>
+          <strong>لوحة التحكم</strong>
+          <span>ملخص سريع عن المتجر</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('books')">
+          <div class="manager-card-icon">📚</div>
+          <strong>إدارة الكتب</strong>
+          <span>الكتب والترتيب والمزيد</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('orders')">
+          <div class="manager-card-icon">🧾</div>
+          <strong>الطلبات والمبيعات</strong>
+          <span>متابعة عمليات الشراء</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('customers')">
+          <div class="manager-card-icon">👥</div>
+          <strong>العملاء</strong>
+          <span>حسابات العملاء والمكتبة</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('analytics')">
+          <div class="manager-card-icon">📈</div>
+          <strong>الإحصائيات</strong>
+          <span>الزوار والمشاهدات والمبيعات</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('appearance')">
+          <div class="manager-card-icon">🎨</div>
+          <strong>المظهر والخلفيات</strong>
+          <span>10 خلفيات وثيمات للمتجر</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('links')">
+          <div class="manager-card-icon">🔗</div>
+          <strong>الروابط والتواصل</strong>
+          <span>المتاجر ووسائل التواصل</span>
+        </button>
+        <button class="manager-card" onclick="managerOpenSection('security')">
+          <div class="manager-card-icon">🛡️</div>
+          <strong>الحساب والأمان</strong>
+          <span>صلاحيات المدير وحماية اللوحة</span>
+        </button>
+      </div>
+
+      <section id="managerOverviewSection" class="manager-section">
+        <h2>📊 لوحة التحكم</h2>
+        <p>نظرة سريعة على حالة متجر آدم النور.</p>
+        <div class="manager-stats">
+          <div class="manager-stat"><strong id="managerBooksCount">—</strong><span>📚 الكتب</span></div>
+          <div class="manager-stat"><strong id="managerVisitorsCount">—</strong><span>👤 الزوار</span></div>
+          <div class="manager-stat"><strong id="managerViewsCount">—</strong><span>👁️ المشاهدات</span></div>
+          <div class="manager-stat"><strong id="managerSalesCount">—</strong><span>💰 المبيعات</span></div>
+        </div>
+        <div class="manager-actions" style="margin-top:12px">
+          <button class="manager-action-btn primary" onclick="showPage('home')">🏠 العودة للمتجر</button>
+          <button class="manager-action-btn gold" onclick="managerRefresh()">🔄 تحديث البيانات</button>
+        </div>
+      </section>
+
+      <section id="managerBooksSection" class="manager-section">
+        <h2>📚 إدارة الكتب</h2>
+        <p>الوصول السريع إلى ترتيب الكتب الموجود في الصفحة الرئيسية.</p>
+        <div class="manager-actions">
+          <button class="manager-action-btn primary" onclick="managerOpenBookOrdering()">↕️ ترتيب الكتب</button>
+          <button class="manager-action-btn" onclick="showPage('home'); setTimeout(()=>document.getElementById('books')?.scrollIntoView({behavior:'smooth'}),150)">📖 عرض الكتب</button>
+        </div>
+        <div class="manager-note">🔐 أدوات ترتيب الكتب وإدارتها لا تظهر للزائر العادي.</div>
+      </section>
+
+      <section id="managerOrdersSection" class="manager-section">
+        <h2>🧾 الطلبات والمبيعات</h2>
+        <p>آخر الطلبات المسجلة في المتجر.</p>
+        <div id="managerOrdersList" class="manager-list">
+          <div class="manager-list-item"><span>اضغط تحديث البيانات لتحميل الطلبات.</span></div>
+        </div>
+      </section>
+
+      <section id="managerCustomersSection" class="manager-section">
+        <h2>👥 العملاء</h2>
+        <p>ملخص حسابات العملاء والمكتبة الرقمية.</p>
+        <div class="manager-stats" style="margin-bottom:12px">
+          <div class="manager-stat"><strong id="managerCustomersCount">—</strong><span>👥 العملاء</span></div>
+          <div class="manager-stat"><strong id="managerLibraryCount">—</strong><span>📖 عمليات المكتبة</span></div>
+        </div>
+        <div id="managerCustomersList" class="manager-list">
+          <div class="manager-list-item"><span>اضغط تحديث البيانات لتحميل العملاء.</span></div>
+        </div>
+      </section>
+
+      <section id="managerAnalyticsSection" class="manager-section">
+        <h2>📈 الإحصائيات</h2>
+        <p>الأرقام الحالية الظاهرة في المتجر.</p>
+        <div class="manager-stats">
+          <div class="manager-stat"><strong id="managerAnalyticsBooks">—</strong><span>📚 الكتب</span></div>
+          <div class="manager-stat"><strong id="managerAnalyticsVisitors">—</strong><span>👤 الزوار</span></div>
+          <div class="manager-stat"><strong id="managerAnalyticsViews">—</strong><span>👁️ المشاهدات</span></div>
+          <div class="manager-stat"><strong id="managerAnalyticsSales">—</strong><span>🛒 المبيعات</span></div>
+        </div>
+      </section>
+
+      <section id="managerAppearanceSection" class="manager-section">
+        <h2>🎨 المظهر والخلفيات</h2>
+        <p>اختر الخلفية والثيم الذي تريد أن يظهر للزوار. هذه الأداة للمدير فقط.</p>
+        <div id="themeGrid" class="theme-grid"></div>
+        <div id="themeSaveStatus" class="manager-note">اختر أي ثيم من الثيمات العشرة لتطبيقه على المتجر وحفظه.</div>
+      </section>
+
+      <section id="managerLinksSection" class="manager-section">
+        <h2>🔗 الروابط والتواصل</h2>
+        <p>الروابط الرسمية المرتبطة بمتجر آدم النور.</p>
+        <div class="manager-list">
+          <div class="manager-list-item"><strong>المتجر الأول</strong><span>project-akmpg.vercel.app</span></div>
+          <div class="manager-list-item"><strong>المتجر الثاني</strong><span>adamalnoorbooks.thewayl.com</span></div>
+          <div class="manager-list-item"><strong>متجر الكريبتو و USDT</strong><span>adamalnoor.sellix.cx</span></div>
+        </div>
+        <div class="manager-note">💬 التواصل المباشر مع المدير متاح من أسفل المتجر عبر واتساب وتليغرام والبريد الإلكتروني.</div>
+      </section>
+
+      <section id="managerSecuritySection" class="manager-section">
+        <h2>🛡️ الحساب والأمان</h2>
+        <p>هذه اللوحة مرتبطة بصلاحية المدير في حساب المتجر.</p>
+        <div class="manager-note">🔒 لن تظهر لوحة التحكم أو أدوات الإدارة للزائر العادي. صلاحية المدير يتم التحقق منها من حساب Supabase.</div>
+        <div class="manager-actions" style="margin-top:12px">
+          <button class="manager-action-btn" onclick="showPage('account')">👤 حسابي</button>
+          <button class="manager-action-btn primary" onclick="logoutUser()">🚪 تسجيل الخروج</button>
+        </div>
+      </section>
+
+      <div class="manager-back">
+        <button onclick="showPage('home')">🏠 العودة إلى المتجر</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+
 <footer>
 
   <div class="container footer-inner">
@@ -6481,8 +6628,10 @@ function managerOpenSection(section) {
   const sections = ["overview","books","orders","customers","analytics","appearance","links","security"];
   sections.forEach(name => {
     const el = document.getElementById("manager" + name.charAt(0).toUpperCase() + name.slice(1) + "Section");
-    if (el) el.style.display = name === section ? "block" : "none";
+    if (el) el.style.display = "block";
   });
+  const target = document.getElementById("manager" + section.charAt(0).toUpperCase() + section.slice(1) + "Section");
+  if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
   if (section === "orders" || section === "customers") loadManagerPeopleData();
   if (section === "appearance") renderThemeOptions(localStorage.getItem("adamNoorStoreTheme") || "classic");
   if (section === "overview" || section === "analytics") managerRefresh();
@@ -6545,13 +6694,20 @@ function managerRefresh() {
   const w = document.getElementById("managerViewsCount");
   const s = document.getElementById("managerSalesCount");
   const visitor = document.getElementById("visitorCount");
-  const views = document.getElementById("viewsCount");
+  const views = document.getElementById("viewCount");
   if (v) v.textContent = visitor?.textContent || "—";
   if (w) w.textContent = views?.textContent || "—";
   const sales = currentBooks?.reduce((sum,bk)=>sum + Number(bk.sales_count || bk.sales || 0),0) || 0;
   if (s) s.textContent = sales.toLocaleString("ar-IQ");
+  const ab = document.getElementById("managerAnalyticsBooks");
+  const av = document.getElementById("managerAnalyticsVisitors");
+  const aw = document.getElementById("managerAnalyticsViews");
+  const ass = document.getElementById("managerAnalyticsSales");
+  if (ab) ab.textContent = books;
+  if (av) av.textContent = visitor?.textContent || "—";
+  if (aw) aw.textContent = views?.textContent || "—";
+  if (ass) ass.textContent = sales.toLocaleString("ar-IQ");
 }
-
 </script>
 </body>
 </html>
