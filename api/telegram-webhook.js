@@ -76,17 +76,6 @@ export default async function handler(req, res) {
 
     const chatId = msg.chat.id;
 
-    // One-time bootstrap: before the admin ID is configured, reveal the ID only to
-    // the person who is currently chatting with this private bot, so it can be
-    // configured in Vercel. No publishing command is executed during bootstrap.
-    if (!adminChatId()) {
-      await telegram("sendMessage", {
-        chat_id:chatId,
-        text:`🔐 تم استلام حساب Telegram بنجاح.\n\nChat ID الخاص بهذه المحادثة هو: ${chatId}\n\nسيتم استخدامه لربط البوت بمالك متجر آدم النور.`
-      });
-      return res.status(200).json({ok:true});
-    }
-
     if (!allowed(chatId)) {
       await telegram("sendMessage", { chat_id:chatId, text:"⛔ هذا البوت خاص بمالك متجر آدم النور." });
       return res.status(200).json({ok:true});
