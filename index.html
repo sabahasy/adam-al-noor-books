@@ -2584,7 +2584,119 @@ footer li:hover {
       }
     }
 
-  </style>
+  
+/* =====================================================
+   MANAGER CONTROL CENTER + STORE THEMES
+===================================================== */
+.manager-only {
+  display: none !important;
+}
+body.manager-theme-active {
+  transition: background .35s ease, color .35s ease;
+}
+.manager-page {
+  padding: 28px 0 55px;
+}
+.manager-shell {
+  background: rgba(255,255,255,.94);
+  border: 1px solid rgba(201,162,39,.28);
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.12);
+  overflow: hidden;
+}
+.manager-head {
+  padding: 24px;
+  background: linear-gradient(135deg,#111,#2a2a2a);
+  color: #fff;
+}
+.manager-head h1 { font-size: clamp(25px,4vw,38px); margin-bottom: 5px; }
+.manager-head p { color:#d4d4d4; font-size:13px; }
+.manager-lock {
+  display:inline-flex; align-items:center; gap:7px; margin-bottom:10px;
+  color:#f0d36a; font-size:12px; font-weight:800;
+}
+.manager-grid {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; padding:18px;
+}
+.manager-card {
+  border:1px solid var(--border); border-radius:16px; background:#fff;
+  padding:16px; text-align:right; transition:.2s; cursor:pointer;
+}
+.manager-card:hover { transform:translateY(-3px); box-shadow:0 10px 25px rgba(0,0,0,.08); border-color:rgba(201,162,39,.45); }
+.manager-card-icon { font-size:25px; margin-bottom:7px; }
+.manager-card strong { display:block; font-size:14px; }
+.manager-card span { color:var(--muted); font-size:11px; }
+.manager-section {
+  margin:0 18px 18px; padding:18px; border:1px solid var(--border);
+  border-radius:18px; background:linear-gradient(135deg,#fff,#fbfaf6);
+}
+.manager-section h2 { font-size:19px; margin-bottom:5px; }
+.manager-section > p { color:var(--muted); font-size:12px; margin-bottom:14px; }
+.manager-stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;
+}
+.manager-stat {
+  padding:14px; border-radius:14px; background:var(--cream); text-align:center;
+  border:1px solid rgba(201,162,39,.18);
+}
+.manager-stat strong { display:block; font-size:23px; }
+.manager-stat span { color:var(--muted); font-size:11px; }
+.manager-actions { display:flex; flex-wrap:wrap; gap:9px; }
+.manager-action-btn {
+  border:1px solid rgba(201,162,39,.35); border-radius:12px; padding:10px 14px;
+  background:#fff; color:#222; font-weight:800; font-size:12px;
+}
+.manager-action-btn.primary { background:#111; color:#fff; }
+.manager-action-btn.gold { background:var(--gold); color:#111; }
+.theme-grid {
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px;
+}
+.theme-option {
+  border:2px solid transparent; border-radius:16px; padding:8px; background:#fff;
+  cursor:pointer; text-align:center; transition:.2s;
+}
+.theme-option:hover { transform:translateY(-3px); }
+.theme-option.active { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,.12); }
+.theme-preview {
+  height:78px; border-radius:11px; border:1px solid rgba(0,0,0,.08);
+  margin-bottom:7px; position:relative; overflow:hidden;
+}
+.theme-preview::after {
+  content:"آدم النور"; position:absolute; right:10px; bottom:8px;
+  font-weight:800; font-size:12px; color:var(--preview-text,#222);
+}
+.theme-option strong { font-size:11px; }
+.manager-list {
+  display:grid; gap:8px; max-height:360px; overflow:auto;
+}
+.manager-list-item {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:#fff;
+}
+.manager-list-item strong { font-size:12px; }
+.manager-list-item span { color:var(--muted); font-size:11px; }
+.manager-note {
+  margin-top:12px; padding:11px 13px; border-radius:12px;
+  background:#fff8df; border:1px solid rgba(201,162,39,.28); color:#6d5715; font-size:11px;
+}
+.manager-back {
+  display:flex; justify-content:center; padding:0 18px 20px;
+}
+.manager-back button {
+  border:0; border-radius:13px; padding:11px 22px; background:#111; color:#fff; font-weight:800;
+}
+@media (max-width: 900px) {
+  .manager-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .manager-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .theme-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 520px) {
+  .manager-grid { grid-template-columns:1fr; }
+  .manager-section { margin-left:10px; margin-right:10px; padding:14px; }
+  .manager-head { padding:19px; }
+}
+
+</style>
 </head>
 
 <body>
@@ -2623,6 +2735,10 @@ footer li:hover {
 
       <button class="nav-btn" onclick="showPage('account')">
         👤 حسابي
+      </button>
+
+      <button id="managerNavBtn" class="nav-btn manager-only" onclick="showPage('manager')" style="display:none">
+        👑 المدير
       </button>
     </nav>
 
@@ -5190,6 +5306,17 @@ if (ratingMessage) {
 
     }
 
+    if (page === "manager") {
+
+      if (!isManager) {
+        showPage("home");
+        return;
+      }
+
+      managerOpenSection("overview");
+
+    }
+
   }
 
   /* =====================================================
@@ -5225,6 +5352,7 @@ if (ratingMessage) {
 
     isManager = false;
     managerAccessToken = null;
+    syncManagerUI();
 
     if (!userId || !token) return;
 
@@ -5235,6 +5363,7 @@ if (ratingMessage) {
     if (String(userId) === knownAdminUserId) {
       isManager = true;
       managerAccessToken = token;
+      syncManagerUI();
       renderBooks();
     }
 
@@ -5250,6 +5379,7 @@ if (ratingMessage) {
       );
 
       if (!response.ok) {
+        syncManagerUI();
         renderBooks();
         return;
       }
@@ -5262,9 +5392,11 @@ if (ratingMessage) {
         managerAccessToken = token;
       }
 
+      syncManagerUI();
       renderBooks();
     } catch (error) {
       console.error("Manager access check error:", error);
+      syncManagerUI();
       renderBooks();
     }
   }
@@ -5536,6 +5668,9 @@ async function loginUser() {
       "access_token"
     );
 
+    isManager = false;
+    managerAccessToken = null;
+    syncManagerUI();
     showLogin();
 
   }
@@ -6226,6 +6361,8 @@ async function downloadPDF(filePath) {
 
   setupStoreBanner();
 
+loadStoreTheme();
+
 renderBooks();
 
 updateCartCount();
@@ -6240,6 +6377,175 @@ loadBooks();
 loadStoreStats();
 
 checkUser();
+
+
+/* =====================================================
+   MANAGER CONTROL CENTER + STORE THEMES
+===================================================== */
+const STORE_THEMES = {
+  classic:{name:"الذهبي الكلاسيكي",bg:"#d8c4a8",text:"#202020",black:"#111111",gold:"#c9a227",goldDark:"#a98216",cream:"#f8f6f0",border:"#e8e5dc"},
+  night:{name:"الليل الفاخر",bg:"#11151b",text:"#eeeeee",black:"#090b0e",gold:"#e1bd45",goldDark:"#c49e2e",cream:"#20262e",border:"#343b45"},
+  emerald:{name:"الأخضر الهادئ",bg:"#d9e7dc",text:"#1f3025",black:"#17231b",gold:"#b38b32",goldDark:"#8d6b20",cream:"#eef5ef",border:"#c7d7ca"},
+  navy:{name:"الأزرق الملكي",bg:"#dce5f2",text:"#202b3c",black:"#101a2a",gold:"#c7a13a",goldDark:"#96751e",cream:"#eef3fa",border:"#c8d4e4"},
+  rose:{name:"الوردي الراقي",bg:"#f0dfe3",text:"#3b272c",black:"#211519",gold:"#b78b46",goldDark:"#8e662c",cream:"#f8edef",border:"#dfc9ce"},
+  sand:{name:"الرمال الدافئة",bg:"#ead7bb",text:"#35291e",black:"#21180f",gold:"#b8862d",goldDark:"#8e641c",cream:"#f8eee0",border:"#dfccb0"},
+  paper:{name:"الورق العتيق",bg:"#eee9d8",text:"#302e25",black:"#24231e",gold:"#aa8430",goldDark:"#7f611f",cream:"#f8f4e6",border:"#dcd5bf"},
+  coffee:{name:"القهوة الفاخرة",bg:"#cdb69f",text:"#2e2118",black:"#1d130d",gold:"#c59a4a",goldDark:"#8f6826",cream:"#efe3d5",border:"#d3bfaa"},
+  forest:{name:"الغابة الهادئة",bg:"#d5ded1",text:"#1f2b20",black:"#111a13",gold:"#b59a46",goldDark:"#806a25",cream:"#edf2ea",border:"#c3d0c0"},
+  burgundy:{name:"العنابي الفخم",bg:"#ead9d9",text:"#321d20",black:"#241114",gold:"#c69b4a",goldDark:"#916b25",cream:"#f5eaea",border:"#dbc4c6"}
+};
+
+function applyStoreTheme(themeId) {
+  const theme = STORE_THEMES[themeId] || STORE_THEMES.classic;
+  const root = document.documentElement;
+  root.style.setProperty("--page-bg", theme.bg);
+  root.style.setProperty("--text", theme.text);
+  root.style.setProperty("--black", theme.black);
+  root.style.setProperty("--gold", theme.gold);
+  root.style.setProperty("--gold-dark", theme.goldDark);
+  root.style.setProperty("--cream", theme.cream);
+  root.style.setProperty("--border", theme.border);
+  document.body.style.background = theme.bg;
+  document.body.style.color = theme.text;
+  document.body.classList.add("manager-theme-active");
+  localStorage.setItem("adamNoorStoreTheme", themeId);
+  renderThemeOptions(themeId);
+}
+
+function renderThemeOptions(activeId) {
+  const grid = document.getElementById("themeGrid");
+  if (!grid) return;
+  grid.innerHTML = Object.entries(STORE_THEMES).map(([id, theme]) => `
+    <button class="theme-option ${id === activeId ? "active" : ""}" onclick="selectStoreTheme('${id}')">
+      <div class="theme-preview" style="background:${theme.bg};--preview-text:${theme.text};box-shadow:inset 0 0 0 999px rgba(0,0,0,.02)"></div>
+      <strong>${theme.name}</strong>
+    </button>
+  `).join("");
+}
+
+async function loadStoreTheme() {
+  try {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/store_settings?id=eq.1&select=background_id", {
+      headers: { apikey: SUPABASE_KEY }
+    });
+    const rows = await response.json();
+    const themeId = rows?.[0]?.background_id || localStorage.getItem("adamNoorStoreTheme") || "classic";
+    applyStoreTheme(themeId);
+  } catch (error) {
+    applyStoreTheme(localStorage.getItem("adamNoorStoreTheme") || "classic");
+  }
+}
+
+async function selectStoreTheme(themeId) {
+  if (!isManager) {
+    alert("هذه الميزة للمدير فقط.");
+    return;
+  }
+  applyStoreTheme(themeId);
+  const status = document.getElementById("themeSaveStatus");
+  if (status) status.textContent = "⏳ جارٍ حفظ الخلفية للمتجر...";
+  const token = getAccessToken();
+  try {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/store_settings?id=eq.1", {
+      method: "PATCH",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({background_id: themeId, updated_at: new Date().toISOString()})
+    });
+    if (!response.ok) throw new Error("تعذر حفظ الخلفية");
+    if (status) status.textContent = "✅ تم حفظ الخلفية والثيم بنجاح، وستظهر للزوار.";
+  } catch (error) {
+    if (status) status.textContent = "⚠️ تعذر حفظ الخلفية حالياً، وبقيت المعاينة على جهازك.";
+    console.error(error);
+  }
+}
+
+function syncManagerUI() {
+  const button = document.getElementById("managerNavBtn");
+  const page = document.getElementById("managerPage");
+  if (button) button.style.display = isManager ? "inline-flex" : "none";
+  if (page) page.classList.toggle("manager-only", !isManager);
+}
+
+function managerOpenSection(section) {
+  if (!isManager) return;
+  const sections = ["overview","books","orders","customers","analytics","appearance","links","security"];
+  sections.forEach(name => {
+    const el = document.getElementById("manager" + name.charAt(0).toUpperCase() + name.slice(1) + "Section");
+    if (el) el.style.display = name === section ? "block" : "none";
+  });
+  if (section === "orders" || section === "customers") loadManagerPeopleData();
+  if (section === "appearance") renderThemeOptions(localStorage.getItem("adamNoorStoreTheme") || "classic");
+  if (section === "overview" || section === "analytics") managerRefresh();
+}
+
+function managerOpenBookOrdering() {
+  showPage("home");
+  setTimeout(() => {
+    const toggle = document.querySelector(".book-order-toggle-btn");
+    if (toggle && isManager) toggle.click();
+    document.querySelector(".book-order-manager")?.scrollIntoView({behavior:"smooth",block:"center"});
+  }, 180);
+}
+
+async function loadManagerPeopleData() {
+  if (!isManager) return;
+  const token = getAccessToken();
+  if (!token) return;
+  const headers = {apikey: SUPABASE_KEY, Authorization:"Bearer " + token};
+  try {
+    const [ordersRes, profilesRes, libraryRes] = await Promise.all([
+      fetch(SUPABASE_URL + "/rest/v1/orders?select=id,total_amount,status,payment_status,created_at&order=created_at.desc&limit=12",{headers}),
+      fetch(SUPABASE_URL + "/rest/v1/profiles?select=id,full_name,role,created_at&order=created_at.desc&limit=20",{headers}),
+      fetch(SUPABASE_URL + "/rest/v1/library?select=id,user_id,book_id,purchased_at&order=purchased_at.desc&limit=100",{headers})
+    ]);
+    const orders = ordersRes.ok ? await ordersRes.json() : [];
+    const profiles = profilesRes.ok ? await profilesRes.json() : [];
+    const library = libraryRes.ok ? await libraryRes.json() : [];
+
+    const ordersList = document.getElementById("managerOrdersList");
+    if (ordersList) {
+      ordersList.innerHTML = orders.length ? orders.map(o => `
+        <div class="manager-list-item">
+          <strong>طلب #${o.id} — ${Number(o.total_amount||0).toLocaleString("ar-IQ")} د.ع</strong>
+          <span>${o.status || "—"} • ${o.payment_status || "—"} • ${new Date(o.created_at).toLocaleDateString("ar-IQ")}</span>
+        </div>`).join("") : '<div class="manager-list-item"><span>لا توجد طلبات متاحة.</span></div>';
+    }
+
+    const customers = profiles.filter(p => p.role !== "admin");
+    const cc = document.getElementById("managerCustomersCount");
+    const lc = document.getElementById("managerLibraryCount");
+    if (cc) cc.textContent = customers.length;
+    if (lc) lc.textContent = library.length;
+    const list = document.getElementById("managerCustomersList");
+    if (list) list.innerHTML = customers.length ? customers.map(p => `
+      <div class="manager-list-item">
+        <strong>${escapeHTML(p.full_name || "عميل بدون اسم")}</strong>
+        <span>${new Date(p.created_at).toLocaleDateString("ar-IQ")} • ${escapeHTML(String(p.id).slice(0,8))}…</span>
+      </div>`).join("") : '<div class="manager-list-item"><span>لا توجد حسابات عملاء متاحة.</span></div>';
+  } catch (error) {
+    console.error("Manager data error:", error);
+  }
+}
+
+function managerRefresh() {
+  const books = currentBooks?.length || 0;
+  const b = document.getElementById("managerBooksCount");
+  if (b) b.textContent = books;
+  const v = document.getElementById("managerVisitorsCount");
+  const w = document.getElementById("managerViewsCount");
+  const s = document.getElementById("managerSalesCount");
+  const visitor = document.getElementById("visitorCount");
+  const views = document.getElementById("viewsCount");
+  if (v) v.textContent = visitor?.textContent || "—";
+  if (w) w.textContent = views?.textContent || "—";
+  const sales = currentBooks?.reduce((sum,bk)=>sum + Number(bk.sales_count || bk.sales || 0),0) || 0;
+  if (s) s.textContent = sales.toLocaleString("ar-IQ");
+}
 
 </script>
 </body>
