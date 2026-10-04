@@ -2767,6 +2767,89 @@ body.manager-theme-active {
   .manager-head { padding:19px; }
 }
 
+
+    /* ================= بطاقات الكتب — تصميم خفيف وأنيق ================= */
+    .book {
+      background: var(--surface);
+      border: 1.5px solid #111 !important;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+      transition: transform .2s ease, box-shadow .2s ease, background .25s ease;
+    }
+    .book:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 16px rgba(0,0,0,.13);
+    }
+    .book-cover-wrap {
+      height: 245px;
+      padding: 7px;
+      background: color-mix(in srgb, var(--surface) 88%, white);
+    }
+    .book-cover {
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.10);
+    }
+    .book-badge {
+      top: 13px;
+      right: 13px;
+      padding: 3px 7px;
+      border-radius: 7px;
+      font-size: 9px;
+    }
+    .book-info { padding: 10px; }
+    .book-category { font-size: 10px; margin-bottom: 2px; }
+    .book-title { font-size: 14px; line-height: 1.4; min-height: 40px; }
+    .book-author { font-size: 11px; margin-top: 3px; min-height: 18px; }
+    .rating, .book-views, .book-sales { font-size: 10px; margin-top: 4px; }
+    .book-bottom { margin-top: 8px; align-items: center; }
+    .price { font-size: 14px; }
+    .book-actions { gap: 4px; }
+    .btn { border-radius: 7px; padding: 6px 8px; font-size: 10px; }
+
+    @media (max-width: 600px) {
+      .books {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .book {
+        border-width: 1.5px !important;
+        border-radius: 9px;
+        box-shadow: 0 2px 7px rgba(0,0,0,.08);
+      }
+      .book:hover { transform: none; box-shadow: 0 2px 7px rgba(0,0,0,.08); }
+      .book-cover-wrap { height: 118px; padding: 4px; }
+      .book-cover { border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,.09); }
+      .book-badge { top: 7px; right: 7px; padding: 2px 4px; border-radius: 5px; font-size: 7px; }
+      .book-info { padding: 6px 5px 7px; }
+      .book-category {
+        font-size: 7px; line-height: 1.3; white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis;
+      }
+      .book-title {
+        font-size: 9px; line-height: 1.35; min-height: 31px;
+        display: -webkit-box; -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical; overflow: hidden;
+      }
+      .book-author {
+        font-size: 7px; line-height: 1.3; min-height: 15px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .rating { font-size: 7px; line-height: 1.2; white-space: nowrap; overflow: hidden; }
+      .rating span { font-size: 8px; }
+      .book-views, .book-sales { display: none; }
+      .book-bottom { display: block; margin-top: 5px; }
+      .price { font-size: 9px; text-align: center; margin-bottom: 4px; }
+      .price small { font-size: 7px; }
+      .book-actions { display: flex; width: 100%; gap: 3px; }
+      .book-actions .btn {
+        flex: 1; min-width: 0; padding: 5px 2px;
+        border-radius: 6px; font-size: 8px; line-height: 1.2;
+      }
+      .book-actions .btn-cart { font-size: 10px; }
+    }
+
 </style>
 </head>
 
