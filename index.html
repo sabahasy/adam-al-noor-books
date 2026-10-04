@@ -209,7 +209,11 @@
 
     #homePage.page {
       padding-top: 0;
-      background: var(--page-bg);
+      background:
+        radial-gradient(circle at 8% 10%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 28%),
+        radial-gradient(circle at 92% 70%, color-mix(in srgb, var(--text) 7%, transparent), transparent 32%),
+        var(--page-bg);
+      color: var(--text);
       transition: background .35s ease, color .35s ease;
     }
 
@@ -217,24 +221,61 @@
     #homePage .stat,
     #homePage .panel,
     #homePage .about-card,
-    #homePage .empty {
-      background: color-mix(in srgb, var(--page-bg) 72%, white);
-      transition: background .35s ease, border-color .35s ease;
+    #homePage .empty,
+    #homePage .category-count-summary,
+    #homePage .book-order-manager,
+    #homePage .book {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border);
+      transition: background .35s ease, color .35s ease, border-color .35s ease;
+    }
+
+    #homePage .feature strong,
+    #homePage .stat strong,
+    #homePage .section-title h2,
+    #homePage .categories-guide-title,
+    #homePage .book-title,
+    #homePage .book-order-title {
+      color: var(--text);
+      transition: color .35s ease;
+    }
+
+    #homePage .feature span,
+    #homePage .stat span,
+    #homePage .section-title p,
+    #homePage .book-author,
+    #homePage .books-more-hint,
+    #homePage .categories-guide-text {
+      color: color-mix(in srgb, var(--text) 68%, var(--surface));
+      transition: color .35s ease;
     }
 
     #homePage .search-box input,
-    #homePage .category-btn {
-      background: color-mix(in srgb, var(--page-bg) 55%, white);
+    #homePage .category-btn,
+    #homePage .categories-guide {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border);
       transition: background .35s ease, color .35s ease, border-color .35s ease;
     }
 
     #homePage .categories-guide {
-      background: linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--page-bg) 65%, white),
-        color-mix(in srgb, var(--gold) 12%, var(--page-bg))
-      );
-      transition: background .35s ease;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 88%, var(--gold)), var(--surface));
+    }
+
+    #homePage .category-btn.active,
+    #homePage .category-btn:hover {
+      background: var(--black);
+      color: var(--cream);
+      border-color: var(--black);
+    }
+
+    #homePage .book-category,
+    #homePage .categories-guide-text strong,
+    #homePage .category-count-summary strong {
+      color: var(--gold-dark);
+      transition: color .35s ease;
     }
 
     .hero-wrap {
@@ -6559,16 +6600,16 @@ checkUser();
    MANAGER CONTROL CENTER + STORE THEMES
 ===================================================== */
 const STORE_THEMES = {
-  classic:{name:"الذهبي الكلاسيكي",bg:"#d8c4a8",text:"#202020",black:"#111111",gold:"#c9a227",goldDark:"#a98216",cream:"#f8f6f0",border:"#e8e5dc"},
-  night:{name:"الليل الفاخر",bg:"#11151b",text:"#eeeeee",black:"#090b0e",gold:"#e1bd45",goldDark:"#c49e2e",cream:"#20262e",border:"#343b45"},
-  emerald:{name:"الأخضر الهادئ",bg:"#d9e7dc",text:"#1f3025",black:"#17231b",gold:"#b38b32",goldDark:"#8d6b20",cream:"#eef5ef",border:"#c7d7ca"},
-  navy:{name:"الأزرق الملكي",bg:"#dce5f2",text:"#202b3c",black:"#101a2a",gold:"#c7a13a",goldDark:"#96751e",cream:"#eef3fa",border:"#c8d4e4"},
-  rose:{name:"الوردي الراقي",bg:"#f0dfe3",text:"#3b272c",black:"#211519",gold:"#b78b46",goldDark:"#8e662c",cream:"#f8edef",border:"#dfc9ce"},
-  sand:{name:"الرمال الدافئة",bg:"#ead7bb",text:"#35291e",black:"#21180f",gold:"#b8862d",goldDark:"#8e641c",cream:"#f8eee0",border:"#dfccb0"},
-  paper:{name:"الورق العتيق",bg:"#eee9d8",text:"#302e25",black:"#24231e",gold:"#aa8430",goldDark:"#7f611f",cream:"#f8f4e6",border:"#dcd5bf"},
-  coffee:{name:"القهوة الفاخرة",bg:"#cdb69f",text:"#2e2118",black:"#1d130d",gold:"#c59a4a",goldDark:"#8f6826",cream:"#efe3d5",border:"#d3bfaa"},
-  forest:{name:"الغابة الهادئة",bg:"#d5ded1",text:"#1f2b20",black:"#111a13",gold:"#b59a46",goldDark:"#806a25",cream:"#edf2ea",border:"#c3d0c0"},
-  burgundy:{name:"العنابي الفخم",bg:"#ead9d9",text:"#321d20",black:"#241114",gold:"#c69b4a",goldDark:"#916b25",cream:"#f5eaea",border:"#dbc4c6"}
+  classic:{name:"الذهبي الكلاسيكي",bg:"#cbb38f",text:"#241c12",black:"#17120d",gold:"#c9a227",goldDark:"#8f6c16",cream:"#eadfc9",surface:"#e5d4b8",border:"#cdbb9e"},
+  night:{name:"الليل الفاخر",bg:"#0b0f14",text:"#f2ead7",black:"#07090c",gold:"#e1bd45",goldDark:"#d2ab35",cream:"#1b232d",surface:"#18212b",border:"#303b47"},
+  emerald:{name:"الأخضر الهادئ",bg:"#b9cfbe",text:"#183021",black:"#102118",gold:"#a77f27",goldDark:"#735b18",cream:"#dce9df",surface:"#cbded0",border:"#a9c0ad"},
+  navy:{name:"الأزرق الملكي",bg:"#b9cbe2",text:"#17253a",black:"#0b1422",gold:"#bd9631",goldDark:"#765d18",cream:"#dce7f3",surface:"#cad9ea",border:"#a5b9d1"},
+  rose:{name:"الوردي الراقي",bg:"#dfc2c9",text:"#351e25",black:"#211116",gold:"#ae7b3d",goldDark:"#765022",cream:"#f0dce1",surface:"#ebd3d8",border:"#cfaeb6"},
+  sand:{name:"الرمال الدافئة",bg:"#d5b98f",text:"#2f2115",black:"#1c130b",gold:"#aa7825",goldDark:"#704d16",cream:"#f1dfc4",surface:"#e6cda8",border:"#c8a979"},
+  paper:{name:"الورق العتيق",bg:"#d8d0b4",text:"#29271f",black:"#1d1c18",gold:"#9c7628",goldDark:"#6d531b",cream:"#eee7d2",surface:"#e4dbc0",border:"#c5bda2"},
+  coffee:{name:"القهوة الفاخرة",bg:"#b59a82",text:"#2a1b13",black:"#180f0b",gold:"#bd8d3e",goldDark:"#76501f",cream:"#e2d0bd",surface:"#cbb29a",border:"#b39a84"},
+  forest:{name:"الغابة الهادئة",bg:"#b7c8b1",text:"#17271b",black:"#0d1710",gold:"#a88a3c",goldDark:"#66551f",cream:"#dce8d9",surface:"#c9d9c5",border:"#9eb39a"},
+  burgundy:{name:"العنابي الفخم",bg:"#d7babc",text:"#30171c",black:"#1e0d11",gold:"#bb8b3f",goldDark:"#704a1c",cream:"#eedadd",surface:"#e4c9cc",border:"#c9a6aa"}
 };
 
 function applyStoreTheme(themeId) {
@@ -6580,6 +6621,7 @@ function applyStoreTheme(themeId) {
   root.style.setProperty("--gold", theme.gold);
   root.style.setProperty("--gold-dark", theme.goldDark);
   root.style.setProperty("--cream", theme.cream);
+  root.style.setProperty("--surface", theme.surface || theme.cream);
   root.style.setProperty("--border", theme.border);
   document.body.style.background = theme.bg;
   document.body.style.color = theme.text;
