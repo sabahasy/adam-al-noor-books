@@ -2850,7 +2850,47 @@ body.manager-theme-active {
       .book-actions .btn-cart { font-size: 10px; }
     }
 
-</style>
+
+/* =====================================================
+   ADAM AL NOOR — DISCOVERY SECTIONS
+===================================================== */
+.discovery-section{padding:18px 0 28px}
+.discovery-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.discovery-title small{display:block;color:var(--gold-dark);font-size:11px;font-weight:800;margin-bottom:2px}
+.discovery-title h2{font-size:22px;line-height:1.35;color:var(--text)}
+.discovery-title p{font-size:12px;color:color-mix(in srgb,var(--text) 65%,var(--surface))}
+.discovery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.discovery-card{background:var(--surface);border:1px solid #111;border-radius:12px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.discovery-card:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.discovery-cover{height:205px;padding:7px;background:color-mix(in srgb,var(--surface) 88%,white)}
+.discovery-cover img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.discovery-info{padding:8px}
+.discovery-tag{font-size:9px;color:var(--gold-dark);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.discovery-name{font-size:11px;line-height:1.4;font-weight:800;color:var(--text);min-height:31px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.discovery-meta{font-size:8px;color:color-mix(in srgb,var(--text) 65%,var(--surface));margin-top:3px}
+.interest-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.interest-card{border:1px solid rgba(17,17,17,.22);background:var(--surface);color:var(--text);border-radius:13px;padding:14px 8px;text-align:center;font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:.2s}
+.interest-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 8px 18px rgba(0,0,0,.09)}
+.quote-card{position:relative;overflow:hidden;padding:20px;border-radius:18px;border:1px solid rgba(201,162,39,.28);background:linear-gradient(135deg,color-mix(in srgb,var(--surface) 92%,var(--gold)),var(--surface));text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.05)}
+.quote-mark{font-size:30px;line-height:1;color:var(--gold-dark)}
+#storeQuote{font-size:15px;font-weight:800;color:var(--text);line-height:1.9;min-height:58px;display:flex;align-items:center;justify-content:center}
+.quote-source{font-size:10px;color:color-mix(in srgb,var(--text) 60%,var(--surface));margin-top:5px}
+@media(max-width:650px){
+ .discovery-section{padding:12px 0 20px}
+ .discovery-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .discovery-cover{height:145px;padding:5px}
+ .discovery-cover img{border-radius:7px}
+ .discovery-info{padding:6px 5px}
+ .discovery-tag{font-size:7px}
+ .discovery-name{font-size:9px;min-height:25px}
+ .discovery-meta{font-size:7px}
+ .interest-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .interest-card{padding:11px 5px;font-size:10px;border-radius:10px}
+ .discovery-title h2{font-size:18px}
+ #storeQuote{font-size:12px;min-height:52px}
+}
+
+  </style>
 </head>
 
 <body>
@@ -3032,6 +3072,61 @@ body.manager-theme-active {
       </div>
 
     </div>
+
+    <section class="discovery-section">
+      <div class="container">
+        <div class="quote-card">
+          <div class="quote-mark">❝</div>
+          <div id="storeQuote">📚 كل كتاب جديد قد يفتح لك بابًا جديدًا من المعرفة.</div>
+          <div class="quote-source">— آدم النور</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="discovery-section">
+      <div class="container">
+        <div class="discovery-head">
+          <div class="discovery-title">
+            <small>✨ مختارات آدم النور</small>
+            <h2>كتب ننصحك باكتشافها</h2>
+            <p>اختيارات مميزة تظهر لك مباشرة في الصفحة الرئيسية.</p>
+          </div>
+        </div>
+        <div id="featuredBooks" class="discovery-grid"></div>
+      </div>
+    </section>
+
+    <section class="discovery-section">
+      <div class="container">
+        <div class="discovery-head">
+          <div class="discovery-title">
+            <small>🔥 الأكثر مشاهدة</small>
+            <h2>الكتب التي يهتم بها الزوار</h2>
+            <p>ترتيب تلقائي حسب عدد المشاهدات.</p>
+          </div>
+        </div>
+        <div id="mostViewedBooks" class="discovery-grid"></div>
+      </div>
+    </section>
+
+    <section class="discovery-section">
+      <div class="container">
+        <div class="discovery-head">
+          <div class="discovery-title">
+            <small>🎯 تصفح حسب اهتمامك</small>
+            <h2>اختر المجال الذي تحبه</h2>
+            <p>اضغط على المجال للوصول إلى كتبه بسرعة.</p>
+          </div>
+        </div>
+        <div class="interest-grid">
+          <button class="interest-card" onclick="jumpToCategory('التاريخ')">🏺 التاريخ</button>
+          <button class="interest-card" onclick="jumpToCategory('الروايات')">📖 الروايات</button>
+          <button class="interest-card" onclick="jumpToCategory('التنمية الذاتية')">🌱 التنمية الذاتية</button>
+          <button class="interest-card" onclick="jumpToCategory('التربية وقصص الاطفال')">🧸 التربية وقصص الأطفال</button>
+          <button class="interest-card" onclick="jumpToCategory('الملزمات الدراسية')">🎓 الملزمات الدراسية</button>
+        </div>
+      </div>
+    </section>
 
     <section class="store-section">
 
@@ -4847,6 +4942,7 @@ viewCount:
       saveCart();
 
       renderBooks();
+      renderHomepageDiscovery();
 
       updateStoreStats();
 
@@ -4909,6 +5005,60 @@ viewCount:
 
   }
 
+  /* =====================================================
+     HOMEPAGE DISCOVERY
+  ===================================================== */
+  const STORE_QUOTES = [
+    "📚 كل كتاب جديد قد يفتح لك بابًا جديدًا من المعرفة.",
+    "✨ المعرفة التي تقرؤها اليوم قد تصنع قرارك غدًا.",
+    "🧠 اقرأ لتفهم العالم، وتعلّم لتصنع عالمك.",
+    "📖 كتاب واحد قد يغيّر طريقة نظرك إلى الحياة.",
+    "🌟 اجعل لكل يوم صفحة جديدة في قصتك."
+  ];
+  let storeQuoteIndex = 0;
+
+  function renderDiscoveryCard(book, tag) {
+    const index = books.findIndex(item => String(item.id) === String(book.id));
+    const cover = book.cover_url
+      ? '<img src="' + escapeHTML(book.cover_url) + '" alt="' + escapeHTML(book.title || "غلاف الكتاب") + '" loading="lazy">';
+      : '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:38px;border-radius:8px;background:var(--cream)">📚</div>';
+    return '<article class="discovery-card" onclick="openBookDetails(' + index + ')">' +
+      '<div class="discovery-cover">' + cover + '</div>' +
+      '<div class="discovery-info">' +
+        '<div class="discovery-tag">' + escapeHTML(tag) + '</div>' +
+        '<div class="discovery-name">' + escapeHTML(book.title || "بدون عنوان") + '</div>' +
+        '<div class="discovery-meta">' + Number(book.viewCount || 0).toLocaleString("ar-IQ") + ' مشاهدة</div>' +
+      '</div>' +
+    '</article>';
+  }
+
+  function renderHomepageDiscovery() {
+    const featured = document.getElementById("featuredBooks");
+    const mostViewed = document.getElementById("mostViewedBooks");
+    if (!books.length) return;
+    const featuredBooks = books.slice(0, 6);
+    if (featured) featured.innerHTML = featuredBooks.map(book => renderDiscoveryCard(book, "✨ مختارات آدم النور")).join("");
+    const mostViewedBooks = [...books].sort((a,b) => Number(b.viewCount || 0) - Number(a.viewCount || 0) || Number(a.id) - Number(b.id)).slice(0, 6);
+    if (mostViewed) mostViewed.innerHTML = mostViewedBooks.map(book => renderDiscoveryCard(book, "🔥 الأكثر مشاهدة")).join("");
+  }
+
+  function rotateStoreQuote() {
+    const el = document.getElementById("storeQuote");
+    if (!el) return;
+    el.style.opacity = "0";
+    setTimeout(() => {
+      storeQuoteIndex = (storeQuoteIndex + 1) % STORE_QUOTES.length;
+      el.textContent = STORE_QUOTES[storeQuoteIndex];
+      el.style.transition = "opacity .35s ease";
+      el.style.opacity = "1";
+    }, 220);
+  }
+
+  function jumpToCategory(category) {
+    const button = [...document.querySelectorAll("#categories .category-btn")].find(btn => btn.textContent.trim() === category);
+    if (button) button.click();
+    document.getElementById("books")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }
   /* =====================================================
      SEARCH
   ===================================================== */
@@ -6664,6 +6814,8 @@ async function downloadPDF(filePath) {
   setupStoreBanner();
 
 renderBooks();
+renderHomepageDiscovery();
+setInterval(rotateStoreQuote, 5000);
 
 updateCartCount();
 
