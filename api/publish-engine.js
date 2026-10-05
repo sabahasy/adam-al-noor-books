@@ -109,6 +109,43 @@ export async function publishInstagram(caption, imageUrl) {
   return { ok:true, platform:"instagram", id:published.id || "" };
 }
 
+export async function listPublishDestinations() {
+  const sb = supabaseAdmin();
+  const { data, error } = await sb
+    .from("publish_destinations")
+    .select("id,name,url,kind,enabled,created_at")
+    .eq("enabled", true)
+    .order("id", { ascending: true });
+  if (error) throw new Error("تعذر تحميل أماكن النشر: " + error.message);
+  return data || [];
+}
+
+export async function addPublishDestination(name, url = "", kind = "facebook") {
+  const sb = supabaseAdmin();
+  const cleanName = cleanText(name);
+  const cleanUrl = cleanText(url);
+  if (!cleanName) throw new Error("اكتب اسم المكان.");
+  const { data, error } = await sb
+    .from("publish_destinations")
+    .insert({ name: cleanName, url: cleanUrl || null, kind: cleanText(kind) || "facebook", enabled: true })
+    .select("id,name,url,kind,enabled")
+    .single();
+  if (error) {
+    if (error.code === "23505") throw new Error("هذا المكان مضاف مسبقًا.");
+    throw new Error("تعذر إضافة المكان: " + error.message);
+  }
+  return data;
+}
+
+export async function removePublishDestination(id) {
+  const sb = supabaseAdmin();
+  const destinationId = Number(id);
+  if (!Number.isInteger(destinationId)) throw new Error("رقم المكان غير صحيح.");
+  const { error } = await sb.from("publish_destinations").delete().eq("id", destinationId);
+  if (error) throw new Error("تعذر حذف المكان: " + error.message);
+  return { ok: true, id: destinationId };
+}
+
 export async function publishTelegram(caption, imageUrl) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatIds = String(process.env.TELEGRAM_TARGET_CHAT_IDS || "").split(",").map(x=>x.trim()).filter(Boolean);
