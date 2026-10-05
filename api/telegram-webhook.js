@@ -1,4 +1,10 @@
-import { findBook, publishBook } from "./publish-engine.js";
+import {
+  findBook,
+  publishBook,
+  listPublishDestinations,
+  addPublishDestination,
+  removePublishDestination
+} from "./publish-engine.js";
 
 function replyKeyboard() {
   return {
@@ -33,6 +39,12 @@ function allowed(chatId) {
   return admin && String(chatId) === admin;
 }
 
+function destinationsText(destinations) {
+  if (!destinations.length) return "📋 لا توجد أماكن نشر محفوظة بعد.\n\nأضف أول مكان بهذا الشكل:\n/إضافة_مكان اسم المكان | الرابط";
+  return "📋 أماكن النشر المحفوظة:\n\n" +
+    destinations.map((d, i) => `${i + 1}️⃣ #${d.id} — ${d.name}${d.url ? `\n🔗 ${d.url}` : ""}`).join("\n\n");
+}
+
 function helpText() {
   return `🤖 بوت نشر آدم النور
 
@@ -46,6 +58,18 @@ function helpText() {
 
 /المنصات
 يعرض حالة المنصات المتصلة.
+
+/الأماكن
+يعرض أماكن النشر المحفوظة.
+
+/إضافة_مكان الاسم | الرابط
+يحفظ مكانًا جديدًا في قائمة النشر.
+
+/حذف_مكان الرقم
+يحذف مكانًا من القائمة.
+
+/نشر_الأماكن اسم الكتاب
+يجهز منشور الكتاب مع قائمة أماكن النشر المحفوظة لتفتحها وتنشر فيها بسرعة.
 
 /مساعدة
 يعرض هذه الرسالة.
@@ -97,6 +121,46 @@ export default async function handler(req, res) {
 
     if (text === "ℹ️ طريقة الاستخدام" || command === "/مساعدة" || command === "/start") {
       await telegram("sendMessage", {chat_id:chatId,text:helpText(),reply_markup:replyKeyboard()});
+      return res.status(200).json({ok:true});
+    }
+
+    if (command === "/الأماكن") {
+      const destinations = await listPublishDestinations();
+      await telegram("sendMessage", {chat_id:chatId,text:destinationsText(destinations),reply_markup:replyKeyboard()});
+      return res.status(200).json({ok:true});
+    }
+
+    if (command === "/إضافة_مكان") {
+      const parts = argument.split("|");
+      const name = (parts[0] || "").trim();
+      const url = (parts.slice(1).join("|") || "").trim();
+      const added = await addPublishDestination(name, url);
+      await telegram("sendMessage", {
+        chat_id:chatId,
+        text:`✅ تمت إضافة مكان النشر #${added.id}\n\n📌 ${added.name}${added.url ? `\n🔗 ${added.url}` : ""}`
+      });
+      return res.status(200).json({ok:true});
+    }
+
+    if (command === "/حذف_مكان") {
+      if (!argument) throw new Error("اكتب رقم المكان بعد /حذف_مكان.");
+      await removePublishDestination(argument);
+      await telegram("sendMessage", {chat_id:chatId,text:`🗑️ تم حذف مكان النشر #${argument}.`});
+      return res.status(200).json({ok:true});
+    }
+
+    if (command === "/نشر_الأماكن") {
+      if (!argument) throw new Error("اكتب اسم الكتاب بعد /نشر_الأماكن.");
+      const book = await findBook(argument);
+      const preview = await publishBook(book, []);
+      const destinations = await listPublishDestinations();
+      const placeText = destinations.length
+        ? destinations.map(d => `• #${d.id} — ${d.name}${d.url ? `\n  🔗 ${d.url}` : ""}`).join("\n")
+        : "لا توجد أماكن محفوظة بعد.";
+      await telegram("sendMessage", {
+        chat_id:chatId,
+        text:`🚀 منشور جاهز للنشر\n\n📚 ${book.title_ar}\n\n${preview.caption}\n\n📋 أماكن النشر المحفوظة:\n${placeText}\n\n⚠️ البوت لا يسجل الدخول إلى حسابك ولا ينشر في أماكن لا تمنحه صلاحية رسمية. استخدم الروابط أعلاه للنشر اليدوي السريع.`
+      });
       return res.status(200).json({ok:true});
     }
 
