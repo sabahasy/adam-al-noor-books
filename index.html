@@ -654,6 +654,47 @@
       transform: translateY(0);
     }
 
+    .books-sort-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 14px 0 8px;
+    }
+
+    .books-sort-label {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .books-sort-select {
+      min-width: 210px;
+      border: 1px solid rgba(201,162,39,.4);
+      border-radius: 13px;
+      padding: 10px 14px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .books-sort-select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,162,39,.12);
+    }
+
+    .books-sort-status {
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      min-height: 16px;
+    }
+
     .books-more-wrap {
       display: flex;
       justify-content: center;
@@ -4200,6 +4241,9 @@ return true;
   const BOOKS_LOAD_STEP = 6;
   let visibleBooksCount = BOOKS_INITIAL_LIMIT;
   let booksNavigationList = [];
+  let booksSortMode = "date_desc";
+  let bookSortRequestId = 0;
+  const booksFileSizeCache = Object.create(null);
 
   function canManageBookOrder() {
     if (!isManager) return false;
@@ -4595,6 +4639,144 @@ return true;
     { passive: true }
   );
 
+  function sortBooksList(list) {
+    const sorted = [...list];
+
+    if (booksSortMode === "name_asc" || booksSortMode === "name_desc") {
+      sorted.sort((a, b) => {
+        const aTitle = String(a.title || "").trim();
+        const bTitle = String(b.title || "").trim();
+        const result = aTitle.localeCompare(bTitle, "ar", {
+          numeric: true,
+          sensitivity: "base"
+        });
+        return booksSortMode === "name_desc" ? -result : result;
+      });
+      return sorted;
+    }
+
+    if (booksSortMode === "date_asc" || booksSortMode === "date_desc") {
+      sorted.sort((a, b) => {
+        const aDate = new Date(a.created_at || 0).getTime() || 0;
+        const bDate = new Date(b.created_at || 0).getTime() || 0;
+        return booksSortMode === "date_desc" ? bDate - aDate : aDate - bDate;
+      });
+      return sorted;
+    }
+
+    if (booksSortMode === "size_asc" || booksSortMode === "size_desc") {
+      sorted.sort((a, b) => {
+        const aSize = Number(booksFileSizeCache[String(a.id)] || 0);
+        const bSize = Number(booksFileSizeCache[String(b.id)] || 0);
+        return booksSortMode === "size_desc" ? bSize - aSize : aSize - bSize;
+      });
+    }
+
+    return sorted;
+  }
+
+  async function getBookFileSize(book) {
+    const id = String(book.id);
+    if (Object.prototype.hasOwnProperty.call(booksFileSizeCache, id)) {
+      return booksFileSizeCache[id];
+    }
+
+    if (!book.pdf_url) {
+      booksFileSizeCache[id] = 0;
+      return 0;
+    }
+
+    try {
+      const response = await fetch(book.pdf_url, {
+        method: "HEAD",
+        cache: "force-cache"
+      });
+      const headerSize = Number(response.headers.get("content-length") || 0);
+      if (response.ok && headerSize > 0) {
+        booksFileSizeCache[id] = headerSize;
+        return headerSize;
+      }
+    } catch (error) {
+      console.warn("Book size HEAD error:", book.id, error);
+    }
+
+    booksFileSizeCache[id] = 0;
+    return 0;
+  }
+
+  async function prepareBookSizeSort(list, requestId) {
+    await Promise.all(list.map(book => getBookFileSize(book)));
+    if (requestId !== bookSortRequestId) return;
+    renderBooks(currentBooks);
+  }
+
+  async function changeBooksSort(mode) {
+    booksSortMode = mode || "date_desc";
+    visibleBooksCount = BOOKS_INITIAL_LIMIT;
+    const requestId = ++bookSortRequestId;
+    const status = document.getElementById("booksSortStatus");
+    if (status) {
+      status.textContent = (booksSortMode === "size_asc" || booksSortMode === "size_desc")
+        ? "⏳ جارٍ قراءة أحجام ملفات الكتب..."
+        : "";
+    }
+
+    renderBooks(currentBooks);
+
+    if (booksSortMode === "size_asc" || booksSortMode === "size_desc") {
+      await prepareBookSizeSort(currentBooks, requestId);
+    }
+
+    if (requestId === bookSortRequestId) {
+      const finalStatus = document.getElementById("booksSortStatus");
+      if (finalStatus) finalStatus.textContent = "";
+    }
+  }
+
+  function renderBooksSortControls() {
+    const container = document.getElementById("books");
+    if (!container || !container.parentNode) return;
+
+    const oldSortWrap = container.parentNode.querySelector(".books-sort-wrap");
+    if (oldSortWrap) oldSortWrap.remove();
+
+    const wrap = document.createElement("div");
+    wrap.className = "books-sort-wrap";
+
+    const label = document.createElement("span");
+    label.className = "books-sort-label";
+    label.textContent = "🔽 ترتيب الكتب حسب:";
+
+    const select = document.createElement("select");
+    select.className = "books-sort-select";
+    select.setAttribute("aria-label", "ترتيب الكتب");
+
+    const options = [
+      ["date_desc", "📅 الأحدث أولاً"],
+      ["date_asc", "📅 الأقدم أولاً"],
+      ["size_desc", "📦 الحجم الأكبر أولاً"],
+      ["size_asc", "📦 الحجم الأصغر أولاً"],
+      ["name_asc", "🔤 الاسم: أ → ي"],
+      ["name_desc", "🔤 الاسم: ي → أ"]
+    ];
+
+    options.forEach(([value, text]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = text;
+      select.appendChild(option);
+    });
+
+    select.value = booksSortMode;
+    select.onchange = () => changeBooksSort(select.value);
+
+    const status = document.createElement("span");
+    status.id = "booksSortStatus";
+    status.className = "books-sort-status";
+
+    wrap.append(label, select, status);
+    container.parentNode.insertBefore(wrap, container);
+  }
   function renderBooks(list = currentBooks) {
 
     const container =
@@ -4609,9 +4791,12 @@ return true;
     const oldMoreWrap = container.parentNode.querySelector(".books-more-wrap");
     if (oldMoreWrap) oldMoreWrap.remove();
 
-    booksNavigationList = [...list];
+    const sortedList = sortBooksList(list);
+    booksNavigationList = [...sortedList];
 
-    if (!list.length) {
+    renderBooksSortControls();
+
+    if (!sortedList.length) {
 
       container.innerHTML = `
         <div class="empty">
@@ -4624,7 +4809,7 @@ return true;
       return;
     }
 
-    const visibleList = list.slice(0, visibleBooksCount);
+    const visibleList = sortedList.slice(0, visibleBooksCount);
 
     container.innerHTML = visibleList.map(book => {
 
@@ -4788,7 +4973,7 @@ const stars =
     const moreWrap = document.createElement("div");
     moreWrap.className = "books-more-wrap";
 
-    if (list.length > visibleBooksCount) {
+    if (sortedList.length > visibleBooksCount) {
       moreWrap.innerHTML =
         '<div><button class="books-more-btn" type="button" onclick="showMoreBooks()">عرض مزيد من الكتب <span class="more-finger" aria-hidden="true">👇</span></button><div class="books-more-hint">اضغط لعرض المزيد من الكتب</div></div>';
     }
