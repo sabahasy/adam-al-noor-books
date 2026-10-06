@@ -3606,9 +3606,13 @@ body.manager-theme-active {
       <section id="managerBooksSection" class="manager-section">
         <h2>📚 إدارة الكتب</h2>
         <p>الوصول السريع إلى ترتيب الكتب الموجود في الصفحة الرئيسية.</p>
+        <div class="manager-actions" style="margin-bottom:12px">
+          <button class="manager-action-btn gold" onclick="managerGoToBooksEnd()">⬇️ الانتقال إلى آخر الكتب</button>
+        </div>
         <div class="manager-actions">
           <button class="manager-action-btn primary" onclick="managerOpenBookOrdering()">↕️ ترتيب الكتب</button>
-          <button class="manager-action-btn" onclick="showPage('home'); setTimeout(()=>document.getElementById('books')?.scrollIntoView({behavior:'smooth'}),150)">📖 عرض الكتب</button>
+          <button class="manager-action-btn" onclick="showPage('home'); setTimeout(()=>document.getElementById('books')?.scrollIntoView({behavior:'smooth',block:'start'}),150)">📖 معاينة الكتب</button>
+          <button class="manager-action-btn" onclick="showPage('home')">🏠 معاينة المتجر</button>
         </div>
         <div class="manager-note">🔐 أدوات ترتيب الكتب وإدارتها لا تظهر للزائر العادي.</div>
       </section>
@@ -7029,6 +7033,18 @@ function managerOpenBookOrdering() {
     document.querySelector(".book-order-manager")?.scrollIntoView({behavior:"smooth",block:"center"});
   }, 180);
 }
+
+function managerGoToBooksEnd() {
+  if (!isManager) return;
+  showPage("home");
+  setTimeout(() => {
+    const books = document.getElementById("books");
+    if (books) {
+      books.scrollIntoView({behavior:"smooth", block:"end", inline:"nearest"});
+    }
+  }, 220);
+}
+
 
 async function loadManagerPeopleData() {
   if (!isManager) return;
