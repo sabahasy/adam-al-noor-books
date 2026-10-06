@@ -627,6 +627,33 @@
       border-color: var(--black);
     }
 
+    .books-navigation-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 8px;
+    }
+
+    .books-navigation-btn {
+      border: 1px solid rgba(201,162,39,.45);
+      border-radius: 15px;
+      padding: 12px 26px;
+      background: linear-gradient(135deg, var(--black), #2d2d2d);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      box-shadow: 0 7px 18px rgba(0,0,0,.13);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .books-navigation-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.17);
+    }
+
+    .books-navigation-btn:active {
+      transform: translateY(0);
+    }
+
     .books-more-wrap {
       display: flex;
       justify-content: center;
@@ -4172,6 +4199,7 @@ return true;
   const BOOKS_INITIAL_LIMIT = 6;
   const BOOKS_LOAD_STEP = 6;
   let visibleBooksCount = BOOKS_INITIAL_LIMIT;
+  let booksNavigationList = [];
 
   function canManageBookOrder() {
     if (!isManager) return false;
@@ -4477,6 +4505,96 @@ return true;
     });
   }
 
+  function updateBooksNavigationButton() {
+
+    const button =
+      document.getElementById("booksNavigationButton");
+
+    const container =
+      document.getElementById("books");
+
+    if (!button || !container) return;
+
+    const firstBook =
+      container.querySelector(".book");
+
+    if (!firstBook) return;
+
+    const firstRect =
+      firstBook.getBoundingClientRect();
+
+    button.textContent =
+      firstRect.top >= 100
+        ? "⬇️ آخر الكتب"
+        : "⬆️ أول الكتب";
+  }
+
+  function navigateBooksEnd() {
+
+    const container =
+      document.getElementById("books");
+
+    if (!container) return;
+
+    const firstBook =
+      container.querySelector(".book");
+
+    if (!firstBook) return;
+
+    const atTop =
+      firstBook.getBoundingClientRect().top >= 100;
+
+    if (atTop) {
+
+      if (booksNavigationList.length > visibleBooksCount) {
+        visibleBooksCount = booksNavigationList.length;
+        renderBooks(booksNavigationList);
+
+        setTimeout(() => {
+          const lastBook =
+            document
+              .getElementById("books")
+              ?.querySelector(".book:last-child");
+
+          if (lastBook) {
+            lastBook.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+          }
+
+          updateBooksNavigationButton();
+        }, 60);
+
+        return;
+      }
+
+      const lastBook =
+        container.querySelector(".book:last-child");
+
+      if (lastBook) {
+        lastBook.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+    } else {
+
+      firstBook.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }
+  }
+
+  window.addEventListener(
+    "scroll",
+    updateBooksNavigationButton,
+    { passive: true }
+  );
+
   function renderBooks(list = currentBooks) {
 
     const container =
@@ -4484,8 +4602,14 @@ return true;
 
     if (!container) return;
 
+    const oldNavigationWrap =
+      container.parentNode.querySelector(".books-navigation-wrap");
+    if (oldNavigationWrap) oldNavigationWrap.remove();
+
     const oldMoreWrap = container.parentNode.querySelector(".books-more-wrap");
     if (oldMoreWrap) oldMoreWrap.remove();
+
+    booksNavigationList = [...list];
 
     if (!list.length) {
 
@@ -4644,6 +4768,22 @@ const stars =
     }).join("");
 
     renderBookOrderManager(container);
+
+    const navigationWrap = document.createElement("div");
+    navigationWrap.className = "books-navigation-wrap";
+
+    const navigationButton = document.createElement("button");
+    navigationButton.id = "booksNavigationButton";
+    navigationButton.type = "button";
+    navigationButton.className = "books-navigation-btn";
+    navigationButton.textContent = "⬇️ آخر الكتب";
+    navigationButton.setAttribute("aria-label", "الانتقال بين أول وآخر الكتب");
+    navigationButton.onclick = navigateBooksEnd;
+
+    navigationWrap.appendChild(navigationButton);
+    container.parentNode.insertBefore(navigationWrap, container);
+
+    updateBooksNavigationButton();
 
     const moreWrap = document.createElement("div");
     moreWrap.className = "books-more-wrap";
