@@ -8,6 +8,7 @@
   <meta name="google-site-verification" content="zJbBxtVsfTFFwfHL2qcePUqSl1BJpCSkNG9cAEFatqc" />
 
   <title>آدم النور للكتب الإلكترونية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Katibeh&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -161,23 +162,17 @@
       width: 170px;
       max-width: 42vw;
       height: 54px;
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto;
-      overflow: visible;
-    }
-
-    .brand-name-logo text {
-      font-family: "Amiri", "Times New Roman", serif;
-      font-weight: 900;
-      letter-spacing: .2px;
-    }
-
-    .brand-name-logo .logo-line {
-      fill: none;
-      stroke: #d8b84c;
-      stroke-width: 1.7;
-      stroke-linecap: round;
-      opacity: .9;
+      color: #e0bd4d;
+      font-family: "Katibeh", serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1;
+      white-space: nowrap;
+      direction: rtl;
     }
 
     @media (max-width: 520px) {
@@ -185,6 +180,7 @@
         width: 132px;
         max-width: 36vw;
         height: 48px;
+        font-size: 38px;
       }
     }
 
@@ -3038,11 +3034,7 @@ body.manager-theme-active {
       <div class="brand-icon">📚</div>
 
       <div class="brand-text">
-        <svg class="brand-name-logo" viewBox="0 0 340 108" role="img" aria-label="آدَم النــور">
-          <path class="logo-line" d="M24 29 C72 10, 111 14, 143 27 C171 39, 202 39, 232 25 C263 11, 296 14, 316 29" />
-          <path class="logo-line" d="M33 78 C78 95, 118 94, 150 81 C181 69, 207 69, 238 82 C269 95, 302 94, 312 80" />
-          <text x="170" y="69" text-anchor="middle" fill="#e0bd4d" font-size="43">آدَم النــور</text>
-        </svg>
+        <div class="brand-name-logo" aria-label="آدَم النــور">آدَم النــور</div>
         <span>للكتب الإلكترونيــــة</span>
       </div>
 
