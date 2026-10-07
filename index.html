@@ -3041,6 +3041,10 @@ body.manager-theme-active {
     .reward-policy{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(201,162,39,.10);border:1px solid rgba(201,162,39,.25);font-size:12px;line-height:1.9}
     .book-points-box{margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(201,162,39,.10),rgba(201,162,39,.03));border:1px solid rgba(201,162,39,.30)}
     .book-points-box h3{font-size:15px;margin-bottom:5px}
+    .points-page-link{display:inline-flex;align-items:center;justify-content:center;margin:4px 0 10px;padding:7px 14px;border-radius:12px;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold-dark);font-size:18px;font-weight:900;text-decoration:none;cursor:pointer;letter-spacing:.2px}
+    .points-page-link .points-elongated{font-size:21px;font-weight:1000}
+    .rewards-nav-highlight{font-weight:900}
+    .rewards-nav-highlight{font-size:16px}
     .book-points-box p{font-size:12px;color:var(--muted);margin-bottom:9px}
     .book-points-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;font-weight:800}
     .book-points-required{color:var(--gold-dark)}
@@ -3102,8 +3106,8 @@ body.manager-theme-active {
         👤 حسابـي
       </button>
 
-      <button id="rewardsNavBtn" class="nav-btn" onclick="showPage('rewards')">
-        🎁 نقاطي
+      <button id="rewardsNavBtn" class="nav-btn rewards-nav-highlight" onclick="showPage('rewards')">
+        🎁 نــــــــقاطي
       </button>
 
       <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
@@ -3674,7 +3678,7 @@ body.manager-theme-active {
 
         <div id="bookPointsPurchase" class="book-points-box" style="display:none;">
           <h3>🎁 شراء هذا الكتاب بالنقاط</h3>
-👉 توجّه إلى نقاطي وأكمل العروض المطلوبة للحصول على نقاط كافية، ثم عد إلى هذا الكتاب لشرائه باستخدام نقاطك.
+          <div>👉 توجّه إلى <button type="button" class="points-page-link" onclick="showPage('rewards')" aria-label="الانتقال إلى نقاطي"><span class="points-elongated">نــــــــقاطي</span></button> وأكمل العروض المطلوبة للحصول على نقاط كافية، ثم عد إلى هذا الكتاب لشرائه باستخدام نقاطك.</div>
           <p>طريقة شراء مستقلة عن الدفع الإلكتروني. إذا كان رصيدك كافيًا، سيُضاف الكتاب مباشرةً إلى مكتبتك.</p>
           <div class="book-points-meta">
             <span id="bookPointsRequired" class="book-points-required">المطلوب: — نقطة</span>
