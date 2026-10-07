@@ -5372,6 +5372,8 @@ const stars =
         "كتب إلكترونية";
     });
 
+    prepareBookSearchIndex();
+
     currentBooks = [...books];
 
     const container =
@@ -5776,52 +5778,93 @@ viewCount:
      SEARCH
   ===================================================== */
 
+  function normalizeSearchArabic(value) {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/[\u064B-\u065F\u0670]/g, "")
+      .replace(/[إأآٱ]/g, "ا")
+      .replace(/ى/g, "ي")
+      .replace(/ؤ/g, "و")
+      .replace(/ئ/g, "ي")
+      .replace(/ة/g, "ه")
+      .replace(/ـ/g, "")
+      .replace(/[^\u0600-\u06FFa-z0-9]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  const SEARCH_SYNONYMS = {
+    "كتاب":["كتب","مؤلف","قراءة"],"كتب":["كتاب","مؤلف","قراءة"],
+    "ملزمه":["ملزمة","ملازم","مذكرة","مراجعة","دراسة"],"ملزمة":["ملازم","مذكرة","مراجعة","دراسة"],
+    "ملازم":["ملزمة","مذكرة","مراجعة"],"مراجعه":["مراجعة","امتحان","اختبار","دراسة"],
+    "امتحان":["اختبار","مراجعة","دراسة"],"اختبار":["امتحان","مراجعة","دراسة"],
+    "سادس":["السادس","سادسي","سادسيون"],"خامس":["الخامس"],"رابع":["الرابع"],"ثالث":["الثالث"],
+    "علمي":["العلمي"],"ادبي":["الأدبي","ادبي"],
+    "انجليزي":["الانجليزية","الإنجليزية","لغة انجليزية","لغة إنجليزية"],
+    "انكليزي":["الانجليزية","الإنجليزية","لغة انجليزية","لغة إنجليزية"],
+    "عربي":["العربية","لغة عربية"],"اسلاميه":["الإسلامية","التربية الإسلامية","دين"],
+    "جغرافيا":["الجغرافية","خرائط","جغرافية"],"تاريخ":["التاريخ","حضارات","أحداث","شخصيات"],
+    "فيزياء":["الفيزياء","قوانين","مسائل"],"كيمياء":["الكيمياء","معادلات","قوانين"],
+    "رياضيات":["الرياضيات","حساب","مسائل","قوانين"],"احياء":["الأحياء","علم الحياة","كائنات"],
+    "نفس":["علم النفس","سيكولوجيا","سلوك","شخصية"],"اطفال":["الأطفال","طفل","تربية","طفولة"],
+    "طفل":["الأطفال","تربية","طفولة"],"مراهقه":["المراهقة","مراهق","طفولة","نمو"],
+    "رعب":["خوف","كوابيس","رعب نفسي","رواية رعب"],"روايه":["رواية","قصة","قصص","تشويق"],
+    "قصه":["قصة","قصص","رواية","حكاية"],"حضارات":["حضارة","تاريخ","سومر","بابل","فراعنة"],
+    "فراعنه":["الفراعنة","مصر القديمة","حضارة مصر"],"سومريين":["السومريون","سومر","العراق القديم","بلاد الرافدين"],
+    "جن":["الجن","أساطير","كائنات غامضة","خوارق"],"دراكولا":["مصاص دماء","فامباير","رعب","برام ستوكر"],
+    "هتلر":["أدولف هتلر","نازية","الحرب العالمية الثانية","ألمانيا"],"فلسفه":["الفلسفة","فكر","منطق","وجود"],
+    "منطق":["المنطق","فلسفة","تفكير"],"سلام":["السلام الداخلي","هدوء","توازن نفسي","راحة"],
+    "حوار":["الحوار","الكلام","التواصل","حديث"],"تربيه":["التربية","الأطفال","طفولة","سلوك"],
+    "سياسه":["السياسة","حكم","سلطة","قيادة"],"قوه":["القوة","نفوذ","سلطة","سياسة"],
+    "مؤامره":["المؤامرة","أسرار","غموض"],"مغول":["المغول","جنكيز خان","تاريخ","إمبراطورية"],
+    "بابل":["بابل","بلاد الرافدين","العراق القديم","الحضارات"],"سومر":["سومر","السومريون","بلاد الرافدين","العراق القديم"]
+  };
+
+  function buildBookSearchText(book) {
+    const raw = [book.title,book.title_ar,book.author,book.author_ar,book.description,book.description_ar,book.category]
+      .filter(Boolean).join(" ");
+    const normalized = normalizeSearchArabic(raw);
+    const extra = [];
+    Object.entries(SEARCH_SYNONYMS).forEach(([key, values]) => {
+      if (normalized.includes(normalizeSearchArabic(key))) extra.push(...values);
+    });
+    return normalizeSearchArabic(raw + " " + extra.join(" "));
+  }
+
+  function prepareBookSearchIndex() {
+    books.forEach(book => { book.searchKeywords = buildBookSearchText(book); });
+  }
+
+  function expandSearchQuery(query) {
+    const normalized = normalizeSearchArabic(query);
+    const words = normalized.split(/\s+/).filter(Boolean);
+    const expanded = new Set(words);
+    words.forEach(word => (SEARCH_SYNONYMS[word] || []).forEach(item => expanded.add(normalizeSearchArabic(item))));
+    return { normalized, words, expanded: [...expanded] };
+  }
+
   function searchBooks() {
-
-    const input =
-      document.getElementById("search");
-
-    const query =
-      input.value
-        .trim()
-        .toLowerCase();
-
+    const input = document.getElementById("search");
+    const query = input.value.trim();
     syncHeroSearch();
 
     if (!query) {
-
-      currentBooks =
-        [...books];
+      currentBooks = [...books];
       visibleBooksCount = BOOKS_INITIAL_LIMIT;
-
       renderBooks();
-
       return;
-
     }
 
     visibleBooksCount = BOOKS_INITIAL_LIMIT;
+    const search = expandSearchQuery(query);
 
-    currentBooks =
-      books.filter(book => {
-
-        const title =
-          String(book.title || "")
-            .toLowerCase();
-
-        const author =
-          String(book.author || "")
-            .toLowerCase();
-
-        return (
-          title.includes(query) ||
-          author.includes(query)
-        );
-
-      });
+    currentBooks = books.filter(book => {
+      const text = book.searchKeywords || buildBookSearchText(book);
+      if (text.includes(search.normalized)) return true;
+      return search.words.every(word => text.includes(word) || search.expanded.some(alias => text.includes(alias)));
+    });
 
     renderBooks();
-
   }
 
   /* =====================================================
