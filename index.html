@@ -157,13 +157,35 @@
       font-size: 17px;
     }
 
-    .brand-name-image {
-      width: 150px;
+    .brand-name-logo {
+      width: 170px;
       max-width: 42vw;
-      height: auto;
+      height: 54px;
       display: block;
-      object-fit: contain;
       margin: 0 auto;
+      overflow: visible;
+    }
+
+    .brand-name-logo text {
+      font-family: "Amiri", "Times New Roman", serif;
+      font-weight: 900;
+      letter-spacing: .2px;
+    }
+
+    .brand-name-logo .logo-line {
+      fill: none;
+      stroke: #d8b84c;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      opacity: .9;
+    }
+
+    @media (max-width: 520px) {
+      .brand-name-logo {
+        width: 132px;
+        max-width: 36vw;
+        height: 48px;
+      }
     }
 
     .brand-text span {
@@ -3016,8 +3038,12 @@ body.manager-theme-active {
       <div class="brand-icon">📚</div>
 
       <div class="brand-text">
-  <img class="brand-name-image" src="https://raw.githubusercontent.com/sabahasy/adam-al-noor-books/main/assets/adam-name.jpg" alt="آدَم النــور">
-  <span>للكتب الإلكترونيــــة</span>
+        <svg class="brand-name-logo" viewBox="0 0 340 108" role="img" aria-label="آدَم النــور">
+          <path class="logo-line" d="M24 29 C72 10, 111 14, 143 27 C171 39, 202 39, 232 25 C263 11, 296 14, 316 29" />
+          <path class="logo-line" d="M33 78 C78 95, 118 94, 150 81 C181 69, 207 69, 238 82 C269 95, 302 94, 312 80" />
+          <text x="170" y="69" text-anchor="middle" fill="#e0bd4d" font-size="43">آدَم النــور</text>
+        </svg>
+        <span>للكتب الإلكترونيــــة</span>
       </div>
 
       <div class="brand-icon">📚</div>
