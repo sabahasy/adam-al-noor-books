@@ -3043,8 +3043,9 @@ body.manager-theme-active {
     .book-points-box h3{font-size:15px;margin-bottom:5px}
     .points-page-link{display:inline-flex;align-items:center;justify-content:center;margin:4px 0 10px;padding:7px 14px;border-radius:12px;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold-dark);font-size:18px;font-weight:900;text-decoration:none;cursor:pointer;letter-spacing:.2px}
     .points-page-link .points-elongated{font-size:21px;font-weight:1000}
-    .rewards-nav-highlight{font-weight:900;font-size:19px;letter-spacing:.5px;padding-left:18px;padding-right:18px}
-    .rewards-nav-highlight .rewards-stretch{font-size:21px;font-weight:1000;letter-spacing:1px}
+    .rewards-nav-highlight{font-weight:900!important;font-size:20px!important;letter-spacing:.7px;padding:10px 20px!important;color:#f4d76a!important;background:rgba(201,162,39,.12)!important;border:1px solid rgba(201,162,39,.42)!important;box-shadow:0 3px 12px rgba(201,162,39,.16)}
+    .rewards-nav-highlight:hover{background:rgba(201,162,39,.25)!important;color:#fff!important}
+    .rewards-nav-highlight .rewards-stretch{font-size:24px;font-weight:1000;letter-spacing:2px;text-shadow:0 1px 5px rgba(0,0,0,.35)}
     .book-points-box p{font-size:12px;color:var(--muted);margin-bottom:9px}
     .book-points-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;font-weight:800}
     .book-points-required{color:var(--gold-dark)}
@@ -3678,7 +3679,7 @@ body.manager-theme-active {
 
         <div id="bookPointsPurchase" class="book-points-box" style="display:none;">
           <h3>🎁 شراء هذا الكتاب بالنقاط</h3>
-          <div>👉 توجّه إلى <button type="button" class="points-page-link" onclick="showPage('rewards')" aria-label="الانتقال إلى نقاطي"><span class="points-elongated">نــــــــقاطي</span></button> وأكمل العروض المطلوبة للحصول على نقاط كافية، ثم عد إلى هذا الكتاب لشرائه باستخدام نقاطك.</div>
+          <div>👉 توجّه إلى <button type="button" class="points-page-link" onclick="goToRewardsFromBook()" aria-label="الانتقال إلى نقاطي"><span class="points-elongated">نــــــــقاطي</span></button> وأكمل العروض المطلوبة للحصول على نقاط كافية، ثم عد إلى هذا الكتاب لشرائه باستخدام نقاطك.</div>
           <p>طريقة شراء مستقلة عن الدفع الإلكتروني. إذا كان رصيدك كافيًا، سيُضاف الكتاب مباشرةً إلى مكتبتك.</p>
           <div class="book-points-meta">
             <span id="bookPointsRequired" class="book-points-required">المطلوب: — نقطة</span>
@@ -7459,7 +7460,7 @@ async function loadRewards(forceReload = false) {
       button.textContent = enough ? "🎁 شراء بالنقاط الآن" : "👉 اجمع نقاطًا أكثر";
       button.onclick = enough
         ? () => redeemRewardBook(book)
-        : () => showPage("rewards");
+        : () => goToRewardsFromBook();
     } catch (error) {
       console.error("Book reward balance error:", error);
       balanceEl.textContent = "⚠️ تعذر التحقق من الرصيد";
@@ -7467,6 +7468,11 @@ async function loadRewards(forceReload = false) {
       button.textContent = "🎁 فتح صفحة النقاط";
       button.onclick = () => showPage("rewards");
     }
+  }
+
+  function goToRewardsFromBook() {
+    closeBookDetails();
+    showPage("rewards");
   }
 
   async function redeemRewardBook(book) {
