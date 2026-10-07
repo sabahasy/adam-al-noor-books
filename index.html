@@ -196,6 +196,8 @@
     }
 
 
+    .header-tools{display:flex;align-items:center;gap:8px;margin-inline-start:auto;flex-shrink:0}.header-tool{position:relative}.header-tool-btn{border:1px solid rgba(201,162,39,.38);background:rgba(255,255,255,.04);color:#fff;border-radius:12px;min-height:40px;padding:7px 10px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:800}.header-tool-btn:hover{background:rgba(201,162,39,.14);border-color:var(--gold)}.header-tool-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:155px;padding:7px;border:1px solid rgba(201,162,39,.28);border-radius:14px;background:#171717;box-shadow:0 14px 35px rgba(0,0,0,.35);display:none;z-index:1200}.header-tool-menu.open{display:grid;gap:5px}.header-tool-option{border:0;border-radius:9px;padding:9px 10px;background:transparent;color:#eee;text-align:start;font-size:12px;font-weight:700}.header-tool-option:hover,.header-tool-option.active{background:var(--gold);color:#111}@media(max-width:900px){.header-inner{flex-wrap:wrap;padding:8px 0}.brand{min-width:0}.header-tools{order:2}nav{order:3;width:100%}}@media(max-width:520px){.header-tool-btn{min-height:36px;padding:6px 8px;font-size:11px}.header-tool-menu{inset-inline-end:-4px}}
+
     .header-slogan {
       display: inline-block;
       color: #ffffff;
@@ -3066,6 +3068,7 @@ body.manager-theme-active {
       </button>
       <span class="header-slogan" aria-label="Adam alnoor">★𝓐𝓭𝓪𝓶.𝓪𝓵𝓷𝓸𝓸𝓻★</span>
     </nav>
+    <div class="header-tools" aria-label="خيارات المتجر"><div class="header-tool"><button type="button" class="header-tool-btn" onclick="toggleHeaderMenu('currencyMenu')" aria-expanded="false">💰 <span id="currencyCurrent">IQD</span></button><div id="currencyMenu" class="header-tool-menu"><button type="button" class="header-tool-option" data-currency="IQD" onclick="setCurrency('IQD')">🇮🇶 IQD — دينار عراقي</button><button type="button" class="header-tool-option" data-currency="USD" onclick="setCurrency('USD')">🇺🇸 USD — دولار أمريكي</button></div></div><div class="header-tool"><button type="button" class="header-tool-btn" onclick="toggleHeaderMenu('languageMenu')" aria-expanded="false">🌐 <span id="languageCurrent">العربية</span></button><div id="languageMenu" class="header-tool-menu"><button type="button" class="header-tool-option" data-language="ar" onclick="setLanguage('ar')">🇮🇶 العربية</button><button type="button" class="header-tool-option" data-language="en" onclick="setLanguage('en')">🇺🇸 English</button><button type="button" class="header-tool-option" data-language="ku" onclick="setLanguage('ku')">🟨 کوردی</button></div></div></div>
 
   </div>
 </header>
@@ -3950,7 +3953,10 @@ body.manager-theme-active {
   const SUPABASE_KEY =
     "sb_publishable_dOspOgRBDAG-KaxmAWha2g_MkBeY5fQ";
 
-  const CURRENCY = "IQD";
+  const DEFAULT_CURRENCY = "IQD";
+  const USD_TO_IQD = 1310;
+  let currentCurrency = localStorage.getItem("adamAlNoorCurrency") || DEFAULT_CURRENCY;
+  let currentLanguage = localStorage.getItem("adamAlNoorLanguage") || "ar";
 
   const STORE_BANNER_URL = "https://raw.githubusercontent.com/sabahasy/adam-al-noor-books/main/assets/adam-al-noor-banner.jpg";
 
@@ -3985,12 +3991,16 @@ let cart = JSON.parse(
   }
 
   function formatPrice(price) {
-
-    const number = Number(price || 0);
-
-    return `${number.toLocaleString("en-US")} ${CURRENCY}`;
-
+    const iqd=Number(price||0);
+    if(currentCurrency==="USD"){const usd=iqd/USD_TO_IQD;return "$"+usd.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD";}
+    return iqd.toLocaleString("en-US")+" IQD";
   }
+  function toggleHeaderMenu(id){document.querySelectorAll(".header-tool-menu.open").forEach(m=>{if(m.id!==id)m.classList.remove("open");});document.getElementById(id)?.classList.toggle("open");}
+  document.addEventListener("click",e=>{if(!e.target.closest(".header-tool"))document.querySelectorAll(".header-tool-menu.open").forEach(m=>m.classList.remove("open"));});
+  function setCurrency(currency){if(!["IQD","USD"].includes(currency))return;currentCurrency=currency;localStorage.setItem("adamAlNoorCurrency",currency);const el=document.getElementById("currencyCurrent");if(el)el.textContent=currency;document.querySelectorAll("[data-currency]").forEach(b=>b.classList.toggle("active",b.dataset.currency===currency));document.getElementById("currencyMenu")?.classList.remove("open");renderBooks();renderCart();const p=document.getElementById("bookDetailsPrice");if(p&&window.currentBookDetailsIndex!=null&&books[window.currentBookDetailsIndex])p.textContent=formatPrice(books[window.currentBookDetailsIndex].price);}
+  const UI_TRANSLATIONS={ar:{home:"🏠 الرئيـسية",library:"📖 مكتبـتي",cart:"🛒 السلـة",account:"👤 حسابـي",manager:"👑 المدير",language:"العربية"},en:{home:"🏠 Home",library:"📖 My Library",cart:"🛒 Cart",account:"👤 Account",manager:"👑 Manager",language:"English",heroLabel:"📚 Adam Al Noor E-Book Store",heroTitle1:"Discover your",heroTitle2:"next book",heroText:"A world of knowledge, history, civilizations and novels at your fingertips.",search:"🔎 Search",browse:"📚 Browse Books",books:"Discover Books",booksSub:"A curated collection of books available for purchase",searchPlaceholder:"🔎 Search by book title or author..."},ku:{home:"🏠 سەرەکی",library:"📖 کتێبخانەم",cart:"🛒 سەبەتە",account:"👤 هەژمار",manager:"👑 بەڕێوەبەر",language:"کوردی",heroLabel:"📚 فرۆشگای کتێبی ئەلیکترۆنی ئادەم ئەلنور",heroTitle1:"کتێبەکەت",heroTitle2:"بدۆزەرەوە",heroText:"جیهانێک لە زانیاری و مێژوو و ڕۆمان لە بەردەستتدایە.",search:"🔎 گەڕان",browse:"📚 کتێبەکان ببینە",books:"کتێبەکان بدۆزەرەوە",booksSub:"کۆمەڵێک کتێبی بەردەست بۆ کڕین",searchPlaceholder:"🔎 بە ناوی کتێب یان نووسەر بگەڕێ..."}};
+  function setLanguage(language){if(!["ar","en","ku"].includes(language))return;currentLanguage=language;localStorage.setItem("adamAlNoorLanguage",language);document.documentElement.lang=language;document.documentElement.dir=language==="en"?"ltr":"rtl";const t=UI_TRANSLATIONS[language],nav=document.querySelectorAll("nav .nav-btn");if(nav[0])nav[0].textContent=t.home;if(nav[1])nav[1].textContent=t.library;if(nav[2])nav[2].innerHTML=t.cart+" <span id="cartCount" class="cart-badge">"+(cart.length||0)+"</span>";if(nav[3])nav[3].textContent=t.account;const m=document.getElementById("managerNavBtn");if(m)m.textContent=t.manager;const l=document.querySelector(".hero-label");if(l)l.textContent=t.heroLabel||"📚 متجر ༺ آدَم النــور ༻ للكتب الإلكترونية";const h=document.querySelector(".hero h1");if(h)h.innerHTML=(t.heroTitle1||"اكتشف كتابك")+" <span>"+(t.heroTitle2||"القادم")+"</span>";const hp=document.querySelector(".hero p");if(hp)hp.textContent=t.heroText||"عالم من المعرفة والتاريخ والحضارات والروايات بين يديك.";const hs=document.getElementById("heroSearch");if(hs)hs.placeholder=language==="ar"?"ابحث عن كتاب أو مؤلف...":t.searchPlaceholder;const hb=document.querySelector(".hero-search button");if(hb)hb.textContent=t.search||"🔎 بحث";const bb=document.querySelector(".hero-browse-btn");if(bb)bb.textContent=t.browse||"📚 تصفح الكتب";const st=document.querySelector(".section-title h2");if(st)st.textContent=t.books||"اكتشف الكتب";const sp=document.querySelector(".section-title p");if(sp)sp.textContent=t.booksSub||"مجموعة مختارة من الكتب المتاحة للشراء";const s=document.getElementById("search");if(s)s.placeholder=language==="ar"?"🔎 ابحث باسم الكتاب أو المؤلف...":t.searchPlaceholder;const lc=document.getElementById("languageCurrent");if(lc)lc.textContent=t.language;document.querySelectorAll("[data-language]").forEach(b=>b.classList.toggle("active",b.dataset.language===language));document.getElementById("languageMenu")?.classList.remove("open");localizeBooks();renderBooks();}
+  function initializeStorePreferences(){setCurrency(currentCurrency);setLanguage(currentLanguage);}
   /* =====================================================
    ANALYTICS
 ===================================================== */
@@ -4184,7 +4194,7 @@ return true;
   }
 
   updateStoreClock();
-
+  setTimeout(initializeStorePreferences,0);
   setInterval(
     updateStoreClock,
     1000
@@ -5107,7 +5117,7 @@ const stars =
 
       const url =
         `${SUPABASE_URL}/rest/v1/books` +
-        `?select=id,title_ar,description_ar,author_ar,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at,display_order` +
+        `?select=id,title_ar,title_en,title_ku,description_ar,description_en,description_ku,author_ar,author_en,author_ku,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at,display_order` +
         `&is_available=eq.true` +
         `&order=display_order.asc.nullslast,id.asc`;
 
@@ -5228,10 +5238,17 @@ books =
 
           id: book.id,
 
+          title_ar: book.title_ar,
+          title_en: book.title_en,
+          title_ku: book.title_ku,
+          description_ar: book.description_ar,
+          description_en: book.description_en,
+          description_ku: book.description_ku,
+          author_ar: book.author_ar,
+          author_en: book.author_en,
+          author_ku: book.author_ku,
           title: book.title_ar,
-
           description: book.description_ar,
-
           author: book.author_ar,
 
           category_id: book.category_id,
@@ -5645,10 +5662,8 @@ if (ratingMessage) {
         ? description
         : "لا يوجد وصف متاح لهذا الكتاب حالياً.";
 
-    document.getElementById(
-      "bookDetailsPrice"
-    ).textContent =
-      formatPrice(book.price);
+    window.currentBookDetailsIndex=index;
+    document.getElementById("bookDetailsPrice").textContent=formatPrice(book.price);
 
     const coverContainer =
       document.getElementById(
