@@ -7408,6 +7408,128 @@ async function loadRewards(forceReload = false) {
   }
 }
 
+
+  async function loadBookRewardOption(book) {
+    const box = document.getElementById("bookPointsPurchase");
+    const requiredEl = document.getElementById("bookPointsRequired");
+    const balanceEl = document.getElementById("bookPointsBalance");
+    const button = document.getElementById("bookPointsBuyButton");
+    if (!box || !requiredEl || !balanceEl || !button) return;
+
+    const price = Number(book?.price || 0);
+    const required = Math.ceil(price / 0.75);
+    requiredEl.textContent = "المطلوب: " + required.toLocaleString("ar-IQ") + " نقطة";
+    box.style.display = "block";
+    button.disabled = true;
+    button.textContent = "🔄 جاري التحقق من رصيد النقاط...";
+    balanceEl.className = "book-points-balance";
+
+    const token = getAccessToken();
+    if (!token) {
+      balanceEl.textContent = "رصيدك: سجّل الدخول أولًا";
+      button.disabled = false;
+      button.textContent = "👤 تسجيل الدخول لاستخدام النقاط";
+      button.onclick = () => showPage("account");
+      return;
+    }
+
+    try {
+      const response = await fetch(SUPABASE_URL + "/functions/v1/reward-profile", {
+        method: "GET",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token,
+          Accept: "application/json"
+        }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "تعذر قراءة رصيد النقاط");
+
+      const balance = Number(data.points || 0);
+      rewardPointsBalance = balance;
+      balanceEl.textContent = "رصيدك: " + balance.toLocaleString("ar-IQ") + " نقطة";
+      const enough = balance >= required;
+      balanceEl.classList.toggle("insufficient", !enough);
+      button.disabled = false;
+      button.textContent = enough ? "🎁 شراء بالنقاط الآن" : "⭐ اجمع نقاطًا أكثر";
+      button.onclick = enough
+        ? () => redeemRewardBook(book)
+        : () => showPage("rewards");
+    } catch (error) {
+      console.error("Book reward balance error:", error);
+      balanceEl.textContent = "⚠️ تعذر التحقق من الرصيد";
+      button.disabled = false;
+      button.textContent = "🎁 فتح صفحة النقاط";
+      button.onclick = () => showPage("rewards");
+    }
+  }
+
+  async function redeemRewardBook(book) {
+    const token = getAccessToken();
+    if (!token) {
+      showPage("account");
+      return;
+    }
+    if (!book?.id) return;
+
+    const required = Math.ceil(Number(book.price || 0) / 0.75);
+    if (rewardPointsBalance < required) {
+      alert("رصيد النقاط غير كافٍ لهذا الكتاب.");
+      return;
+    }
+
+    const button = document.getElementById("bookPointsBuyButton");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "⏳ جاري شراء الكتاب بالنقاط...";
+    }
+
+    try {
+      const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/redeem_reward_book", {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({ p_book_id: Number(book.id) })
+      });
+
+      const result = await response.json();
+      const data = Array.isArray(result) ? result[0] : result;
+      if (!response.ok) throw new Error(data?.message || "تعذر شراء الكتاب بالنقاط");
+
+      if (!data?.success) {
+        alert(data?.message || "تعذر إتمام شراء الكتاب بالنقاط.");
+        return;
+      }
+
+      rewardPointsBalance = Number(data.points_balance || 0);
+      alert("🎉 " + (data.message || "تم شراء الكتاب بالنقاط.") + "\n\n📚 أصبح الكتاب متاحًا في مكتبتك.");
+      closeBookDetails();
+
+      const sameBookInCart = cart.findIndex(item => String(item.id) === String(book.id));
+      if (sameBookInCart >= 0) {
+        cart.splice(sameBookInCart, 1);
+        saveCart();
+        updateCartCount();
+        renderCart();
+      }
+
+      renderLibrary();
+      loadRewards(true);
+    } catch (error) {
+      console.error("Reward redemption error:", error);
+      alert("⚠️ " + (error?.message || "حدث خطأ أثناء شراء الكتاب بالنقاط."));
+    } finally {
+      if (button) {
+        button.disabled = false;
+        loadBookRewardOption(book);
+      }
+    }
+  }
+
   /* =====================================================
      CHECKOUT
   ===================================================== */
