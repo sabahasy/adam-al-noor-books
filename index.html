@@ -3020,6 +3020,28 @@ body.manager-theme-active {
 .book-views,.book-sales{display:flex;align-items:center;gap:4px;font-weight:800;margin-top:4px}
 .book-views{color:var(--muted)}
 .book-sales{color:var(--gold)}
+
+    /* ================= REWARDS / OFFERWALL ================= */
+    .rewards-panel{max-width:1100px;margin:0 auto}
+    .rewards-hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:linear-gradient(135deg,#111,#272727);color:#fff;border:1px solid rgba(201,162,39,.35);border-radius:22px;padding:24px;box-shadow:0 16px 40px rgba(0,0,0,.16);margin-bottom:18px}
+    .rewards-balance{min-width:180px;text-align:center;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.42);border-radius:18px;padding:14px}
+    .rewards-balance strong{display:block;color:#e7ca60;font-size:30px;line-height:1.1}
+    .rewards-balance span{display:block;color:#ddd;font-size:12px;margin-top:4px}
+    .rewards-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .rewards-btn{border:0;border-radius:12px;padding:10px 15px;font-weight:800;background:var(--gold);color:#111}
+    .rewards-btn.secondary{background:#fff;color:#111}
+    .rewards-note{color:#ddd;font-size:13px;line-height:1.8}
+    .reward-wall-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:12px;overflow:hidden}
+    .reward-wall-wrap iframe{display:block;width:100%;min-height:720px;border:0;border-radius:14px;background:#fff}
+    .rewards-history{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px}
+    .rewards-history h3{margin-bottom:12px}
+    .reward-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)}
+    .reward-row:last-child{border-bottom:0}
+    .reward-row small{color:#777}
+    .reward-positive{font-weight:900;color:#238636}
+    .reward-negative{font-weight:900;color:#c62828}
+    @media(max-width:700px){.rewards-hero{grid-template-columns:1fr}.rewards-balance{width:100%}.reward-wall-wrap iframe{min-height:650px}}
+
 </style>
 </head>
 
@@ -3061,6 +3083,10 @@ body.manager-theme-active {
 
       <button class="nav-btn" onclick="showPage('account')">
         👤 حسابـي
+      </button>
+
+      <button id="rewardsNavBtn" class="nav-btn" onclick="showPage('rewards')">
+        🎁 نقاطي
       </button>
 
       <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
@@ -3512,6 +3538,45 @@ body.manager-theme-active {
 
   </div>
 
+</section>
+
+<section id="rewardsPage" class="page">
+  <div class="container">
+    <div class="panel rewards-panel">
+      <div class="rewards-hero">
+        <div>
+          <h2>🎁 اكسب نقاطًا من العروض</h2>
+          <p class="rewards-note">أكمل العروض المتاحة داخل المتجر، وستُضاف نقاطك تلقائيًا إلى حسابك بعد تأكيد العرض. النقاط مخصصة لاستخدامها داخل المتجر.</p>
+          <div class="rewards-actions">
+            <button class="rewards-btn" type="button" onclick="loadRewards(true)">🔄 تحديث النقاط</button>
+            <button class="rewards-btn secondary" type="button" onclick="showPage('account')">👤 حسابي</button>
+          </div>
+        </div>
+        <div class="rewards-balance">
+          <strong id="rewardPoints">0</strong>
+          <span>نقطة</span>
+        </div>
+      </div>
+
+      <div id="rewardsLoginHint" class="empty" style="display:none;">
+        <div class="empty-icon">👤</div>
+        سجّل الدخول أولًا لفتح صفحة العروض وربط النقاط بحسابك.
+        <br><br>
+        <button class="rewards-btn" type="button" onclick="showPage('account')">تسجيل الدخول</button>
+      </div>
+
+      <div id="rewardWallWrap" class="reward-wall-wrap" style="display:none;">
+        <iframe id="rewardWallFrame" title="اكسب نقاطًا من العروض" loading="lazy"></iframe>
+      </div>
+
+      <div class="rewards-history">
+        <h3>📜 آخر عمليات النقاط</h3>
+        <div id="rewardHistory">
+          <div class="empty">سجّل الدخول لعرض عمليات النقاط.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ================= BOOK DETAILS ================= -->
@@ -3998,7 +4063,7 @@ let cart = JSON.parse(
   function toggleHeaderMenu(id){document.querySelectorAll(".header-tool-menu.open").forEach(m=>{if(m.id!==id)m.classList.remove("open");});document.getElementById(id)?.classList.toggle("open");}
   document.addEventListener("click",e=>{if(!e.target.closest(".header-tool"))document.querySelectorAll(".header-tool-menu.open").forEach(m=>m.classList.remove("open"));});
   function setCurrency(currency){if(!["IQD","USD"].includes(currency))return;currentCurrency=currency;localStorage.setItem("adamAlNoorCurrency",currency);const el=document.getElementById("currencyCurrent");if(el)el.textContent=currency;document.querySelectorAll("[data-currency]").forEach(b=>b.classList.toggle("active",b.dataset.currency===currency));document.getElementById("currencyMenu")?.classList.remove("open");renderBooks();renderCart();const p=document.getElementById("bookDetailsPrice");if(p&&window.currentBookDetailsIndex!=null&&books[window.currentBookDetailsIndex])p.textContent=formatPrice(books[window.currentBookDetailsIndex].price);}
-  const UI_TRANSLATIONS={ar:{home:"🏠 الرئيـسية",library:"📖 مكتبـتي",cart:"🛒 السلـة",account:"👤 حسابـي",manager:"👑 المدير",language:"العربية"},en:{home:"🏠 Home",library:"📖 My Library",cart:"🛒 Cart",account:"👤 Account",manager:"👑 Manager",language:"English",heroLabel:"📚 Adam Al Noor E-Book Store",heroTitle1:"Discover your",heroTitle2:"next book",heroText:"A world of knowledge, history, civilizations and novels at your fingertips.",search:"🔎 Search",browse:"📚 Browse Books",books:"Discover Books",booksSub:"A curated collection of books available for purchase",searchPlaceholder:"🔎 Search by book title or author..."},ku:{home:"🏠 سەرەکی",library:"📖 کتێبخانەم",cart:"🛒 سەبەتە",account:"👤 هەژمار",manager:"👑 بەڕێوەبەر",language:"کوردی",heroLabel:"📚 فرۆشگای کتێبی ئەلیکترۆنی ئادەم ئەلنور",heroTitle1:"کتێبەکەت",heroTitle2:"بدۆزەرەوە",heroText:"جیهانێک لە زانیاری و مێژوو و ڕۆمان لە بەردەستتدایە.",search:"🔎 گەڕان",browse:"📚 کتێبەکان ببینە",books:"کتێبەکان بدۆزەرەوە",booksSub:"کۆمەڵێک کتێبی بەردەست بۆ کڕین",searchPlaceholder:"🔎 بە ناوی کتێب یان نووسەر بگەڕێ..."}};
+  const UI_TRANSLATIONS={ar:{home:"🏠 الرئيـسية",library:"📖 مكتبـتي",cart:"🛒 السلـة",account:"👤 حسابـي",rewards:"🎁 نقاطي",manager:"👑 المدير",language:"العربية"},en:{home:"🏠 Home",library:"📖 My Library",cart:"🛒 Cart",account:"👤 Account",rewards:"🎁 Rewards",manager:"👑 Manager",language:"English",heroLabel:"📚 Adam Al Noor E-Book Store",heroTitle1:"Discover your",heroTitle2:"next book",heroText:"A world of knowledge, history, civilizations and novels at your fingertips.",search:"🔎 Search",browse:"📚 Browse Books",books:"Discover Books",booksSub:"A curated collection of books available for purchase",searchPlaceholder:"🔎 Search by book title or author..."},ku:{home:"🏠 سەرەکی",library:"📖 کتێبخانەم",cart:"🛒 سەبەتە",account:"👤 هەژمار",rewards:"🎁 خاڵەکانم",manager:"👑 بەڕێوەبەر",language:"کوردی",heroLabel:"📚 فرۆشگای کتێبی ئەلیکترۆنی ئادەم ئەلنور",heroTitle1:"کتێبەکەت",heroTitle2:"بدۆزەرەوە",heroText:"جیهانێک لە زانیاری و مێژوو و ڕۆمان لە بەردەستتدایە.",search:"🔎 گەڕان",browse:"📚 کتێبەکان ببینە",books:"کتێبەکان بدۆزەرەوە",booksSub:"کۆمەڵێک کتێبی بەردەست بۆ کڕین",searchPlaceholder:"🔎 بە ناوی کتێب یان نووسەر بگەڕێ..."}};
   function getBookText(book,field){if(currentLanguage==="en"&&book[field+"_en"])return book[field+"_en"];if(currentLanguage==="ku"&&book[field+"_ku"])return book[field+"_ku"];return book[field+"_ar"]||book[field]||"";}
   function localizeBooks(){books.forEach(book=>{book.title=getBookText(book,"title");book.description=getBookText(book,"description");book.author=getBookText(book,"author");});}
   
@@ -4185,7 +4250,7 @@ function applyFullInterfaceLanguage(){
   if(title) title.textContent=currentLanguage==="en"?"Adam Al Noor E-Book Store":currentLanguage==="ku"?"فرۆشگای کتێبی ئەلیکترۆنی ئادەم ئەلنور":"آدم النور للكتب الإلكترونية";
 }
 
-function setLanguage(language){if(!["ar","en","ku"].includes(language))return;currentLanguage=language;localStorage.setItem("adamAlNoorLanguage",language);document.documentElement.lang=language;document.documentElement.dir=language==="en"?"ltr":"rtl";const t=UI_TRANSLATIONS[language],nav=document.querySelectorAll("nav .nav-btn");if(nav[0])nav[0].textContent=t.home;if(nav[1])nav[1].textContent=t.library;if(nav[2]){nav[2].innerHTML=`${t.cart} <span id="cartCount" class="cart-badge">${cart.length||0}</span>`;} if(nav[3])nav[3].textContent=t.account;const m=document.getElementById("managerNavBtn");if(m)m.textContent=t.manager;const l=document.querySelector(".hero-label");if(l)l.textContent=t.heroLabel||"📚 متجر ༺ آدَم النــور ༻ للكتب الإلكترونية";const h=document.querySelector(".hero h1");if(h)h.innerHTML=(t.heroTitle1||"اكتشف كتابك")+" <span>"+(t.heroTitle2||"القادم")+"</span>";const hp=document.querySelector(".hero p");if(hp)hp.textContent=t.heroText||"عالم من المعرفة والتاريخ والحضارات والروايات بين يديك.";const hs=document.getElementById("heroSearch");if(hs)hs.placeholder=language==="ar"?"ابحث عن كتاب أو مؤلف...":t.searchPlaceholder;const hb=document.querySelector(".hero-search button");if(hb)hb.textContent=t.search||"🔎 بحث";const bb=document.querySelector(".hero-browse-btn");if(bb)bb.textContent=t.browse||"📚 تصفح الكتب";const st=document.querySelector(".section-title h2");if(st)st.textContent=t.books||"اكتشف الكتب";const sp=document.querySelector(".section-title p");if(sp)sp.textContent=t.booksSub||"مجموعة مختارة من الكتب المتاحة للشراء";const s=document.getElementById("search");if(s)s.placeholder=language==="ar"?"🔎 ابحث باسم الكتاب أو المؤلف...":t.searchPlaceholder;const lc=document.getElementById("languageCurrent");if(lc)lc.textContent=t.language;document.querySelectorAll("[data-language]").forEach(b=>b.classList.toggle("active",b.dataset.language===language));document.getElementById("languageMenu")?.classList.remove("open");localizeBooks();renderBooks();updateCartCount();
+function setLanguage(language){if(!["ar","en","ku"].includes(language))return;currentLanguage=language;localStorage.setItem("adamAlNoorLanguage",language);document.documentElement.lang=language;document.documentElement.dir=language==="en"?"ltr":"rtl";const t=UI_TRANSLATIONS[language],nav=document.querySelectorAll("nav .nav-btn");if(nav[0])nav[0].textContent=t.home;if(nav[1])nav[1].textContent=t.library;if(nav[2]){nav[2].innerHTML=`${t.cart} <span id="cartCount" class="cart-badge">${cart.length||0}</span>`;} if(nav[3])nav[3].textContent=t.account;if(nav[4])nav[4].textContent=t.rewards||"🎁 نقاطي";const m=document.getElementById("managerNavBtn");if(m)m.textContent=t.manager;const l=document.querySelector(".hero-label");if(l)l.textContent=t.heroLabel||"📚 متجر ༺ آدَم النــور ༻ للكتب الإلكترونية";const h=document.querySelector(".hero h1");if(h)h.innerHTML=(t.heroTitle1||"اكتشف كتابك")+" <span>"+(t.heroTitle2||"القادم")+"</span>";const hp=document.querySelector(".hero p");if(hp)hp.textContent=t.heroText||"عالم من المعرفة والتاريخ والحضارات والروايات بين يديك.";const hs=document.getElementById("heroSearch");if(hs)hs.placeholder=language==="ar"?"ابحث عن كتاب أو مؤلف...":t.searchPlaceholder;const hb=document.querySelector(".hero-search button");if(hb)hb.textContent=t.search||"🔎 بحث";const bb=document.querySelector(".hero-browse-btn");if(bb)bb.textContent=t.browse||"📚 تصفح الكتب";const st=document.querySelector(".section-title h2");if(st)st.textContent=t.books||"اكتشف الكتب";const sp=document.querySelector(".section-title p");if(sp)sp.textContent=t.booksSub||"مجموعة مختارة من الكتب المتاحة للشراء";const s=document.getElementById("search");if(s)s.placeholder=language==="ar"?"🔎 ابحث باسم الكتاب أو المؤلف...":t.searchPlaceholder;const lc=document.getElementById("languageCurrent");if(lc)lc.textContent=t.language;document.querySelectorAll("[data-language]").forEach(b=>b.classList.toggle("active",b.dataset.language===language));document.getElementById("languageMenu")?.classList.remove("open");localizeBooks();renderBooks();updateCartCount();
   setTimeout(applyFullInterfaceLanguage,0);}
   function initializeStorePreferences(){setCurrency(currentCurrency);setLanguage(currentLanguage);}
   /* =====================================================
@@ -6347,6 +6412,12 @@ if (ratingMessage) {
 
     }
 
+    if (page === "rewards") {
+
+      loadRewards();
+
+    }
+
     if (page === "manager") {
 
       if (!isManager) {
@@ -7220,6 +7291,77 @@ async function downloadPDF(filePath) {
 
   }
 
+}
+
+
+/* =====================================================
+   REWARDS / OFFERWALL
+===================================================== */
+let rewardWallUrl = "";
+let rewardPointsBalance = 0;
+
+async function loadRewards(forceReload = false) {
+  const hint = document.getElementById("rewardsLoginHint");
+  const wall = document.getElementById("rewardWallWrap");
+  const frame = document.getElementById("rewardWallFrame");
+  const pointsEl = document.getElementById("rewardPoints");
+  const historyEl = document.getElementById("rewardHistory");
+  if (!hint || !wall || !frame) return;
+
+  const token = getAccessToken();
+  if (!token) {
+    hint.style.display = "block";
+    wall.style.display = "none";
+    if (pointsEl) pointsEl.textContent = "0";
+    if (historyEl) historyEl.innerHTML = '<div class="empty">سجّل الدخول لعرض عمليات النقاط.</div>';
+    return;
+  }
+
+  hint.style.display = "none";
+  try {
+    const response = await fetch(SUPABASE_URL + "/functions/v1/reward-profile", {
+      method: "GET",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token,
+        Accept: "application/json"
+      }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "تعذر تحميل نظام النقاط");
+
+    rewardPointsBalance = Number(data.points || 0);
+    if (pointsEl) pointsEl.textContent = rewardPointsBalance.toLocaleString("ar-IQ");
+
+    if (forceReload || frame.src !== data.wallUrl) {
+      rewardWallUrl = data.wallUrl;
+      frame.src = data.wallUrl;
+    }
+    wall.style.display = "block";
+
+    const historyResponse = await fetch(
+      SUPABASE_URL + "/rest/v1/reward_transactions?select=type,points_delta,offer_name,status,created_at&order=created_at.desc&limit=12",
+      { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + token } }
+    );
+    const rows = historyResponse.ok ? await historyResponse.json() : [];
+    if (historyEl) {
+      historyEl.innerHTML = rows.length
+        ? rows.map(row => {
+            const delta = Number(row.points_delta || 0);
+            const sign = delta > 0 ? "+" : "";
+            const cls = delta >= 0 ? "reward-positive" : "reward-negative";
+            const label = row.type === "credit" ? "مكافأة" : row.type === "reversal" ? "استرجاع/عكس" : row.type === "redemption" ? "استخدام نقاط" : "تعديل";
+            const date = row.created_at ? new Date(row.created_at).toLocaleString("ar-IQ") : "—";
+            return '<div class="reward-row"><div><strong>' + escapeHTML(label) + '</strong><br><small>' + escapeHTML(row.offer_name || date) + '</small></div><span class="' + cls + '">' + sign + delta.toLocaleString("ar-IQ") + ' نقطة</span></div>';
+          }).join("")
+        : '<div class="empty">لا توجد عمليات نقاط بعد.</div>';
+    }
+  } catch (error) {
+    console.error("Rewards error:", error);
+    if (pointsEl) pointsEl.textContent = "—";
+    if (historyEl) historyEl.innerHTML = '<div class="empty">⚠️ تعذر تحميل النقاط حاليًا. حاول التحديث بعد قليل.</div>';
+    wall.style.display = "none";
+  }
 }
 
   /* =====================================================
