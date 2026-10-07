@@ -3034,6 +3034,23 @@ body.manager-theme-active {
     .reward-wall-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:12px;overflow:hidden}
     .reward-wall-wrap iframe{display:block;width:100%;min-height:720px;border:0;border-radius:14px;background:#fff}
     .rewards-history{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px}
+    .reward-guide{margin:18px 0;background:linear-gradient(135deg,var(--surface),var(--cream));border:1px solid var(--border);border-radius:18px;padding:18px}
+    .reward-guide h3{margin-bottom:8px;color:var(--gold-dark)}
+    .reward-guide ol{margin:8px 22px 0 0;padding:0}
+    .reward-guide li{margin:5px 0}
+    .reward-policy{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(201,162,39,.10);border:1px solid rgba(201,162,39,.25);font-size:12px;line-height:1.9}
+    .book-points-box{margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(201,162,39,.10),rgba(201,162,39,.03));border:1px solid rgba(201,162,39,.30)}
+    .book-points-box h3{font-size:15px;margin-bottom:5px}
+    .book-points-box p{font-size:12px;color:var(--muted);margin-bottom:9px}
+    .book-points-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;font-weight:800}
+    .book-points-required{color:var(--gold-dark)}
+    .book-points-balance{color:var(--success)}
+    .book-points-balance.insufficient{color:var(--danger)}
+    .book-points-btn{border:0;border-radius:11px;padding:10px 14px;background:var(--gold);color:#111;font-weight:900;width:100%}
+    .book-points-btn:disabled{opacity:.55;cursor:not-allowed}
+    .book-points-note{font-size:11px!important;margin:7px 0 0!important;line-height:1.7}
+    .cash-payment-note{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(17,17,17,.06);border:1px solid var(--border);font-size:11px;line-height:1.8;color:var(--muted)}
+
     .rewards-history h3{margin-bottom:12px}
     .reward-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)}
     .reward-row:last-child{border-bottom:0}
@@ -3433,7 +3450,8 @@ body.manager-theme-active {
       <div style="margin-top: 8px; text-align: center; font-size: 13px; color: #777; line-height: 2;">
         <div>✨ لحظات فقط… يرجى عدم مغادرة الصفحة، وسيتم تحويلك تلقائيًا إلى بوابة الدفع.</div>
         <div style="margin-top: 6px;">💰 في حالة تأخر تجهيز الدفع، يرجى تحديث الصفحة والنقر على 🛒 السلة ثم قم بعملية الشراء.</div>
-      </div>      <div id="checkoutStatus" class="status"></div>
+      </div>      <div class="cash-payment-note">🎁 <strong>تنبيه:</strong> شراء الكتب بالنقاط منفصل عن هذه السلة. لا تدخل النقاط إلى بوابة الدفع؛ لاستخدامها، افتح صفحة الكتاب واختر <strong>شراء بالنقاط</strong>.</div>
+      <div id="checkoutStatus" class="status"></div>
 
     </div>
 
@@ -3558,6 +3576,18 @@ body.manager-theme-active {
         </div>
       </div>
 
+
+      <div class="reward-guide">
+        <h3>🧭 إرشاد النقاط — كيف أستفيد منها؟</h3>
+        <ol>
+          <li>🎁 أكمل العروض المتاحة داخل صفحة النقاط.</li>
+          <li>⭐ عند تأكيد العرض من المعلن، تُضاف النقاط تلقائيًا إلى رصيدك.</li>
+          <li>📚 افتح أي كتاب واختر <strong>شراء بالنقاط</strong> إذا كان رصيدك كافيًا.</li>
+          <li>✅ تُخصم النقاط ويُضاف الكتاب مباشرةً إلى مكتبتك، دون فتح بوابة الدفع.</li>
+        </ol>
+        <div class="reward-policy">⚠️ النقاط ليست مالًا نقديًا، ولا تُحوّل إلى دولار أو دينار، ولا تُرسل إلى بوابة الدفع. استخدامها داخل متجر آدم النور يكون لشراء الكتب بالنقاط فقط.</div>
+      </div>
+
       <div id="rewardsLoginHint" class="empty" style="display:none;">
         <div class="empty-icon">👤</div>
         سجّل الدخول أولًا لفتح صفحة العروض وربط النقاط بحسابك.
@@ -3640,6 +3670,18 @@ body.manager-theme-active {
           id="bookDetailsDescription"
           class="book-details-description"
         ></div>
+
+
+        <div id="bookPointsPurchase" class="book-points-box" style="display:none;">
+          <h3>🎁 شراء هذا الكتاب بالنقاط</h3>
+          <p>طريقة شراء مستقلة عن الدفع الإلكتروني. إذا كان رصيدك كافيًا، سيُضاف الكتاب مباشرةً إلى مكتبتك.</p>
+          <div class="book-points-meta">
+            <span id="bookPointsRequired" class="book-points-required">المطلوب: — نقطة</span>
+            <span id="bookPointsBalance" class="book-points-balance">رصيدك: — نقطة</span>
+          </div>
+          <button id="bookPointsBuyButton" class="book-points-btn" type="button">🎁 شراء بالنقاط</button>
+          <p class="book-points-note">100 نقطة = 75 د.ع. تقريبًا. النقاط لا تُستبدل نقدًا ولا تُرسل إلى بوابة الدفع.</p>
+        </div>
 
         <div class="book-details-bottom">
 
@@ -5976,6 +6018,8 @@ if (ratingMessage) {
         closeBookDetails();
 
       };
+
+    loadBookRewardOption(book);
 
     overlay.classList.add("show");
 
