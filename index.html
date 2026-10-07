@@ -3043,8 +3043,8 @@ body.manager-theme-active {
     .book-points-box h3{font-size:15px;margin-bottom:5px}
     .points-page-link{display:inline-flex;align-items:center;justify-content:center;margin:4px 0 10px;padding:7px 14px;border-radius:12px;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold-dark);font-size:18px;font-weight:900;text-decoration:none;cursor:pointer;letter-spacing:.2px}
     .points-page-link .points-elongated{font-size:21px;font-weight:1000}
-    .rewards-nav-highlight{font-weight:900}
-    .rewards-nav-highlight{font-size:16px}
+    .rewards-nav-highlight{font-weight:900;font-size:19px;letter-spacing:.5px;padding-left:18px;padding-right:18px}
+    .rewards-nav-highlight .rewards-stretch{font-size:21px;font-weight:1000;letter-spacing:1px}
     .book-points-box p{font-size:12px;color:var(--muted);margin-bottom:9px}
     .book-points-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;font-weight:800}
     .book-points-required{color:var(--gold-dark)}
@@ -3107,7 +3107,7 @@ body.manager-theme-active {
       </button>
 
       <button id="rewardsNavBtn" class="nav-btn rewards-nav-highlight" onclick="showPage('rewards')">
-        🎁 نــــــــقاطي
+        🎁 <span class="rewards-stretch">نــــــــقاطي</span>
       </button>
 
       <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
@@ -7456,7 +7456,7 @@ async function loadRewards(forceReload = false) {
       const enough = balance >= required;
       balanceEl.classList.toggle("insufficient", !enough);
       button.disabled = false;
-      button.textContent = enough ? "🎁 شراء بالنقاط الآن" : "⭐ اجمع نقاطًا أكثر";
+      button.textContent = enough ? "🎁 شراء بالنقاط الآن" : "👉 اجمع نقاطًا أكثر";
       button.onclick = enough
         ? () => redeemRewardBook(book)
         : () => showPage("rewards");
