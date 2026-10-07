@@ -3045,6 +3045,15 @@ body.manager-theme-active {
     .points-page-link .points-elongated{font-size:21px;font-weight:1000}
     .rewards-nav-highlight{font-weight:900!important;font-size:20px!important;letter-spacing:.7px;padding:10px 20px!important;color:#f4d76a!important;background:rgba(201,162,39,.12)!important;border:1px solid rgba(201,162,39,.42)!important;box-shadow:0 3px 12px rgba(201,162,39,.16)}
     .rewards-nav-highlight:hover{background:rgba(201,162,39,.25)!important;color:#fff!important}
+.nav-section-highlight{
+  background:rgba(201,162,39,.12)!important;
+  border:1px solid rgba(201,162,39,.42)!important;
+  box-shadow:0 3px 12px rgba(201,162,39,.16);
+}
+.nav-section-highlight:hover{
+  background:rgba(201,162,39,.25)!important;
+  color:#fff!important;
+}
     .rewards-nav-highlight .rewards-stretch{font-size:24px;font-weight:1000;letter-spacing:2px;text-shadow:0 1px 5px rgba(0,0,0,.35)}
     .book-points-box p{font-size:12px;color:var(--muted);margin-bottom:9px}
     .book-points-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;font-weight:800}
@@ -3092,18 +3101,18 @@ body.manager-theme-active {
     </div>
 
     <nav>
-      <button class="nav-btn" onclick="showPage('home')">🏠 الرئيـسية</button>
+      <button class="nav-btn nav-section-highlight" onclick="showPage('home')">🏠 الرئيـسية</button>
 
-      <button class="nav-btn" onclick="showPage('library')">
+      <button class="nav-btn nav-section-highlight" onclick="showPage('library')">
         📖 مكتبـتي
       </button>
 
-      <button class="nav-btn cart-nav" onclick="showPage('cart')">
+      <button class="nav-btn cart-nav nav-section-highlight" onclick="showPage('cart')">
         🛒 السلـة
         <span id="cartCount" class="cart-badge">0</span>
       </button>
 
-      <button class="nav-btn" onclick="showPage('account')">
+      <button class="nav-btn nav-section-highlight" onclick="showPage('account')">
         👤 حسابـي
       </button>
 
