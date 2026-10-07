@@ -5117,7 +5117,7 @@ const stars =
 
       const url =
         `${SUPABASE_URL}/rest/v1/books` +
-        `?select=id,title_ar,title_en,title_ku,description_ar,description_en,description_ku,author_ar,author_en,author_ku,category_id,price,rating,cover_url,pdf_url,is_available,created_at,updated_at,display_order` +
+        `?select=*` +
         `&is_available=eq.true` +
         `&order=display_order.asc.nullslast,id.asc`;
 
@@ -5970,7 +5970,7 @@ if (ratingMessage) {
       if (totalElement) {
 
         totalElement.textContent =
-          `0 ${CURRENCY}`;
+          `0 IQD`;
 
       }
 
