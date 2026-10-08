@@ -3050,8 +3050,8 @@ body.manager-theme-active {
   align-items:center;
   justify-content:center;
   gap:7px;
-  min-height:42px;
-  padding:10px 16px;
+  min-height:44px;
+  padding:10px 18px;
   border-radius:12px;
   background:rgba(201,162,39,.12);
   border:1px solid rgba(201,162,39,.42);
@@ -3069,8 +3069,9 @@ body.manager-theme-active {
   animation:livePulse 1.8s infinite;
   flex:0 0 auto;
 }
-.live-visitors-label{font-size:13px}
-.live-visitors-badge strong{font-size:19px;min-width:18px;text-align:center}
+.live-visitors-icon{font-size:15px;line-height:1}
+.live-visitors-label{font-size:14px}
+.live-visitors-badge strong{font-size:21px;min-width:18px;text-align:center}
 @keyframes livePulse{
   0%,100%{transform:scale(1);opacity:1}
   50%{transform:scale(.82);opacity:.72}
@@ -3158,6 +3159,7 @@ body.manager-theme-active {
       <span class="header-slogan" aria-label="Adam alnoor">★𝓐𝓭𝓪𝓶.𝓪𝓵𝓷𝓸𝓸𝓻★</span>
 
       <span id="liveVisitorsBadge" class="live-visitors-badge" title="عدد المتواجدين حاليًا في المتجر" aria-label="المتواجدون الآن">
+        <span class="live-visitors-icon" aria-hidden="true">👥</span>
         <span class="live-visitors-dot" aria-hidden="true"></span>
         <span class="live-visitors-label">المتصلون</span>
         <strong id="liveVisitorsCount">0</strong>
