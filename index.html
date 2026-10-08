@@ -3077,8 +3077,28 @@ body.manager-theme-active {
   50%{transform:scale(.82);opacity:.72}
 }
 @media(max-width:700px){
-  .live-visitors-badge{padding:10px 12px;gap:6px}
+  .live-visitors-badge{
+    min-height:40px;
+    padding:7px 9px;
+    gap:5px;
+    flex:0 0 auto;
+  }
+  .live-visitors-icon{font-size:13px}
   .live-visitors-label{display:none}
+  .live-visitors-badge strong{font-size:19px;min-width:15px}
+  .rewards-nav-highlight{
+    padding:7px 12px!important;
+    font-size:18px!important;
+  }
+  .rewards-nav-highlight .rewards-stretch{
+    font-size:21px;
+    letter-spacing:1px;
+  }
+  .header-slogan{
+    font-size:15px;
+    letter-spacing:0;
+    margin-inline-start:0;
+  }
 }
 .nav-section-highlight{
   background:rgba(201,162,39,.12)!important;
