@@ -774,10 +774,14 @@
 
     .books {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px 14px;
       margin-top: 20px;
     }
+
+    .book-row-divider{grid-column:1 / -1;display:flex;align-items:center;justify-content:center;gap:12px;height:18px;margin:2px 0;pointer-events:none}
+    .book-row-divider::before,.book-row-divider::after{content:"";flex:1;max-width:260px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.58),transparent)}
+    .book-row-divider span{color:var(--gold-dark);font-size:12px;line-height:1;text-shadow:0 1px 5px rgba(201,162,39,.25)}
 
     .book-order-manager {
       margin: 8px 0 12px;
@@ -5264,7 +5268,7 @@ return true;
 
     const visibleList = sortedList.slice(0, visibleBooksCount);
 
-    container.innerHTML = visibleList.map(book => {
+    container.innerHTML = visibleList.map((book, bookPosition) => {
 
       const realIndex =
         books.findIndex(
@@ -5400,6 +5404,10 @@ const stars =
           </div>
 
         </article>
+
+        \${(bookPosition + 1) % 3 === 0 && bookPosition < visibleList.length - 1
+          ? '<div class="book-row-divider" aria-hidden="true"><span>✦ 𓂃 📚 𓂃 ✦</span></div>'
+          : ""}
 
       `;
 
