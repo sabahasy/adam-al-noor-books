@@ -3045,6 +3045,40 @@ body.manager-theme-active {
     .points-page-link .points-elongated{font-size:21px;font-weight:1000}
     .rewards-nav-highlight{font-weight:900!important;font-size:20px!important;letter-spacing:.7px;padding:10px 20px!important;color:#f4d76a!important;background:rgba(201,162,39,.12)!important;border:1px solid rgba(201,162,39,.42)!important;box-shadow:0 3px 12px rgba(201,162,39,.16)}
     .rewards-nav-highlight:hover{background:rgba(201,162,39,.25)!important;color:#fff!important}
+.live-visitors-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:42px;
+  padding:10px 16px;
+  border-radius:12px;
+  background:rgba(201,162,39,.12);
+  border:1px solid rgba(201,162,39,.42);
+  box-shadow:0 3px 12px rgba(0,0,0,.16);
+  color:inherit;
+  font-weight:900;
+  white-space:nowrap;
+}
+.live-visitors-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 3px rgba(34,197,94,.14),0 0 10px rgba(34,197,94,.55);
+  animation:livePulse 1.8s infinite;
+  flex:0 0 auto;
+}
+.live-visitors-label{font-size:13px}
+.live-visitors-badge strong{font-size:19px;min-width:18px;text-align:center}
+@keyframes livePulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(.82);opacity:.72}
+}
+@media(max-width:700px){
+  .live-visitors-badge{padding:10px 12px;gap:6px}
+  .live-visitors-label{display:none}
+}
 .nav-section-highlight{
   background:rgba(201,162,39,.12)!important;
   border:1px solid rgba(201,162,39,.42)!important;
@@ -3074,6 +3108,7 @@ body.manager-theme-active {
     @media(max-width:700px){.rewards-hero{grid-template-columns:1fr}.rewards-balance{width:100%}.reward-wall-wrap iframe{min-height:650px}}
 
 </style>
+<script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -3120,10 +3155,17 @@ body.manager-theme-active {
         🎁 <span class="rewards-stretch">نــــــــقاطي</span>
       </button>
 
+      <span class="header-slogan" aria-label="Adam alnoor">★𝓐𝓭𝓪𝓶.𝓪𝓵𝓷𝓸𝓸𝓻★</span>
+
+      <span id="liveVisitorsBadge" class="live-visitors-badge" title="عدد المتواجدين حاليًا في المتجر" aria-label="المتواجدون الآن">
+        <span class="live-visitors-dot" aria-hidden="true"></span>
+        <span class="live-visitors-label">المتصلون</span>
+        <strong id="liveVisitorsCount">0</strong>
+      </span>
+
       <button id="managerNavBtn" class="nav-btn" onclick="showPage('manager')" style="display:none">
         👑 المدير
       </button>
-      <span class="header-slogan" aria-label="Adam alnoor">★𝓐𝓭𝓪𝓶.𝓪𝓵𝓷𝓸𝓸𝓻★</span>
     </nav>
     <div class="header-tools" aria-label="خيارات المتجر"><div class="header-tool"><button type="button" class="header-tool-btn" onclick="toggleHeaderMenu('currencyMenu')" aria-expanded="false">💰 <span id="currencyCurrent">IQD</span></button><div id="currencyMenu" class="header-tool-menu"><button type="button" class="header-tool-option" data-currency="IQD" onclick="setCurrency('IQD')">🇮🇶 IQD — دينار عراقي</button><button type="button" class="header-tool-option" data-currency="USD" onclick="setCurrency('USD')">🇺🇸 USD — دولار أمريكي</button></div></div><div class="header-tool"><button type="button" class="header-tool-btn" onclick="toggleHeaderMenu('languageMenu')" aria-expanded="false">🌐 <span id="languageCurrent">العربية</span></button><div id="languageMenu" class="header-tool-menu"><button type="button" class="header-tool-option" data-language="ar" onclick="setLanguage('ar')">🇮🇶 العربية</button><button type="button" class="header-tool-option" data-language="en" onclick="setLanguage('en')">🇺🇸 English</button><button type="button" class="header-tool-option" data-language="ku" onclick="setLanguage('ku')">🟨 کوردی</button></div></div></div>
 
@@ -4097,6 +4139,68 @@ let cart = JSON.parse(
   localStorage.getItem("adamAlNoorCart") || "[]"
 );
 
+/* =====================================================
+   LIVE STORE PRESENCE
+   Counts active store connections using Supabase Realtime Presence.
+===================================================== */
+let liveVisitorsChannel = null;
+let liveVisitorsStarted = false;
+
+function setLiveVisitorsCount(count) {
+  const el = document.getElementById("liveVisitorsCount");
+  if (el) el.textContent = Number.isFinite(count) ? count.toLocaleString("ar-IQ") : "0";
+}
+
+function getLiveVisitorKey() {
+  let key = localStorage.getItem("adamAlNoorLiveVisitorKey");
+  if (!key) {
+    key = (crypto.randomUUID ? crypto.randomUUID() : "visitor-" + Date.now() + "-" + Math.random().toString(36).slice(2));
+    localStorage.setItem("adamAlNoorLiveVisitorKey", key);
+  }
+  return key;
+}
+
+async function startLiveVisitorsPresence() {
+  if (liveVisitorsStarted || !window.supabase || !SUPABASE_URL || !SUPABASE_KEY) return;
+  liveVisitorsStarted = true;
+
+  try {
+    const realtimeClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const key = getLiveVisitorKey();
+
+    liveVisitorsChannel = realtimeClient.channel("store:adam-al-noor:presence", {
+      config: { presence: { key } }
+    });
+
+    const updateCount = () => {
+      if (!liveVisitorsChannel) return;
+      const state = liveVisitorsChannel.presenceState();
+      const count = Object.values(state).reduce((total, entries) => total + entries.length, 0);
+      setLiveVisitorsCount(count);
+    };
+
+    liveVisitorsChannel
+      .on("presence", { event: "sync" }, updateCount)
+      .on("presence", { event: "join" }, updateCount)
+      .on("presence", { event: "leave" }, updateCount)
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await liveVisitorsChannel.track({
+            visitor: key,
+            online_at: new Date().toISOString()
+          });
+          updateCount();
+        }
+      });
+  } catch (error) {
+    console.warn("Live visitors unavailable:", error);
+    setLiveVisitorsCount(0);
+  }
+}
+
+
+  window.addEventListener("load", startLiveVisitorsPresence);
+  
   /* =====================================================
      HELPERS
   ===================================================== */
