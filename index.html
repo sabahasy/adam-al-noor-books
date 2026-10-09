@@ -3895,6 +3895,28 @@ footer ul li:hover {
   footer ul li { font-size: 15px !important; padding: 10px 11px !important; }
 }
 
+
+    .store-books-heading {
+      margin: 24px auto 12px;
+      text-align: center;
+      font-size: clamp(21px, 3.5vw, 29px);
+      font-weight: 900;
+      line-height: 1.5;
+      letter-spacing: .2px;
+      color: #f5d27a;
+      text-shadow: 0 2px 14px rgba(193, 142, 42, .24);
+    }
+    .store-books-heading span {
+      display: inline-block;
+      margin: 0 7px;
+      color: #d5a63b;
+      font-size: .78em;
+      vertical-align: 10%;
+      text-shadow: 0 0 9px rgba(213, 166, 59, .45);
+    }
+    @media (max-width: 520px) {
+      .store-books-heading { margin: 19px auto 10px; font-size: 23px; }
+    }
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -4189,6 +4211,8 @@ footer ul li:hover {
         <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h12M10 5c0 7-3 11-6 13M6 9c2 4 5 7 8 8M14 13h7M17.5 9v10M14.5 19h6"/></svg><i>✦</i></span><span class="category-label">تعليم اللغات</span>
       </button>
     </div>
+
+      <h2 class="store-books-heading"><span aria-hidden="true">✦</span> قائمة كتب المتجر <span aria-hidden="true">✦</span></h2>
 
       <div id="categoryCountSummary" class="category-count-summary" aria-live="polite">
         📚 <strong>جميع الكتب</strong> — متوفر حاليًا <strong>عدد الكتب</strong>
