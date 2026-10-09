@@ -3336,6 +3336,71 @@ body.manager-theme-active {
       #homePage .category-btn:hover { transform: none; }
     }
 
+  
+    /* زخرفة أيقونات فئات الكتب بأسلوب شارات ذهبية */
+    #homePage .category-icon {
+      position: relative;
+      overflow: visible;
+      flex: 0 0 38px !important;
+      width: 38px !important;
+      height: 38px !important;
+      border-radius: 50% !important;
+      border: 1px solid rgba(201,162,39,.78) !important;
+      outline: 1px dotted rgba(201,162,39,.58);
+      outline-offset: -4px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255,255,255,.88), transparent 48%),
+        linear-gradient(145deg, #fff8df, #e8d18a 55%, #c5a13a) !important;
+      color: #5e4510 !important;
+      box-shadow: 0 3px 9px rgba(120,83,10,.18), inset 0 1px 2px rgba(255,255,255,.85) !important;
+      font-size: 16px;
+      line-height: 1;
+    }
+    #homePage .category-icon svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.55;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,.55));
+    }
+    #homePage .category-icon i {
+      position: absolute;
+      top: -5px;
+      inset-inline-end: -4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border: 1px solid #f6e7ad;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #302718, #111);
+      color: #f4d66b;
+      font-size: 9px;
+      font-style: normal;
+      line-height: 1;
+      box-shadow: 0 2px 5px rgba(0,0,0,.2);
+    }
+    #homePage .category-btn.active .category-icon,
+    #homePage .category-btn:hover .category-icon {
+      background: linear-gradient(145deg, #fff0a8, #d7b342 58%, #a98017) !important;
+      color: #251b08 !important;
+      border-color: #fff0a8 !important;
+      box-shadow: 0 0 0 2px rgba(230,202,97,.16), 0 4px 12px rgba(201,162,39,.25), inset 0 1px 2px rgba(255,255,255,.8) !important;
+    }
+    @media (max-width: 520px) {
+      #homePage .category-icon {
+        flex-basis: 34px !important;
+        width: 34px !important;
+        height: 34px !important;
+      }
+      #homePage .category-icon svg { width: 18px; height: 18px; }
+    }
+
   </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -3606,28 +3671,28 @@ body.manager-theme-active {
 
       <div id="categories" class="categories" aria-label="فئات الكتب">
       <button class="category-btn active" onclick="filterCategory('all', this)">
-        <span class="category-icon" aria-hidden="true">✦📚</span><span class="category-label">جميع الكتب</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 5.5c3.2-1.2 6-.7 8.5 1.2v12c-2.5-1.9-5.3-2.4-8.5-1.2z"/><path d="M20.5 5.5c-3.2-1.2-6-.7-8.5 1.2v12c2.5-1.9 5.3-2.4 8.5-1.2z"/><path d="M6 8.5c1.5-.3 2.7 0 4 .7M6 11.5c1.5-.3 2.7 0 4 .7M14 9.2c1.3-.7 2.5-1 4-.7M14 12.2c1.3-.7 2.5-1 4-.7"/></svg><i>✦</i></span><span class="category-label">جميع الكتب</span>
       </button>
       <button class="category-btn" onclick="filterCategory('التاريخ', this)">
-        <span class="category-icon" aria-hidden="true">⌛</span><span class="category-label">التاريخ</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3.5h12M6 20.5h12M7 4c0 4 2 5.5 5 8-3 2.5-5 4-5 8M17 4c0 4-2 5.5-5 8 3 2.5 5 4 5 8"/><path d="M9 7h6M9 17h6"/></svg><i>✧</i></span><span class="category-label">التاريخ</span>
       </button>
       <button class="category-btn" onclick="filterCategory('الروايات', this)">
-        <span class="category-icon" aria-hidden="true">❦📖</span><span class="category-label">الروايات</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z"/><path d="M20 5.5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/><path d="M6.5 9h4M6.5 12h4M15.5 9H18"/></svg><i>❦</i></span><span class="category-label">الروايات</span>
       </button>
       <button class="category-btn" onclick="filterCategory('التنمية الذاتية', this)">
-        <span class="category-icon" aria-hidden="true">✧🌱</span><span class="category-label">التنمية الذاتية</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20v-9"/><path d="M12 14C5 14 4 9 4 5c5 0 8 2 8 7"/><path d="M12 11c0-5 3-7 8-7 0 5-2 8-8 8"/><path d="M7 20h10"/></svg><i>✧</i></span><span class="category-label">التنمية الذاتية</span>
       </button>
       <button class="category-btn" onclick="filterCategory('التربية وقصص الاطفال', this)">
-        <span class="category-icon" aria-hidden="true">🧸✦</span><span class="category-label">التربية وقصص الأطفال</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="6" r="2.5"/><circle cx="17" cy="6" r="2.5"/><circle cx="12" cy="12" r="7"/><circle cx="9.5" cy="11" r=".7"/><circle cx="14.5" cy="11" r=".7"/><path d="M10 14c1.2 1 2.8 1 4 0"/></svg><i>✦</i></span><span class="category-label">التربية وقصص الأطفال</span>
       </button>
       <button class="category-btn" onclick="filterCategory('الملزمات الدراسية', this)">
-        <span class="category-icon" aria-hidden="true">🎓</span><span class="category-label">الملازم الدراسية</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m2.5 9 9.5-5 9.5 5-9.5 5z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M21.5 9v6"/></svg><i>✦</i></span><span class="category-label">الملازم الدراسية</span>
       </button>
       <button class="category-btn" onclick="filterCategory('الفلسفة', this)">
-        <span class="category-icon" aria-hidden="true">☯</span><span class="category-label">الفلسفة</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 4.5 4.5 0 0 1 0-9 4.5 4.5 0 0 0 0-9z"/><circle cx="12" cy="7.5" r="1"/><circle cx="12" cy="16.5" r="1"/></svg><i>✧</i></span><span class="category-label">الفلسفة</span>
       </button>
       <button class="category-btn" onclick="filterCategory('تعليم اللغات', this)">
-        <span class="category-icon" aria-hidden="true">文✧</span><span class="category-label">تعليم اللغات</span>
+        <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h12M10 5c0 7-3 11-6 13M6 9c2 4 5 7 8 8M14 13h7M17.5 9v10M14.5 19h6"/></svg><i>✦</i></span><span class="category-label">تعليم اللغات</span>
       </button>
     </div>
 
