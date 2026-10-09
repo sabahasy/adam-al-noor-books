@@ -6675,29 +6675,64 @@ if (ratingMessage) {
      AUTH
   ===================================================== */
 
+  const AUTH_REFRESH_TOKEN_KEY = "sb-refresh-token";
+
   function getAccessToken() {
-
-    const keys = [
-
-      "sb-access-token",
-
-      "supabase_access_token",
-
-      "access_token"
-
-    ];
-
+    const keys = ["sb-access-token", "supabase_access_token", "access_token"];
     for (const key of keys) {
-
-      const value =
-        localStorage.getItem(key);
-
+      const value = localStorage.getItem(key);
       if (value) return value;
-
     }
-
     return null;
+  }
 
+  function saveAuthSession(data) {
+    if (!data || !data.access_token) return;
+    localStorage.setItem("sb-access-token", data.access_token);
+    if (data.refresh_token) {
+      localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, data.refresh_token);
+    }
+    if (data.expires_in) {
+      localStorage.setItem("sb-session-expires-at", String(Date.now() + Number(data.expires_in) * 1000));
+    }
+    if (data.user) {
+      localStorage.setItem("sb-auth-user", JSON.stringify({
+        id: data.user.id,
+        email: data.user.email
+      }));
+    }
+  }
+
+  async function refreshAuthSession() {
+    const refreshToken = localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+    if (!refreshToken) return null;
+
+    try {
+      const response = await fetch(SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY
+        },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+      const data = await response.json();
+      if (!response.ok || !data.access_token) {
+        // Keep the stored session if this was a temporary network/server error.
+        if (response.status === 400 || response.status === 401) {
+          localStorage.removeItem("sb-access-token");
+          localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
+          localStorage.removeItem("sb-session-expires-at");
+          localStorage.removeItem("sb-auth-user");
+        }
+        return null;
+      }
+      saveAuthSession(data);
+      return data.access_token;
+    } catch (error) {
+      console.warn("Session refresh temporarily unavailable:", error);
+      return null;
+    }
   }
 
   async function checkManagerAccess(userId, token) {
@@ -6754,7 +6789,7 @@ if (ratingMessage) {
   }
 
   async function checkUser() {
-    const token = getAccessToken();
+    let token = getAccessToken();
 
     if (!token) {
       isManager = false;
@@ -6764,15 +6799,26 @@ if (ratingMessage) {
     }
 
     try {
-      const response = await fetch(
+      const fetchCurrentUser = (accessToken) => fetch(
         SUPABASE_URL + "/auth/v1/user",
         {
           headers: {
             apikey: SUPABASE_KEY,
-            Authorization: "Bearer " + token
+            Authorization: "Bearer " + accessToken
           }
         }
       );
+
+      let response = await fetchCurrentUser(token);
+
+      // If the access token expired, silently renew it with the saved refresh token.
+      if (!response.ok) {
+        const renewedToken = await refreshAuthSession();
+        if (renewedToken) {
+          token = renewedToken;
+          response = await fetchCurrentUser(token);
+        }
+      }
 
       if (!response.ok) {
         isManager = false;
@@ -6782,15 +6828,19 @@ if (ratingMessage) {
       }
 
       const user = await response.json();
+      localStorage.setItem("sb-auth-user", JSON.stringify({ id: user.id, email: user.email }));
       showLoggedUser(user);
       await checkManagerAccess(user?.id, token);
     } catch (error) {
-      console.error(error);
-      isManager = false;
-      managerAccessToken = null;
-      showLogin();
+      console.error("Unable to verify saved customer session:", error);
+      // Do not erase a customer's saved session because of a temporary connection error.
+      const savedUser = localStorage.getItem("sb-auth-user");
+      if (savedUser) {
+        try { showLoggedUser(JSON.parse(savedUser)); } catch (_) { showLogin(); }
+      } else {
+        showLogin();
+      }
     }
-
   }
 async function loginUser() {
 
@@ -6858,12 +6908,7 @@ async function loginUser() {
       }
 
       if (data.access_token) {
-
-        localStorage.setItem(
-          "sb-access-token",
-          data.access_token
-        );
-
+        saveAuthSession(data);
       }
 
       showLoggedUser(data.user);
@@ -6954,10 +6999,7 @@ async function loginUser() {
 
       if (data.access_token) {
 
-        localStorage.setItem(
-          "sb-access-token",
-          data.access_token
-        );
+        saveAuthSession(data);
 
         showLoggedUser(data.user);
 
@@ -7008,17 +7050,12 @@ async function loginUser() {
 
   function logoutUser() {
 
-    localStorage.removeItem(
-      "sb-access-token"
-    );
-
-    localStorage.removeItem(
-      "supabase_access_token"
-    );
-
-    localStorage.removeItem(
-      "access_token"
-    );
+    localStorage.removeItem("sb-access-token");
+    localStorage.removeItem("sb-refresh-token");
+    localStorage.removeItem("sb-session-expires-at");
+    localStorage.removeItem("sb-auth-user");
+    localStorage.removeItem("supabase_access_token");
+    localStorage.removeItem("access_token");
 
     isManager = false;
     managerAccessToken = null;
