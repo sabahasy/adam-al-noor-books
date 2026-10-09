@@ -4002,6 +4002,111 @@ footer ul li:hover {
       opacity: 1;
     }
 
+
+    
+    /* BOOK DETAILS — clearer Arabic typography and stronger contrast */
+    .book-details {
+      color: #19150f !important;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(180,132,20,.12), transparent 32%),
+        linear-gradient(180deg, #fffdf7 0%, #f3ead8 100%) !important;
+      border: 1px solid rgba(132, 92, 12, .38);
+      font-family: "Amiri", "Tahoma", serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .book-details h2,
+    .book-details #bookDetailsTitle {
+      color: #17120b !important;
+      font-family: "Amiri", "Tahoma", serif;
+      font-size: clamp(27px, 3.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.55;
+      letter-spacing: 0;
+      text-shadow: 0 0 .25px currentColor;
+    }
+    .book-details .book-details-category,
+    .book-details #bookDetailsCategory {
+      color: #704b00 !important;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.8;
+    }
+    .book-details .book-details-author,
+    .book-details #bookDetailsAuthor {
+      color: #403729 !important;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.9;
+    }
+    .book-details .book-details-description-title {
+      color: #20190f !important;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+    .book-details .book-details-description,
+    .book-details #bookDetailsDescription {
+      color: #292319 !important;
+      font-family: "Amiri", "Tahoma", serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 2.05;
+      letter-spacing: 0;
+      text-shadow: 0 0 .15px currentColor;
+    }
+    .book-details .book-details-price,
+    .book-details #bookDetailsPrice {
+      color: #17120b !important;
+      font-size: 26px;
+      font-weight: 900;
+    }
+    .book-details .book-details-bottom {
+      border-top-color: rgba(112, 75, 0, .28);
+    }
+    .book-details .book-details-cart {
+      background: #e5dac4;
+      color: #20190f;
+      border: 1px solid #bca77f;
+      font-weight: 800;
+    }
+    .book-details .book-details-buy {
+      background: #17130d;
+      color: #fffdf7;
+      border: 1px solid #17130d;
+      font-weight: 800;
+    }
+    .book-details .book-details-buy:hover {
+      background: #704b00;
+      border-color: #704b00;
+    }
+    .book-details .book-details-close {
+      background: #e8dcc5;
+      color: #21190e;
+      border-color: rgba(112, 75, 0, .3);
+      font-weight: 800;
+    }
+    @media (max-width: 650px) {
+      .book-details {
+        padding: 22px 16px;
+      }
+      .book-details h2,
+      .book-details #bookDetailsTitle {
+        font-size: 25px;
+        line-height: 1.6;
+      }
+      .book-details .book-details-description,
+      .book-details #bookDetailsDescription {
+        font-size: 17px;
+        line-height: 2;
+      }
+      .book-details .book-details-author,
+      .book-details #bookDetailsAuthor {
+        font-size: 15px;
+      }
+    }
+
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
