@@ -3332,7 +3332,19 @@ body.manager-theme-active {
     }
 
   
-    /* زخرفة أيقونات فئات الكتب بأسلوب شارات ذهبية */
+    /* حجم نص أزرار فئات الكتب ثابت عند 13px */
+#homePage .category-btn,
+#homePage .category-btn .category-label {
+  font-size: 13px !important;
+}
+@media (max-width: 520px) {
+  #homePage .category-btn,
+  #homePage .category-btn .category-label {
+    font-size: 13px !important;
+  }
+}
+
+/* زخرفة أيقونات فئات الكتب بأسلوب شارات ذهبية */
     #homePage .category-icon {
       position: relative;
       overflow: visible;
