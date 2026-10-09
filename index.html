@@ -421,19 +421,19 @@
 
     .hero-search {
       background: white;
-      border-radius: 13px;
-      padding: 5px;
+      border-radius: 11px;
+      padding: 4px;
       display: flex;
-      max-width: 560px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.20);
+      max-width: 430px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
     }
 
     .hero-search input {
       flex: 1;
       border: 0;
       outline: 0;
-      padding: 11px 12px;
-      font-size: 14px;
+      padding: 8px 10px;
+      font-size: 13px;
       min-width: 0;
     }
 
@@ -441,10 +441,11 @@
       border: 0;
       background: var(--gold);
       color: #111;
-      border-radius: 10px;
-      padding: 0 17px;
+      border-radius: 8px;
+      padding: 0 12px;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 12px;
+      min-height: 36px;
     }
 
     .hero-books {
@@ -3182,7 +3183,77 @@ body.manager-theme-active {
     .reward-negative{font-weight:900;color:#c62828}
     @media(max-width:700px){.rewards-hero{grid-template-columns:1fr}.rewards-balance{width:100%}.reward-wall-wrap iframe{min-height:650px}}
 
-</style>
+
+    /* Compact hero search and horizontal mini-stat pills */
+    .hero-search {
+      width: 100%;
+      max-width: 390px !important;
+      padding: 4px !important;
+      border-radius: 11px;
+    }
+    .hero-search input {
+      padding: 7px 9px !important;
+      font-size: 12px !important;
+    }
+    .hero-search button {
+      min-width: 0 !important;
+      min-height: 33px !important;
+      padding: 0 10px !important;
+      font-size: 11px !important;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+      margin: 18px 0 34px;
+    }
+    .stats .stat {
+      min-width: 0;
+      min-height: 52px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 9px;
+      border: 1px solid rgba(201,162,39,.28);
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--surface) 82%, #fff));
+      box-shadow: 0 5px 14px rgba(0,0,0,.06);
+      text-align: center;
+    }
+    .stats .stat::before { width: 2px; }
+    .stats .stat strong {
+      display: inline-block;
+      flex: 0 0 auto;
+      font-size: 17px;
+      line-height: 1.2;
+      color: var(--gold-dark);
+      white-space: nowrap;
+    }
+    .stats .stat span {
+      display: inline-block;
+      font-size: 11px;
+      line-height: 1.35;
+      white-space: nowrap;
+      color: var(--text);
+    }
+    .daily-visitors-inline { display: none !important; }
+    @media (max-width: 900px) {
+      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .stats .stat { padding: 10px 7px; gap: 6px; }
+    }
+    @media (max-width: 520px) {
+      .hero-search { max-width: 320px !important; }
+      .hero-search input { padding: 6px 8px !important; font-size: 11px !important; }
+      .hero-search button { min-height: 31px !important; padding: 0 9px !important; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .stats .stat { min-height: 46px; border-radius: 12px; }
+      .stats .stat strong { font-size: 16px; }
+      .stats .stat span { font-size: 10px; }
+    }
+
+  </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -3373,10 +3444,11 @@ body.manager-theme-active {
       <div class="stat">
         <strong id="viewCount">0</strong>
         <span>👁️ المشاهدة</span>
-        <div class="daily-visitors-inline">
-          <strong id="dailyVisitorCount">0</strong>
-          <span>📅 زوار اليوم</span>
-        </div>
+      </div>
+
+      <div class="stat">
+        <strong id="dailyVisitorCount">0</strong>
+        <span>📅 زوار اليوم</span>
       </div>
 
       <div class="stat">
