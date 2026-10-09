@@ -501,6 +501,35 @@
       margin: 20px 0 40px;
     }
 
+    .daily-checkin-card {
+      margin: 0 0 20px;
+      padding: 18px;
+      border: 1px solid rgba(201,162,39,.42);
+      border-radius: 17px;
+      background: linear-gradient(135deg, #fffdf7, #f7f1df);
+      color: #29251b;
+      text-align: center;
+      box-shadow: 0 7px 22px rgba(0,0,0,.05);
+    }
+
+    .daily-checkin-card h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .daily-checkin-card p {
+      margin: 7px 0 12px;
+      font-size: 13px;
+      color: #625a47;
+    }
+
+    .daily-checkin-status {
+      display: block;
+      min-height: 24px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .stat {
       background: white;
       border: 1px solid var(--border);
@@ -3326,6 +3355,11 @@ body.manager-theme-active {
       </div>
 
       <div class="stat">
+        <strong id="dailyVisitorCount">0</strong>
+        <span>📅 زوار اليوم</span>
+      </div>
+
+      <div class="stat">
         <strong id="cartStat">0</strong>
         <span>🛒 سلة المشتريات</span>
       </div>
@@ -3662,6 +3696,13 @@ body.manager-theme-active {
         </div>
       </div>
 
+
+      <div id="dailyCheckinCard" class="daily-checkin-card" style="display:none;">
+        <h3>🎁 هدية الحضور اليومي</h3>
+        <p>سجّل حضورك اليومي واحصل على 10 نقاط مجانية تُضاف إلى رصيدك داخل المتجر مرة واحدة يوميًا.</p>
+        <button id="dailyCheckinButton" class="rewards-btn" type="button" onclick="claimDailyCheckin()">🎁 سجّل حضوري واكسب 10 نقاط</button>
+        <span id="dailyCheckinStatus" class="daily-checkin-status" role="status" aria-live="polite">جارٍ التحقق من حضورك اليوم...</span>
+      </div>
 
       <div class="reward-guide">
         <h3>🧭 إرشاد النقاط — كيف أستفيد منها؟</h3>
@@ -6530,6 +6571,34 @@ if (ratingMessage) {
 
   }
 
+  async function loadDailyVisitorCount() {
+    const el = document.getElementById("dailyVisitorCount");
+    if (!el) return;
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/rpc/register_daily_store_visit",
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            apikey: SUPABASE_KEY,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Cache-Control": "no-cache"
+          },
+          body: JSON.stringify({ p_visitor_id: getVisitorId() })
+        }
+      );
+      if (!response.ok) throw new Error("Daily visitor counter HTTP " + response.status);
+      const count = await response.json();
+      el.textContent = Number(count || 0).toLocaleString("ar-IQ");
+    } catch (error) {
+      console.warn("Daily visitor counter unavailable:", error);
+      el.textContent = "—";
+    }
+  }
+
   async function loadStoreStats() {
 
     try {
@@ -7577,6 +7646,93 @@ async function downloadPDF(filePath) {
 let rewardWallUrl = "";
 let rewardPointsBalance = 0;
 
+async function loadDailyCheckinStatus(token) {
+  const card = document.getElementById("dailyCheckinCard");
+  const button = document.getElementById("dailyCheckinButton");
+  const status = document.getElementById("dailyCheckinStatus");
+  if (!card || !button || !status || !token) return;
+
+  try {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/daily_checkin", {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ p_claim: false })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.error || "تعذر التحقق من الحضور");
+
+    card.style.display = "block";
+    if (data.claimed_today) {
+      button.disabled = true;
+      button.textContent = "✅ تم تسجيل حضوري اليوم";
+      status.textContent = "أحسنت! لقد سجلت حضورك اليوم. عُد غدًا بعد منتصف الليل بتوقيت العراق لتحصل على هديتك اليومية.";
+    } else {
+      button.disabled = false;
+      button.textContent = "🎁 سجّل حضوري واكسب 10 نقاط";
+      status.textContent = "هدية اليوم بانتظارك — نقطة حضور واحدة يوميًا.";
+    }
+  } catch (error) {
+    console.warn("Daily check-in status unavailable:", error);
+    card.style.display = "block";
+    button.disabled = false;
+    button.textContent = "🎁 سجّل حضوري واكسب 10 نقاط";
+    status.textContent = "اضغط لتسجيل حضورك واستلام الهدية اليومية.";
+  }
+}
+
+async function claimDailyCheckin() {
+  const token = getAccessToken();
+  const button = document.getElementById("dailyCheckinButton");
+  const status = document.getElementById("dailyCheckinStatus");
+  if (!token) {
+    if (status) status.textContent = "سجّل الدخول أولًا حتى نضيف الهدية إلى رصيدك.";
+    showPage("account");
+    return;
+  }
+  if (!button) return;
+
+  button.disabled = true;
+  button.textContent = "⏳ جارٍ تسجيل الحضور...";
+  if (status) status.textContent = "نتحقق من استحقاقك للهدية اليومية...";
+
+  try {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/daily_checkin", {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ p_claim: true })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.error || "تعذر تسجيل الحضور");
+
+    rewardPointsBalance = Number(data.points_balance || 0);
+    const pointsEl = document.getElementById("rewardPoints");
+    if (pointsEl) pointsEl.textContent = rewardPointsBalance.toLocaleString("ar-IQ");
+
+    if (Number(data.awarded || 0) > 0) {
+      if (status) status.textContent = "🎉 تم تسجيل حضورك! أُضيفت 10 نقاط إلى رصيدك بنجاح.";
+    } else {
+      if (status) status.textContent = "✅ لقد استلمت هدية اليوم بالفعل. يمكنك استلام الهدية التالية غدًا.";
+    }
+    button.textContent = "✅ تم تسجيل حضوري اليوم";
+    await loadRewards();
+  } catch (error) {
+    console.error("Daily check-in error:", error);
+    button.disabled = false;
+    button.textContent = "🎁 حاول تسجيل الحضور مجددًا";
+    if (status) status.textContent = error.message || "حدث خطأ مؤقت. حاول مرة أخرى.";
+  }
+}
+
 async function loadRewards(forceReload = false) {
   const hint = document.getElementById("rewardsLoginHint");
   const wall = document.getElementById("rewardWallWrap");
@@ -7589,12 +7745,17 @@ async function loadRewards(forceReload = false) {
   if (!token) {
     hint.style.display = "block";
     wall.style.display = "none";
+    const checkinCard = document.getElementById("dailyCheckinCard");
+    if (checkinCard) checkinCard.style.display = "none";
     if (pointsEl) pointsEl.textContent = "0";
     if (historyEl) historyEl.innerHTML = '<div class="empty">سجّل الدخول لعرض عمليات النقاط.</div>';
     return;
   }
 
   hint.style.display = "none";
+  const checkinCard = document.getElementById("dailyCheckinCard");
+  if (checkinCard) checkinCard.style.display = "block";
+  await loadDailyCheckinStatus(token);
   try {
     const response = await fetch(SUPABASE_URL + "/functions/v1/reward-profile", {
       method: "GET",
@@ -7962,6 +8123,7 @@ sendAnalyticsEvent("store_view");
 loadBooks();
 
 loadStoreStats();
+loadDailyVisitorCount();
 
 checkUser();
 
