@@ -3766,6 +3766,44 @@ body.manager-theme-active {
 .manager-signature-art-caption { margin-top: 10px; color: #8a6817; font-size: 13px; font-weight: 800; letter-spacing: .5px; }
 @media(max-width:520px) { .manager-signature-art { max-width: 300px; margin: 15px auto 22px; } }
 
+
+/* Premium dark manager card and visible signature artwork */
+.footer-manager-card {
+  background: radial-gradient(circle at 50% 0%, rgba(201,162,39,.18), transparent 42%),
+              linear-gradient(145deg, #10101b 0%, #191526 48%, #090b12 100%) !important;
+  color: #f7edce !important;
+  border: 1px solid rgba(224,190,91,.82) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,224,138,.12), 0 0 22px rgba(201,162,39,.12) !important;
+}
+.footer-manager-card .footer-manager-card-kicker,
+.footer-manager-card .footer-contact-heading,
+.footer-manager-card .official-manager,
+.footer-manager-card .official-manager span,
+.footer-manager-card .footer-manager-card-note {
+  color: #f1dfad !important;
+}
+.footer-manager-card .footer-manager-card-ornament { color: #f5d77b !important; text-shadow: 0 0 14px rgba(245,215,123,.38); }
+.footer-manager-card .footer-contact {
+  color: #fff4d3 !important;
+  background: linear-gradient(135deg, #292338, #17131f) !important;
+  border: 1px solid rgba(224,190,91,.65) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.07), 0 6px 16px rgba(0,0,0,.2) !important;
+}
+.footer-manager-card .official-manager strong {
+  color: #ffe7a0 !important;
+  text-shadow: 0 0 12px rgba(255,215,110,.22);
+}
+.footer-manager-card .footer-social-link {
+  background: linear-gradient(145deg, #30283e, #15121d) !important;
+  border: 1px solid rgba(224,190,91,.58) !important;
+  color: #ffe7a0 !important;
+}
+.manager-signature-art { display:block !important; visibility:visible !important; opacity:1 !important; position:relative; z-index:1; width:calc(100% - 20px); max-width:390px; margin:18px auto 28px !important; }
+.manager-signature-art-frame { display:block !important; background:linear-gradient(145deg,#171322,#090a11 65%,#2b2035) !important; border:1px solid rgba(224,190,91,.85) !important; box-shadow:0 14px 34px rgba(0,0,0,.3), inset 0 0 0 3px rgba(255,220,130,.1), 0 0 22px rgba(201,162,39,.13) !important; }
+.manager-signature-art img { display:block !important; visibility:visible !important; opacity:1 !important; width:100% !important; max-width:100%; height:auto !important; max-height:340px; object-fit:contain; background:#f000d8; }
+.manager-signature-art-caption { color:#f4d77f !important; text-shadow:0 1px 8px rgba(201,162,39,.22); }
+@media(max-width:520px) { .manager-signature-art { max-width:300px; } }
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
