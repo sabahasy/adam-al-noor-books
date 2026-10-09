@@ -2899,24 +2899,13 @@ body.manager-theme-active {
 }
 .manager-action-btn.primary { background:#111; color:#fff; }
 .manager-action-btn.gold { background:var(--gold); color:#111; }
-.theme-grid {
-  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px;
-}
-.theme-option {
-  border:2px solid transparent; border-radius:16px; padding:8px; background:#fff;
-  cursor:pointer; text-align:center; transition:.2s;
-}
-.theme-option:hover { transform:translateY(-3px); }
-.theme-option.active { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,.12); }
-.theme-preview {
-  height:78px; border-radius:11px; border:1px solid rgba(0,0,0,.08);
-  margin-bottom:7px; position:relative; overflow:hidden;
-}
-.theme-preview::after {
-  content:"آدم النور"; position:absolute; right:10px; bottom:8px;
-  font-weight:800; font-size:12px; color:var(--preview-text,#222);
-}
-.theme-option strong { font-size:11px; }
+.theme-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
+.theme-option { min-width:0; border:2px solid rgba(201,162,39,.18); border-radius:12px; padding:5px; background:linear-gradient(145deg,#fff,#f7f1e3); cursor:pointer; text-align:center; transition:transform .2s,box-shadow .2s,border-color .2s; box-shadow:0 3px 9px rgba(40,28,10,.07); }
+.theme-option:hover { transform:translateY(-2px); box-shadow:0 7px 14px rgba(40,28,10,.13); }
+.theme-option.active { border-color:var(--gold); box-shadow:0 0 0 2px rgba(201,162,39,.2),0 5px 14px rgba(40,28,10,.12); }
+.theme-preview { height:34px; border-radius:8px; border:1px solid rgba(0,0,0,.12); margin-bottom:4px; position:relative; overflow:hidden; }
+.theme-preview::after { content:"✦"; position:absolute; inset:0; display:grid; place-items:center; font-weight:900; font-size:18px; color:var(--preview-text,#222); text-shadow:0 1px 2px rgba(255,255,255,.3); }
+.theme-option strong { display:block; font-size:10px; line-height:1.25; overflow-wrap:anywhere; }
 .manager-list {
   display:grid; gap:8px; max-height:360px; overflow:auto;
 }
@@ -2939,11 +2928,14 @@ body.manager-theme-active {
 @media (max-width: 900px) {
   .manager-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .manager-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .theme-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .theme-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; }
 }
 @media (max-width: 520px) {
   .manager-grid { grid-template-columns:1fr; }
   .manager-section { margin-left:10px; margin-right:10px; padding:14px; }
+  .theme-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+  .theme-option { padding:4px; border-radius:10px; }
+  .theme-preview { height:30px; }
   .manager-head { padding:19px; }
 }
 
@@ -4728,7 +4720,7 @@ footer ul li:hover {
         <h2>🎨 المظهر والخلفيات</h2>
         <p>اختر الخلفية والثيم الذي تريد أن يظهر للزوار. هذه الأداة للمدير فقط.</p>
         <div id="themeGrid" class="theme-grid"></div>
-        <div id="themeSaveStatus" class="manager-note">اختر أي ثيم من الثيمات العشرة لتطبيقه على المتجر وحفظه.</div>
+        <div id="themeSaveStatus" class="manager-note">🎨 اختر من بين 30 ثيمًا راقيًا؛ اضغط على اللون لتطبيقه وحفظه للمتجر.</div>
       </section>
 
       <section id="managerLinksSection" class="manager-section">
@@ -8916,7 +8908,27 @@ const STORE_THEMES = {
   paper:{name:"الورق العتيق",bg:"#d8d0b4",text:"#29271f",black:"#1d1c18",gold:"#9c7628",goldDark:"#6d531b",cream:"#eee7d2",surface:"#e4dbc0",border:"#c5bda2"},
   coffee:{name:"القهوة الفاخرة",bg:"#b59a82",text:"#2a1b13",black:"#180f0b",gold:"#bd8d3e",goldDark:"#76501f",cream:"#e2d0bd",surface:"#cbb29a",border:"#b39a84"},
   forest:{name:"الغابة الهادئة",bg:"#b7c8b1",text:"#17271b",black:"#0d1710",gold:"#a88a3c",goldDark:"#66551f",cream:"#dce8d9",surface:"#c9d9c5",border:"#9eb39a"},
-  burgundy:{name:"العنابي الفخم",bg:"#d7babc",text:"#30171c",black:"#1e0d11",gold:"#bb8b3f",goldDark:"#704a1c",cream:"#eedadd",surface:"#e4c9cc",border:"#c9a6aa"}
+  burgundy:{name:"العنابي الفخم",bg:"#d7babc",text:"#30171c",black:"#1e0d11",gold:"#bb8b3f",goldDark:"#704a1c",cream:"#eedadd",surface:"#e4c9cc",border:"#c9a6aa"},
+  amethyst:{name:"الأرجواني الملكي",bg:"#c8b6e2",text:"#291b3b",black:"#160d24",gold:"#d7b35a",goldDark:"#8b6825",cream:"#e9def6",surface:"#d9cbed",border:"#b4a0d2"},
+  ocean:{name:"المحيط العميق",bg:"#9fcbd0",text:"#12333a",black:"#092329",gold:"#c6a34a",goldDark:"#80651f",cream:"#d9edef",surface:"#b9dce0",border:"#8dbac0"},
+  teal:{name:"الفيروزي الفاخر",bg:"#a8d2c7",text:"#163b35",black:"#0d2924",gold:"#b9953b",goldDark:"#755c20",cream:"#dff0eb",surface:"#c4e2d9",border:"#91bfb3"},
+  lavender:{name:"لافندر ناعم",bg:"#d0c6e8",text:"#30254a",black:"#1c1430",gold:"#b99a48",goldDark:"#786022",cream:"#eee8f8",surface:"#dfd7f0",border:"#b8acd8"},
+  midnight:{name:"منتصف الليل",bg:"#24243b",text:"#f5f0ff",black:"#11111f",gold:"#e4c46b",goldDark:"#c8a64a",cream:"#34334f",surface:"#2d2d47",border:"#494766"},
+  charcoal:{name:"الفحم الأنيق",bg:"#34383d",text:"#f7f3ea",black:"#17191c",gold:"#d8b45c",goldDark:"#b08b32",cream:"#454b51",surface:"#3c4248",border:"#626a71"},
+  plum:{name:"البرقوق المخملي",bg:"#c9a9c7",text:"#3a2039",black:"#241324",gold:"#c6a04a",goldDark:"#806023",cream:"#ead7e8",surface:"#d9bfd7",border:"#b18db0"},
+  coral:{name:"المرجان الدافئ",bg:"#efb7a6",text:"#48251f",black:"#2b1512",gold:"#ad7a2d",goldDark:"#704a19",cream:"#f9ded5",surface:"#f2cbbf",border:"#d99d8c"},
+  mint:{name:"النعناع المنعش",bg:"#bce0d0",text:"#1d3b31",black:"#10271f",gold:"#a88732",goldDark:"#6c541d",cream:"#e2f2e9",surface:"#cfe9dc",border:"#9fcab8"},
+  sky:{name:"السماء الصافية",bg:"#b8d8f0",text:"#18324a",black:"#0b1e30",gold:"#b28a2f",goldDark:"#73571b",cream:"#e2f0fb",surface:"#cce4f5",border:"#9bbfdb"},
+  olive:{name:"الزيتوني النبيل",bg:"#c4c9a0",text:"#30351b",black:"#1b1e10",gold:"#a98631",goldDark:"#6b531d",cream:"#e8e9d0",surface:"#d5d8b7",border:"#aeb487"},
+  ice:{name:"الجليد الفضي",bg:"#d0dbe2",text:"#24323b",black:"#111a20",gold:"#b39243",goldDark:"#765f25",cream:"#edf3f6",surface:"#dfe8ed",border:"#b1c2cc"},
+  copper:{name:"النحاس العتيق",bg:"#c99a7b",text:"#3c2117",black:"#24120b",gold:"#e0b95a",goldDark:"#8b5a25",cream:"#f0d7c5",surface:"#dcb296",border:"#b98260"},
+  cherry:{name:"الكرز المخملي",bg:"#d8a6b4",text:"#421d2a",black:"#270f18",gold:"#d0a04c",goldDark:"#855d21",cream:"#f3dce3",surface:"#e5bdc8",border:"#c58c9e"},
+  indigo:{name:"النيلي الفخم",bg:"#aeb9e0",text:"#20294b",black:"#11172d",gold:"#d4b04f",goldDark:"#8a6c25",cream:"#dfe4f7",surface:"#c3cbed",border:"#929fc9"},
+  sage:{name:"المريمية الهادئة",bg:"#c4d2bf",text:"#27382a",black:"#142117",gold:"#ad8a3c",goldDark:"#70581f",cream:"#e8efe4",surface:"#d4dfcf",border:"#a7bba1"},
+  lemon:{name:"الليموني الراقي",bg:"#e5dfa5",text:"#3d3817",black:"#24210b",gold:"#a98524",goldDark:"#6e5515",cream:"#f6f0ca",surface:"#ede7b8",border:"#cbc37e"},
+  blush:{name:"الوردي الحريري",bg:"#ead0d8",text:"#482d38",black:"#291720",gold:"#b78d45",goldDark:"#765721",cream:"#f8e9ee",surface:"#f0dce3",border:"#d4b0bd"},
+  glacier:{name:"الزمرد الجليدي",bg:"#a9d0c8",text:"#173a35",black:"#0c2622",gold:"#c0a04a",goldDark:"#786020",cream:"#d9eee9",surface:"#bfdfd8",border:"#8ebbb2"},
+  ruby:{name:"الياقوت الأحمر",bg:"#d79ba0",text:"#451b24",black:"#290e14",gold:"#e0bd64",goldDark:"#936b25",cream:"#f0d6d8",surface:"#e2b7bc",border:"#bd7c84"}
 };
 
 function applyStoreTheme(themeId) {
