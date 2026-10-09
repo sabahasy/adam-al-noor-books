@@ -5800,37 +5800,59 @@ const stars =
 
     if (!container) return;
 
-    const buttons = [
+    // Keep the decorative category badges after Supabase loads categories.
+    // The initial HTML is replaced here, so each generated button must include its own icon.
+    const categoryIconMarkup = (rawName) => {
+      const name = String(rawName || "").toLowerCase();
+      const paths = name.includes("تاريخ")
+        ? '<path d="M6 3.5h12M6 20.5h12M7 4c0 4 2 5.5 5 8-3 2.5-5 4-5 8M17 4c0 4-2 5.5-5 8 3 2.5 5 4 5 8"/><path d="M9 7h6M9 17h6"/>'
+        : (name.includes("روا") || name.includes("قص") || name.includes("أدب"))
+        ? '<path d="M4 5.5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z"/><path d="M20 5.5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/><path d="M6.5 9h4M6.5 12h4M15.5 9H18"/>'
+        : (name.includes("تنمي") || name.includes("تطوير") || name.includes("نجاح"))
+        ? '<path d="M12 20v-9"/><path d="M12 14C5 14 4 9 4 5c5 0 8 2 8 7"/><path d="M12 11c0-5 3-7 8-7 0 5-2 8-8 8"/><path d="M7 20h10"/>'
+        : (name.includes("طفل") || name.includes("تربي") || name.includes("أطفال") || name.includes("اطفال"))
+        ? '<circle cx="7" cy="6" r="2.5"/><circle cx="17" cy="6" r="2.5"/><circle cx="12" cy="12" r="7"/><circle cx="9.5" cy="11" r=".7"/><circle cx="14.5" cy="11" r=".7"/><path d="M10 14c1.2 1 2.8 1 4 0"/>'
+        : (name.includes("ملزم") || name.includes("دراس") || name.includes("مدرس") || name.includes("تعليم"))
+        ? '<path d="m2.5 9 9.5-5 9.5 5-9.5 5z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M21.5 9v6"/>'
+        : (name.includes("فلسف") || name.includes("فكر") || name.includes("منطق"))
+        ? '<path d="M12 3a9 9 0 1 0 0 18 4.5 4.5 0 0 1 0-9 4.5 4.5 0 0 0 0-9z"/><circle cx="12" cy="7.5" r="1"/><circle cx="12" cy="16.5" r="1"/>'
+        : (name.includes("لغة") || name.includes("لغات") || name.includes("إنجليزي") || name.includes("انجليزي"))
+        ? '<path d="M4 5h12M10 5c0 7-3 11-6 13M6 9c2 4 5 7 8 8M14 13h7M17.5 9v10M14.5 19h6"/>'
+        : '<path d="M3.5 5.5c3.2-1.2 6-.7 8.5 1.2v12c-2.5-1.9-5.3-2.4-8.5-1.2z"/><path d="M20.5 5.5c-3.2-1.2-6-.7-8.5 1.2v12c2.5-1.9 5.3-2.4 8.5-1.2z"/><path d="M6 8.5c1.5-.3 2.7 0 4 .7M14 9.2c1.3-.7 2.5-1 4-.7"/>';
+      const ornament = name.includes("تاريخ") ? "✧"
+        : (name.includes("روا") || name.includes("قص")) ? "❦"
+        : (name.includes("فلسف") || name.includes("فكر")) ? "✧"
+        : "✦";
+      return '<span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24">' + paths + '</svg><i>' + ornament + '</i></span>';
+    };
 
+    const buttons = [
       `
         <button
           class="category-btn active"
           onclick="filterCategory('all', this)"
         >
-          جميع الكتب
+          ${categoryIconMarkup("جميع الكتب")}
+          <span class="category-label">جميع الكتب</span>
         </button>
       `,
-
       ...categories.map(category => {
-
-        const name =
-          escapeHTML(category.name_ar);
-
+        const rawName = String(category.name_ar || "");
+        const safeName = escapeHTML(rawName);
+        const clickName = rawName.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, " ");
         return `
           <button
             class="category-btn"
-            onclick="filterCategory('${name}', this)"
+            onclick="filterCategory('${clickName}', this)"
           >
-            ${name}
+            ${categoryIconMarkup(rawName)}
+            <span class="category-label">${safeName}</span>
           </button>
         `;
-
       })
-
     ];
 
-    container.innerHTML =
-      buttons.join("");
+    container.innerHTML = buttons.join("");
 
   }
 
