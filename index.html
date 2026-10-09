@@ -501,6 +501,26 @@
       margin: 20px 0 40px;
     }
 
+    .daily-visitors-inline {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 9px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(201,162,39,.28);
+    }
+
+    .daily-visitors-inline strong {
+      display: inline-block;
+      font-size: 18px;
+      color: var(--gold-dark);
+    }
+
+    .daily-visitors-inline span {
+      font-size: 12px;
+    }
+
     .daily-checkin-card {
       margin: 0 0 20px;
       padding: 18px;
@@ -3352,11 +3372,10 @@ body.manager-theme-active {
       <div class="stat">
         <strong id="viewCount">0</strong>
         <span>👁️ المشاهدة</span>
-      </div>
-
-      <div class="stat">
-        <strong id="dailyVisitorCount">0</strong>
-        <span>📅 زوار اليوم</span>
+        <div class="daily-visitors-inline">
+          <strong id="dailyVisitorCount">0</strong>
+          <span>📅 زوار اليوم</span>
+        </div>
       </div>
 
       <div class="stat">
