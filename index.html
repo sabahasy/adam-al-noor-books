@@ -3917,6 +3917,57 @@ footer ul li:hover {
   -webkit-text-fill-color: #000000 !important;
   text-shadow: none !important;
 }
+
+/* Compact manager dashboard cards; keep the appearance/backgrounds section untouched */
+#managerPage .manager-grid {
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)) !important;
+  gap: 9px !important;
+  padding: 12px !important;
+}
+#managerPage .manager-card {
+  min-height: 0 !important;
+  padding: 11px 12px !important;
+  border-radius: 13px !important;
+}
+#managerPage .manager-card-icon {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 35px !important;
+  height: 35px !important;
+  margin: 0 0 6px !important;
+  border: 1px solid rgba(201,162,39,.32) !important;
+  border-radius: 11px !important;
+  background: linear-gradient(145deg,#fff9e8,#f0dfad) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 3px 8px rgba(111,81,14,.08) !important;
+  font-size: 20px !important;
+}
+#managerPage .manager-card strong { font-size: 13px !important; line-height: 1.45 !important; }
+#managerPage .manager-card span { font-size: 10px !important; line-height: 1.4 !important; }
+#managerPage .manager-section:not(#managerAppearanceSection) {
+  margin: 0 12px 12px !important;
+  padding: 13px !important;
+  border-radius: 14px !important;
+}
+#managerPage .manager-section:not(#managerAppearanceSection) h2 { font-size: 17px !important; }
+#managerPage .manager-stats { gap: 8px !important; }
+#managerPage .manager-stat { padding: 10px 8px !important; border-radius: 11px !important; }
+#managerPage .manager-stat strong { font-size: 19px !important; }
+#managerPage .manager-dashboard-grid { gap: 9px !important; margin-top: 10px !important; }
+#managerPage .manager-dashboard-grid > div { padding: 10px !important; border-radius: 12px !important; }
+#managerPage .manager-actions { gap: 7px !important; }
+#managerPage .manager-action-btn { padding: 8px 11px !important; border-radius: 10px !important; font-size: 11px !important; }
+#managerPage .manager-list { gap: 6px !important; }
+#managerPage .manager-list-item { padding: 8px 10px !important; border-radius: 10px !important; }
+#managerPage .manager-back { padding: 0 12px 14px !important; }
+@media (max-width: 520px) {
+  #managerPage .manager-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 7px !important; padding: 9px !important; }
+  #managerPage .manager-card { padding: 9px !important; }
+  #managerPage .manager-card-icon { width: 31px !important; height: 31px !important; font-size: 18px !important; }
+  #managerPage .manager-section:not(#managerAppearanceSection) { margin: 0 8px 10px !important; padding: 10px !important; }
+  #managerPage .manager-stats { gap: 6px !important; }
+  #managerPage .manager-stat strong { font-size: 17px !important; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
