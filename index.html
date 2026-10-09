@@ -3654,6 +3654,111 @@ body.manager-theme-active {
   .footer-manager-card .footer-contact-heading { font-size: 15px; }
 }
 
+
+/* Premium manager contact panel */
+.footer-manager-card {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 26px auto 18px !important;
+  padding: 25px 20px 22px !important;
+  max-width: 560px;
+  border: 1px solid rgba(201,162,39,.72) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(230,196,106,.22), transparent 48%),
+    linear-gradient(145deg, #fffdf6 0%, #f8f0d9 52%, #fffaf0 100%) !important;
+  box-shadow: 0 14px 38px rgba(83,61,13,.14), inset 0 0 0 4px rgba(255,255,255,.72) !important;
+  text-align: center;
+}
+.footer-manager-card::before {
+  content: "✧ ･ﾟ: *✧ ･ﾟ:*";
+  display: block;
+  color: #b38a25;
+  letter-spacing: 5px;
+  font-size: 15px;
+  margin-bottom: 7px;
+}
+.footer-manager-card-ornament {
+  color: #a87d16 !important;
+  font-size: 27px !important;
+  line-height: 1.5;
+  text-shadow: 0 2px 8px rgba(201,162,39,.22);
+}
+.footer-manager-card-kicker {
+  display: inline-block;
+  margin: 4px auto 15px;
+  padding: 7px 16px;
+  border: 1px solid rgba(180,137,30,.35);
+  border-radius: 999px;
+  background: rgba(255,255,255,.68);
+  color: #84600d !important;
+  font-weight: 800;
+  font-size: 13px;
+}
+.footer-manager-card .footer-contact {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 14px;
+  padding: 12px 18px;
+  border: 1px solid rgba(201,162,39,.48);
+  border-radius: 15px;
+  background: linear-gradient(135deg,#fff,#f7edcf);
+  color: #75520a !important;
+  font-size: 15px !important;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 5px 14px rgba(99,74,15,.08);
+  overflow-wrap: anywhere;
+}
+.footer-manager-card .footer-contact-heading {
+  color: #39301d !important;
+  font-size: 17px !important;
+  font-weight: 900;
+  margin: 9px 0 14px;
+}
+.footer-manager-card .footer-socials { justify-content: center; gap: 13px; margin: 13px 0 17px; }
+.footer-manager-card .footer-social-link {
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid rgba(201,162,39,.52) !important;
+  border-radius: 16px !important;
+  background: linear-gradient(145deg,#fffdf7,#eee0b5) !important;
+  box-shadow: 0 5px 13px rgba(83,61,13,.12);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.footer-manager-card .footer-social-link:hover { transform: translateY(-3px); box-shadow: 0 9px 18px rgba(83,61,13,.18); }
+.footer-manager-card .official-manager {
+  margin: 12px 0 10px !important;
+  padding: 14px 12px !important;
+  border: 1px solid rgba(201,162,39,.38);
+  border-radius: 17px;
+  background: rgba(255,255,255,.64);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.footer-manager-card .official-manager span { color: #76602b; font-size: 13px; font-weight: 700; }
+.footer-manager-card .official-manager strong {
+  color: #7d5a12 !important;
+  font-size: clamp(17px, 4vw, 22px) !important;
+  text-shadow: 0 1px 0 #fff, 0 2px 9px rgba(201,162,39,.2);
+  overflow-wrap: anywhere;
+}
+.footer-manager-card-note {
+  margin-top: 13px !important;
+  color: #746747 !important;
+  font-size: 12px !important;
+  line-height: 1.9;
+}
+@media (max-width: 520px) {
+  .footer-manager-card { padding: 21px 13px 18px !important; border-radius: 20px !important; }
+  .footer-manager-card .footer-contact { font-size: 13px !important; padding: 11px 12px; }
+  .footer-manager-card .footer-contact-heading { font-size: 15px !important; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
