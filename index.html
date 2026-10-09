@@ -3968,6 +3968,40 @@ footer ul li:hover {
   #managerPage .manager-stat strong { font-size: 17px !important; }
 }
 
+
+    /* HIGH-CONTRAST BOOK CARD TEXT */
+    #homePage .book {
+      color: #17130d;
+    }
+    #homePage .book .book-title,
+    #homePage .book .book-order-title {
+      color: #17130d !important;
+      font-weight: 900 !important;
+      text-shadow: 0 0 0.2px currentColor;
+    }
+    #homePage .book .book-author,
+    #homePage .book .book-description,
+    #homePage .book .book-desc,
+    #homePage .book .book-details,
+    #homePage .book .book-meta,
+    #homePage .book .book-rating,
+    #homePage .book .book-price,
+    #homePage .book .book-category,
+    #homePage .book p,
+    #homePage .book label,
+    #homePage .book small,
+    #homePage .book .book-info {
+      color: #262018 !important;
+      font-weight: 700;
+    }
+    #homePage .book .book-category {
+      color: #624600 !important;
+      font-weight: 800 !important;
+    }
+    #homePage .book :is(.book-title, .book-author, .book-description, .book-desc, .book-details, .book-meta, .book-rating, .book-price, .book-category, p, label, small, .book-info) {
+      opacity: 1;
+    }
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
