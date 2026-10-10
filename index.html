@@ -4000,7 +4000,25 @@ footer ul li:hover {
 }
 
 
-    /* Reduce visual clutter in book cards: compact category label and PDF badge */
+    /* Slightly enlarge the IQD price and points for easier reading */
+#homePage .book .book-bottom .price .price-iqd {
+  font-size: 17px !important;
+  line-height: 1.35 !important;
+}
+#homePage .book .book-bottom .price .price-points {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+@media (max-width: 600px) {
+  #homePage .book .book-bottom .price .price-iqd {
+    font-size: 11px !important;
+  }
+  #homePage .book .book-bottom .price .price-points {
+    font-size: 9px !important;
+  }
+}
+
+/* Reduce visual clutter in book cards: compact category label and PDF badge */
 #homePage .book .book-category {
   font-size: 9px !important;
   line-height: 1.3 !important;
