@@ -9413,9 +9413,11 @@ async function loadRewards(forceReload = false) {
 
     const controller = new AbortController();
 
+    // The API may spend up to 10 seconds contacting WAYL and another
+    // 4 seconds reconciling a delayed response. Do not abort the browser request early.
     const paymentTimeout = setTimeout(() => {
       controller.abort();
-    }, 5000);
+    }, 20000);
 
     try {
 
