@@ -5086,7 +5086,7 @@ header .live-visitors-badge {
             <span id="bookPointsBalance" class="book-points-balance">رصيدك: — نقطة</span>
           </div>
           <button id="bookPointsBuyButton" class="book-points-btn" type="button">🎁 شراء بالنقاط</button>
-          <p class="book-points-note">100 نقطة = 75 د.ع. تقريبًا. النقاط لا تُستبدل نقدًا ولا تُرسل إلى بوابة الدفع.</p>
+          <p class="book-points-note">100 نقطة = 86 د.ع. تقريبًا. النقاط لا تُستبدل نقدًا ولا تُرسل إلى بوابة الدفع.</p>
         </div>
 
         <div class="book-details-bottom">
@@ -9178,7 +9178,7 @@ async function loadRewards(forceReload = false) {
     if (!box || !requiredEl || !balanceEl || !button) return;
 
     const price = Number(book?.price || 0);
-    const required = Math.ceil(price / 0.75);
+    const required = Math.ceil(price * 7 / 6);
     requiredEl.textContent = "المطلوب: " + required.toLocaleString("ar-IQ") + " نقطة";
     box.style.display = "block";
     button.disabled = true;
@@ -9238,7 +9238,7 @@ async function loadRewards(forceReload = false) {
     }
     if (!book?.id) return;
 
-    const required = Math.ceil(Number(book.price || 0) / 0.75);
+    const required = Math.ceil(Number(book.price || 0) * 7 / 6);
     if (rewardPointsBalance < required) {
       alert("رصيد النقاط غير كافٍ لهذا الكتاب.");
       return;
