@@ -4395,6 +4395,15 @@ header .brand-pdf {
   header .brand-pdf { font-size: 9px !important; letter-spacing: 1.5px; }
 }
 
+
+/* Slightly shrink the online-status icon in the header */
+header .live-visitors-icon { font-size: 12px !important; }
+header .live-visitors-dot { width: 7px !important; height: 7px !important; }
+@media (max-width: 700px) {
+  header .live-visitors-icon { font-size: 11px !important; }
+  header .live-visitors-dot { width: 6px !important; height: 6px !important; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
