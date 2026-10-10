@@ -4404,6 +4404,25 @@ header .live-visitors-dot { width: 5px !important; height: 5px !important; }
   header .live-visitors-dot { width: 4px !important; height: 4px !important; }
 }
 
+
+/* Make the live visitors badge rectangular like Cart and Points buttons */
+header .live-visitors-badge {
+  min-width: 62px !important;
+  min-height: 28px !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box;
+}
+@media (max-width: 700px) {
+  header .live-visitors-badge {
+    min-width: 54px !important;
+    min-height: 25px !important;
+    padding: 3px 8px !important;
+    gap: 4px !important;
+    border-radius: 7px !important;
+  }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
