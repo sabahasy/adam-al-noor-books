@@ -7554,10 +7554,12 @@ viewCount:
     ).textContent =
       book.title || "بدون عنوان";
 
-    document.getElementById(
+    const bookDetailsAuthor = document.getElementById(
       "bookDetailsAuthor"
-    ).textContent =
-      book.author || "مؤلف غير معروف";
+    );
+    const displayedAuthor = String(book.author || "").trim();
+    bookDetailsAuthor.textContent = displayedAuthor;
+    bookDetailsAuthor.style.display = displayedAuthor ? "" : "none";
 
     document.getElementById(
       "bookDetailsCategory"
@@ -8720,12 +8722,7 @@ async function loginUser() {
                 )}
               </h3>
 
-              <p>
-                ${escapeHTML(
-                  book.author_ar ||
-                  "مؤلف غير معروف"
-                )}
-              </p>
+              ${String(book.author_ar || "").trim() ? `<p>${escapeHTML(String(book.author_ar).trim())}</p>` : ""}
 
               <button
   class="pdf-btn"
