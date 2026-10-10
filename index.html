@@ -4423,6 +4423,40 @@ header .live-visitors-badge {
   }
 }
 
+
+/* Show each category's live book total inside its icon */
+#homePage .category-icon {
+  position: relative;
+  overflow: visible;
+}
+#homePage .category-book-count {
+  position: absolute;
+  inset-inline-end: -6px;
+  bottom: -6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #17130a;
+  color: #f5d76e;
+  border: 1px solid #e2bd4d;
+  box-shadow: 0 2px 5px rgba(0,0,0,.22);
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+#homePage .category-btn.active .category-book-count {
+  background: #fff8dc;
+  color: #241b05;
+  border-color: #fff0a8;
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -6873,7 +6907,7 @@ const stars =
 
     // Keep the decorative category badges after Supabase loads categories.
     // The initial HTML is replaced here, so each generated button must include its own icon.
-    const categoryIconMarkup = (rawName) => {
+    const categoryIconMarkup = (rawName, count) => {
       const name = String(rawName || "").toLowerCase();
       const paths = name.includes("تاريخ")
         ? '<path d="M6 3.5h12M6 20.5h12M7 4c0 4 2 5.5 5 8-3 2.5-5 4-5 8M17 4c0 4-2 5.5-5 8 3 2.5 5 4 5 8"/><path d="M9 7h6M9 17h6"/>'
@@ -6894,7 +6928,7 @@ const stars =
         : (name.includes("روا") || name.includes("قص")) ? "❦"
         : (name.includes("فلسف") || name.includes("فكر")) ? "✧"
         : "✦";
-      return '<span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24">' + paths + '</svg><i>' + ornament + '</i></span>';
+      return '<span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24">' + paths + '</svg><i>' + ornament + '</i><b class="category-book-count">' + Number(count || 0).toLocaleString("ar-IQ") + '</b></span>';
     };
 
     const buttons = [
@@ -6903,7 +6937,7 @@ const stars =
           class="category-btn active"
           onclick="filterCategory('all', this)"
         >
-          ${categoryIconMarkup("جميع الكتب")}
+          ${categoryIconMarkup("جميع الكتب", books.length)}
           <span class="category-label">جميع الكتب</span>
         </button>
       `,
@@ -6916,7 +6950,7 @@ const stars =
             class="category-btn"
             onclick="filterCategory('${clickName}', this)"
           >
-            ${categoryIconMarkup(rawName)}
+            ${categoryIconMarkup(rawName, books.filter(book => String(book.category || "").trim().toLowerCase() === rawName.trim().toLowerCase()).length)}
             <span class="category-label">${safeName}</span>
           </button>
         `;
