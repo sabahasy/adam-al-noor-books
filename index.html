@@ -3063,10 +3063,20 @@ body.manager-theme-active {
 }
 
   
-/* بطاقة الكتاب — عرض المشاهدة والبيع */
-.book-views,.book-sales{display:flex;align-items:center;gap:4px;font-weight:800;margin-top:4px}
+/* بطاقة الكتاب — المشاهدات والمبيعات بجانب بعضهما والسعر بالنقاط تحته */
+.book-stats{display:flex;align-items:center;justify-content:flex-start;gap:14px;flex-wrap:wrap;margin-top:5px;min-height:16px}
+.book-views,.book-sales{display:flex;align-items:center;gap:4px;font-weight:800;margin:0;white-space:nowrap}
 .book-views{color:var(--muted)}
 .book-sales{color:var(--gold)}
+.book-bottom .price{display:flex;flex-direction:column;align-items:flex-start;gap:2px;white-space:normal}
+.book-bottom .price-iqd{display:block;white-space:nowrap}
+.book-bottom .price-points{display:block;color:var(--gold);font-size:11px;font-weight:800;line-height:1.3;white-space:nowrap}
+@media(max-width:600px){
+  .book-stats{gap:7px;margin-top:4px;min-height:13px;flex-wrap:nowrap}
+  .book-views,.book-sales{display:flex!important;font-size:7px!important;gap:2px;white-space:nowrap}
+  .book-bottom .price{align-items:center;gap:2px;margin-bottom:4px;font-size:9px}
+  .book-bottom .price-points{font-size:7px}
+}
 
     /* ================= REWARDS / OFFERWALL ================= */
     .rewards-panel{max-width:1100px;margin:0 auto}
@@ -6757,18 +6767,20 @@ const stars =
   }
 </div>
 
-            <div class="book-views">
-              👁️ ${book.viewCount || 0}
-            </div>
-
-            <div class="book-sales">
-              💰 بيع ${book.soldCount || 0}
+            <div class="book-stats">
+              <div class="book-views">
+                ${book.viewCount || 0} 👁️
+              </div>
+              <div class="book-sales">
+                ${book.soldCount || 0} 💰 بيع
+              </div>
             </div>
 
             <div class="book-bottom">
 
               <div class="price">
-                ${formatPrice(book.price)}
+                <span class="price-iqd">${formatPrice(book.price)}</span>
+                <small class="price-points">${Math.ceil(Number(book.price || 0) * 7 / 6).toLocaleString("en-US")} نقطة</small>
               </div>
 
               <div class="book-actions">
