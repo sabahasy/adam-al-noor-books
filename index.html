@@ -9411,13 +9411,15 @@ async function loadRewards(forceReload = false) {
     button.textContent =
       "جاري تجهيز الدفع...";
 
-    const controller = new AbortController();
-
-    // The API may spend up to 10 seconds contacting WAYL and another
-    // 4 seconds reconciling a delayed response. Do not abort the browser request early.
+    // Show a warning after 5 seconds, but do not abort the payment request:
+    // the server may already have created a real WAYL link and order.
     const paymentTimeout = setTimeout(() => {
-      controller.abort();
-    }, 20000);
+      showStatus(
+        "checkoutStatus",
+        "تأخر تجهيز الدفع أكثر من 5 ثوانٍ. لا تضغط مرة أخرى؛ انتظر قليلًا حتى لا يتكرر الطلب.",
+        "error"
+      );
+    }, 5000);
 
     try {
 
@@ -9445,10 +9447,6 @@ async function loadRewards(forceReload = false) {
               totalIQD
 
             }),
-
-            signal:
-              controller.signal
-
           }
         );
 
