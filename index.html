@@ -2972,7 +2972,7 @@ body.manager-theme-active {
     .book-info { padding: 10px; }
     .book-category { font-size: 10px; margin-bottom: 2px; }
     .book-title { font-size: 14px; line-height: 1.4; min-height: 40px; }
-    .book-author { font-size: 11px; margin-top: 3px; min-height: 18px; }
+    .book-author { font-size: 11px; margin-top: 3px; }
     .rating, .book-views, .book-sales { font-size: 10px; margin-top: 4px; }
     .book-bottom { margin-top: 8px; align-items: center; }
     .price { font-size: 14px; }
@@ -6680,7 +6680,7 @@ return true;
         escapeHTML(book.title || "بدون عنوان");
 
       const author =
-        escapeHTML(book.author || "مؤلف غير معروف");
+        escapeHTML(String(book.author || "").trim());
 
       const category =
         escapeHTML(book.category || "كتب إلكترونية");
@@ -6755,9 +6755,7 @@ const stars =
               ${title}
             </div>
 
-            <div class="book-author">
-              ${author}
-            </div>
+            ${author ? `<div class="book-author">${author}</div>` : ""}
 
             <div class="rating">
   <span>${stars}</span>
