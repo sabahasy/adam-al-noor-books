@@ -4345,6 +4345,25 @@ footer ul li:hover {
       }
     }
 
+
+/* Header size adjustment #1: make all top-bar elements slightly smaller */
+header .header-inner { min-height:52px; gap:8px; }
+header .brand { gap:5px; }
+header .brand-icon { width:28px; height:28px; flex-basis:28px; font-size:15px; }
+header .brand-name-logo { width:112px; max-width:31vw; height:29px; font-size:25px; }
+header .brand-text span { font-size:10px; }
+header nav { gap:1px; }
+header .nav-btn { padding:5px 5px; font-size:10px; }
+header .header-tool-btn { min-height:25px; padding:3px 5px; font-size:9px; }
+header .header-slogan { font-size:10px; }
+@media (max-width:520px) {
+  header .brand-name-logo { width:92px; max-width:27vw; height:26px; font-size:22px; }
+  header .brand-icon { width:24px; height:24px; flex-basis:24px; font-size:13px; }
+  header .brand-text span { font-size:9px; }
+  header .nav-btn { padding:4px 4px; font-size:9px; }
+  header .header-tool-btn { min-height:23px; padding:2px 4px; font-size:8px; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
