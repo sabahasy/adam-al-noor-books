@@ -9413,12 +9413,53 @@ async function loadRewards(forceReload = false) {
 
     // Show a warning after 5 seconds, but do not abort the payment request:
     // the server may already have created a real WAYL link and order.
-    const paymentTimeout = setTimeout(() => {
+    const paymentTimeout = setTimeout(async () => {
       showStatus(
         "checkoutStatus",
-        "تأخر تجهيز الدفع أكثر من 5 ثوانٍ. لا تضغط مرة أخرى؛ انتظر قليلًا حتى لا يتكرر الطلب.",
+        "تأخر الرد من صفحة الدفع. أتحقق من رابط الطلب الحالي الآن؛ لا تضغط شراء مرة أخرى.",
         "error"
       );
+
+      // Recover an already-created payment link for this signed-in user.
+      // This endpoint is read-only and never creates another order.
+      try {
+        const recoveryResponse = await fetch("/api/recover-payment", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store"
+        });
+        const recoveryData = await recoveryResponse.json();
+
+        if (recoveryResponse.ok && recoveryData.paymentUrl) {
+          localStorage.setItem(
+            "pendingOrder",
+            JSON.stringify({
+              orderId: recoveryData.orderId,
+              totalIQD
+            })
+          );
+
+          const statusElement = document.getElementById("checkoutStatus");
+          showStatus(
+            "checkoutStatus",
+            "وجدت رابط الدفع للطلب الحالي. اضغط على الرابط أدناه إذا لم تفتح بوابة الدفع تلقائيًا.",
+            "success"
+          );
+
+          const paymentLink = document.createElement("a");
+          paymentLink.href = recoveryData.paymentUrl;
+          paymentLink.textContent = "فتح بوابة الدفع الآن";
+          paymentLink.style.display = "inline-block";
+          paymentLink.style.margin = "8px";
+          paymentLink.style.fontWeight = "700";
+          paymentLink.style.textDecoration = "underline";
+          statusElement.appendChild(document.createElement("br"));
+          statusElement.appendChild(paymentLink);
+          window.location.assign(recoveryData.paymentUrl);
+        }
+      } catch (recoveryError) {
+        console.warn("PAYMENT RECOVERY CHECK FAILED:", recoveryError);
+      }
     }, 5000);
 
     try {
