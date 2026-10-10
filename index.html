@@ -4215,6 +4215,102 @@ footer ul li:hover {
   font-size: 15px !important;
 }
 
+
+    /* Compact store header requested by user */
+    header .header-inner {
+      min-height: 58px;
+      gap: 10px;
+    }
+    header .brand {
+      gap: 6px;
+      min-width: 0;
+    }
+    header .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      font-size: 17px;
+      flex: 0 0 32px;
+    }
+    header .brand-name-logo {
+      width: 128px;
+      max-width: 34vw;
+      height: 34px;
+      font-size: 29px;
+    }
+    header .brand-text span {
+      font-size: 12px;
+      line-height: 1.1;
+      margin-top: 0;
+      transform: none;
+    }
+    header nav {
+      gap: 2px;
+    }
+    header .nav-btn {
+      padding: 6px 7px;
+      border-radius: 7px;
+      font-size: 11px;
+      line-height: 1.15;
+    }
+    header .cart-badge {
+      min-width: 15px;
+      height: 15px;
+      font-size: 9px;
+    }
+    header .header-slogan {
+      font-size: 12px;
+      margin-inline-start: 1px;
+    }
+    header .header-tools {
+      gap: 4px;
+    }
+    header .header-tool-btn {
+      min-height: 29px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      gap: 3px;
+      font-size: 10px;
+    }
+    @media (max-width: 900px) {
+      header .header-inner {
+        gap: 6px;
+        padding: 5px 0;
+      }
+      header nav {
+        gap: 2px;
+      }
+    }
+    @media (max-width: 520px) {
+      header .brand-name-logo {
+        width: 105px;
+        max-width: 30vw;
+        height: 30px;
+        font-size: 25px;
+      }
+      header .brand-icon {
+        width: 27px;
+        height: 27px;
+        flex-basis: 27px;
+        font-size: 15px;
+      }
+      header .brand-text span {
+        font-size: 10px;
+      }
+      header .nav-btn {
+        padding: 5px 5px;
+        font-size: 10px;
+      }
+      header .header-tool-btn {
+        min-height: 26px;
+        padding: 3px 5px;
+        font-size: 9px;
+      }
+      header .header-slogan {
+        display: none;
+      }
+    }
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
