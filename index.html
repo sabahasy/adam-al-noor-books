@@ -9482,8 +9482,25 @@ async function loadRewards(forceReload = false) {
         })
       );
 
-      window.location.href =
-        data.paymentUrl;
+      showStatus(
+        "checkoutStatus",
+        "تم تجهيز رابط الدفع. إذا لم يتم التحويل تلقائيًا، اضغط على الرابط أدناه.",
+        "success"
+      );
+
+      const statusElement = document.getElementById("checkoutStatus");
+      const paymentLink = document.createElement("a");
+      paymentLink.href = data.paymentUrl;
+      paymentLink.textContent = "فتح بوابة الدفع الآن";
+      paymentLink.style.display = "inline-block";
+      paymentLink.style.margin = "8px";
+      paymentLink.style.fontWeight = "700";
+      paymentLink.style.textDecoration = "underline";
+      statusElement.appendChild(document.createElement("br"));
+      statusElement.appendChild(paymentLink);
+
+      // Use explicit navigation; the visible link remains as a fallback.
+      window.location.assign(data.paymentUrl);
 
     } catch (error) {
 
