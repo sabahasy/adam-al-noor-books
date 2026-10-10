@@ -4364,6 +4364,19 @@ header .header-slogan { font-size:10px; }
   header .header-tool-btn { min-height:23px; padding:2px 4px; font-size:8px; }
 }
 
+
+/* Make the store signature larger and darker */
+.quote-source {
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  color: #24152f !important;
+  -webkit-text-stroke: 0.25px currentColor;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.12);
+}
+@media (max-width: 520px) {
+  .quote-source { font-size: 20px !important; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
