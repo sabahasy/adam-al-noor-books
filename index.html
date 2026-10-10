@@ -4377,6 +4377,24 @@ header .header-slogan { font-size:10px; }
   .quote-source { font-size: 20px !important; }
 }
 
+
+/* Add PDF label beneath the store subtitle */
+header .brand-pdf {
+  display: block;
+  color: #e0bd4d;
+  font-family: Arial, sans-serif;
+  font-size: 11px !important;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin-top: 1px;
+  text-align: center;
+  transform: none !important;
+}
+@media (max-width: 520px) {
+  header .brand-pdf { font-size: 9px !important; letter-spacing: 1.5px; }
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -4400,6 +4418,7 @@ header .header-slogan { font-size:10px; }
       <div class="brand-text">
         <div class="brand-name-logo" aria-label="آدَم النــور">آدَم النــور</div>
         <span>للكتب الإلكترونيــــة</span>
+        <span class="brand-pdf">pdf</span>
       </div>
 
       <div class="brand-icon">📚</div>
