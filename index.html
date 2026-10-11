@@ -7624,6 +7624,8 @@ if (ratingMessage) {
           class="book-details-cover"
           src="${escapeHTML(book.cover_url)}"
           alt="${escapeHTML(book.title || "كتاب")}"
+          loading="lazy"
+          decoding="async"
           onerror="this.style.display='none'"
         >
 
