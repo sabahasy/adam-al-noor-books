@@ -6842,7 +6842,7 @@ const stars =
               ?
               (
                 bookCoverNodeCache.has(String(book.id)) &&
-                bookCoverNodeCache.get(String(book.id)).getAttribute("src") === cover &&
+                bookCoverNodeCache.get(String(book.id)).getAttribute("src") === String(book.cover_url || "") &&
                 bookCoverNodeCache.get(String(book.id)).dataset.coverFailed !== "true"
               )
               ? `
