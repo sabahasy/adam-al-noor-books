@@ -4706,6 +4706,11 @@ header .live-visitors-badge {
       </div>
 
       <div class="stat stat-luxury">
+        <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/><path d="M12 7.5v1M12 15.5v1"/></svg><i>✦</i></span>
+        <span class="stat-copy"><span class="stat-label">مشاهدات اليوم</span><strong id="dailyViewCount">0</strong></span>
+      </div>
+
+      <div class="stat stat-luxury">
         <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M9 11h8M13 7v8"/></svg><i>✦</i></span>
         <span class="stat-copy"><span class="stat-label">سلة المشتريات</span><strong id="cartStat">0</strong></span>
       </div>
@@ -7538,7 +7543,10 @@ viewCount:
     if (!book) return;
 
     // Count every actual book-details opening in one reliable place.
-    sendAnalyticsEvent("book_view", book.id).then(() => loadStoreStats());
+    sendAnalyticsEvent("book_view", book.id).then(() => {
+      loadStoreStats();
+      loadDailyViewCount();
+    });
 
     currentRatingBookId = book.id;
 
@@ -8010,6 +8018,34 @@ if (ratingMessage) {
       el.textContent = Number(count || 0).toLocaleString("ar-IQ");
     } catch (error) {
       console.warn("Daily visitor counter unavailable:", error);
+      el.textContent = "—";
+    }
+  }
+
+  async function loadDailyViewCount() {
+    const el = document.getElementById("dailyViewCount");
+    if (!el) return;
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/rpc/get_daily_book_view_count",
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            apikey: SUPABASE_KEY,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Cache-Control": "no-cache"
+          },
+          body: "{}"
+        }
+      );
+      if (!response.ok) throw new Error("Daily book views HTTP " + response.status);
+      const count = await response.json();
+      el.textContent = Number(count || 0).toLocaleString("ar-IQ");
+    } catch (error) {
+      console.warn("Daily book view counter unavailable:", error);
       el.textContent = "—";
     }
   }
@@ -9586,7 +9622,7 @@ updateCartCount();
 renderCart();
 
 sendAnalyticsEvent("visitor");
-sendAnalyticsEvent("store_view");
+sendAnalyticsEvent("store_view").then(() => loadDailyViewCount());
 
 loadBooks();
 
