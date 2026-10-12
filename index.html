@@ -4537,6 +4537,19 @@ header .live-visitors-badge {
   border-color: #fff0a8;
 }
 
+
+    /* Keep checkout and its payment link compact on small screens */
+    @media (max-width: 700px) {
+      #cartPage { padding-top: 12px; padding-bottom: 20px; }
+      #cartPage .panel { padding: 14px; }
+      #cartPage .panel > p { margin-bottom: 10px; }
+      #cartPage .cart-list { gap: 8px; }
+      #cartPage .cart-item { padding: 9px; gap: 9px; }
+      #cartPage .cart-total { margin-top: 12px; padding-top: 12px; font-size: 16px; }
+      #cartPage .checkout-btn { margin-top: 10px; padding: 11px; }
+      #cartPage .cash-payment-note { margin-top: 6px; padding: 6px 8px; line-height: 1.6; }
+      #cartPage #checkoutStatus { margin-top: 6px; padding: 8px 10px; line-height: 1.6; }
+    }
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
