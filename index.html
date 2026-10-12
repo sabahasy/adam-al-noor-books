@@ -6747,12 +6747,26 @@ return true;
     wrap.append(label, select, status);
     container.parentNode.insertBefore(wrap, container);
   }
+  // Reuse existing cover <img> nodes when the book list is re-rendered.
+  // This prevents UI-only redraws (language/currency/sort/admin checks) from
+  // creating fresh image elements and issuing avoidable cover requests.
+  const bookCoverNodeCache = new Map();
+
   function renderBooks(list = currentBooks) {
 
     const container =
       document.getElementById("books");
 
     if (!container) return;
+
+    // Preserve every cover image already created, including images for books
+    // that may temporarily disappear from a filtered list.
+    container.querySelectorAll("article.book[data-book-id] img.book-cover").forEach(image => {
+      const bookId = image.closest("article.book")?.dataset.bookId;
+      if (bookId && image.dataset.coverFailed !== "true") {
+        bookCoverNodeCache.set(String(bookId), image);
+      }
+    });
 
     const oldNavigationWrap =
       container.parentNode.querySelector(".books-navigation-wrap");
@@ -6826,13 +6840,22 @@ const stars =
             ${
               cover
               ?
+              (
+                bookCoverNodeCache.has(String(book.id)) &&
+                bookCoverNodeCache.get(String(book.id)).getAttribute("src") === cover &&
+                bookCoverNodeCache.get(String(book.id)).dataset.coverFailed !== "true"
+              )
+              ? `
+                <span class="book-cover-reuse" data-cover-book-id="${escapeHTML(book.id)}" aria-hidden="true"></span>
               `
+              : `
                 <img
                   class="book-cover"
                   src="${cover}"
                   alt="${title}"
                   loading="lazy"
-                  onerror="this.style.display='none'"
+                  decoding="async"
+                  onerror="this.dataset.coverFailed='true'; this.style.display='none'"
                 >
               `
               :
@@ -6922,6 +6945,26 @@ const stars =
       `;
 
     }).join("");
+
+    // Replace temporary placeholders with the original loaded image nodes.
+    // Placeholders have no src, so they cannot trigger duplicate downloads.
+    container.querySelectorAll(".book-cover-reuse[data-cover-book-id]").forEach(placeholder => {
+      const bookId = String(placeholder.dataset.coverBookId || "");
+      const image = bookCoverNodeCache.get(bookId);
+      if (!image || image.dataset.coverFailed === "true") return;
+      const card = placeholder.closest("article.book");
+      const titleElement = card?.querySelector(".book-title");
+      if (titleElement) image.alt = titleElement.textContent || image.alt;
+      placeholder.replaceWith(image);
+    });
+
+    // Remember newly created images for future redraws and category changes.
+    container.querySelectorAll("article.book[data-book-id] img.book-cover").forEach(image => {
+      const bookId = image.closest("article.book")?.dataset.bookId;
+      if (bookId && image.dataset.coverFailed !== "true") {
+        bookCoverNodeCache.set(String(bookId), image);
+      }
+    });
 
     renderBookOrderManager(container);
 
