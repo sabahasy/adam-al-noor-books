@@ -5666,9 +5666,10 @@ header .live-visitors-badge {
   // Temporary ImageKit test: use the external cover for this one book only.
   // The original Supabase cover URL remains unchanged in the database.
   function getBookCoverUrl(book) {
-    const title = String(book?.title || "").trim().replace(/\\s+/g, " ");
+    const title = String(book?.title || "").trim().replace(/\s+/g, " ");
     if (title === "سارة وصديقتها والمحبة") {
-      return "https://ik.imagekit.io/adamalnoorbooks/IMG-20261011-WA5868.jpg";
+      // Cache-busting query ensures the preview requests the latest ImageKit asset.
+      return "https://ik.imagekit.io/adamalnoorbooks/IMG-20261011-WA5868.jpg?updatedAt=1791868769710";
     }
     return book?.cover_url || "";
   }
