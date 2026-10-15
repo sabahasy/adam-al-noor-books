@@ -10010,12 +10010,16 @@ async function refreshManagerDailyNews() {
 function managerOpenSection(section) {
   if (!isManager) return;
   const sections = ["overview","books","orders","customers","analytics","appearance","links","security"];
+  // إخفاء كل لوحات الإدارة أولًا حتى لا تتراكم الأقسام تحت بعضها.
   sections.forEach(name => {
     const el = document.getElementById("manager" + name.charAt(0).toUpperCase() + name.slice(1) + "Section");
-    if (el) el.style.display = "block";
+    if (el) el.style.display = "none";
   });
   const target = document.getElementById("manager" + section.charAt(0).toUpperCase() + section.slice(1) + "Section");
-  if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
+  if (target) {
+    target.style.display = "block";
+    target.scrollIntoView({behavior:"smooth", block:"start"});
+  }
   if (section === "orders" || section === "customers") loadManagerPeopleData();
   if (section === "appearance") renderThemeOptions(localStorage.getItem("adamNoorStoreTheme") || "classic");
   if (section === "overview" || section === "analytics") managerRefresh();
