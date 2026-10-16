@@ -4550,6 +4550,97 @@ header .live-visitors-badge {
       #cartPage .cash-payment-note { margin-top: 6px; padding: 6px 8px; line-height: 1.6; }
       #cartPage #checkoutStatus { margin-top: 6px; padding: 8px 10px; line-height: 1.6; }
     }
+
+    /* تكبير غلاف الكتاب في نافذة التفاصيل والشراء */
+    .book-details-overlay {
+      padding: 14px;
+    }
+
+    .book-details {
+      width: min(1100px, 100%);
+      max-height: 94vh;
+      padding: 28px;
+    }
+
+    .book-details-grid {
+      grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
+      gap: 32px;
+    }
+
+    #bookDetailsCover {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .book-details-cover {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(620px, 72vh);
+      object-fit: contain;
+      object-position: center top;
+    }
+
+    .book-details-cover-placeholder {
+      width: 100%;
+      min-height: 420px;
+      height: auto;
+    }
+
+    @media (max-width: 700px) {
+      .book-details-overlay {
+        align-items: flex-start;
+        padding: 8px;
+      }
+
+      .book-details {
+        width: 100%;
+        max-height: calc(100dvh - 16px);
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+
+      .book-details-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+      }
+
+      #bookDetailsCover {
+        width: 100%;
+      }
+
+      .book-details-cover {
+        width: 100%;
+        max-width: 360px;
+        max-height: 52vh;
+        margin-inline: auto;
+      }
+
+      .book-details-cover-placeholder {
+        max-width: 360px;
+        min-height: 300px;
+        margin-inline: auto;
+      }
+
+      .book-details h2 {
+        font-size: 25px;
+      }
+    }
+
+    @media (min-width: 701px) and (max-width: 900px) {
+      .book-details-grid {
+        grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+        gap: 22px;
+      }
+
+      .book-details {
+        padding: 24px;
+      }
+    }
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
