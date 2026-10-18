@@ -623,6 +623,46 @@
       box-shadow: 0 0 0 3px rgba(201,162,39,.12);
     }
 
+    .author-originality-note {
+      margin-top: 13px;
+      padding: 13px 16px;
+      border: 1px solid rgba(201,162,39,.48);
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(255,253,247,.96), rgba(247,241,223,.94));
+      color: #29251b;
+      text-align: center;
+      box-shadow: 0 7px 20px rgba(0,0,0,.045), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    .author-originality-title {
+      margin-bottom: 3px;
+      color: #947016;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .author-originality-note p {
+      margin: 0;
+      color: #403a2c;
+      font-size: 13px;
+      line-height: 1.85;
+    }
+
+    .author-originality-note span {
+      display: block;
+      margin-top: 5px;
+      color: #806319;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 520px) {
+      .author-originality-note { padding: 11px 12px; }
+      .author-originality-title { font-size: 15px; }
+      .author-originality-note p { font-size: 12px; }
+    }
+
     .categories-guide {
       margin: 10px 0 8px;
       padding: 15px 18px;
@@ -4884,6 +4924,11 @@ header .live-visitors-badge {
           <small>مكتبتنا الرقمية</small>
           <h2>اكتشف الكتب</h2>
           <p>مجموعة مختارة من الكتب المتاحة للشراء</p>
+          <div class="author-originality-note" role="note" aria-label="أصالة المؤلفات وحقوقها">
+            <div class="author-originality-title">✦ بصمة آدم النور ✦</div>
+            <p>مؤلفات أصلية وحصرية من إبداع آدم النور، لا نُسخ لها في أي مكان آخر، محفوظة الحقوق الفكرية والأدبية لمؤلفها.</p>
+            <span>© جميع الحقوق محفوظة — آدم النور</span>
+          </div>
         </div>
 
       </div>
