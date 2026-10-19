@@ -5223,8 +5223,8 @@ header .live-visitors-badge {
 
       <div id="dailyCheckinCard" class="daily-checkin-card" style="display:none;">
         <h3>🎁 هدية الحضور اليومي</h3>
-        <p>سجّل حضورك اليومي واحصل على 25 نقطة مجانية تُضاف إلى رصيدك داخل المتجر مرة واحدة يوميًا.</p>
-        <button id="dailyCheckinButton" class="rewards-btn" type="button" onclick="claimDailyCheckin()">🎁 سجّل حضوري واكسب 25 نقطة</button>
+        <p>سجّل حضورك اليومي واحصل على 10 نقاط مجانية تُضاف إلى رصيدك داخل المتجر مرة واحدة يوميًا.</p>
+        <button id="dailyCheckinButton" class="rewards-btn" type="button" onclick="claimDailyCheckin()">🎁 سجّل حضوري واكسب 10 نقاط</button>
         <span id="dailyCheckinStatus" class="daily-checkin-status" role="status" aria-live="polite">جارٍ التحقق من حضورك اليوم...</span>
       </div>
 
@@ -9355,14 +9355,14 @@ async function loadDailyCheckinStatus(token) {
       status.textContent = "أحسنت! لقد سجلت حضورك اليوم. عُد غدًا بعد منتصف الليل بتوقيت العراق لتحصل على هديتك اليومية.";
     } else {
       button.disabled = false;
-      button.textContent = "🎁 سجّل حضوري واكسب 25 نقطة";
+      button.textContent = "🎁 سجّل حضوري واكسب 10 نقاط";
       status.textContent = "هدية اليوم بانتظارك — يمكنك الحصول عليها مرة واحدة يوميًا.";
     }
   } catch (error) {
     console.warn("Daily check-in status unavailable:", error);
     card.style.display = "block";
     button.disabled = false;
-    button.textContent = "🎁 سجّل حضوري واكسب 25 نقطة";
+    button.textContent = "🎁 سجّل حضوري واكسب 10 نقاط";
     status.textContent = "اضغط لتسجيل حضورك واستلام الهدية اليومية.";
   }
 }
@@ -9401,7 +9401,7 @@ async function claimDailyCheckin() {
     if (pointsEl) pointsEl.textContent = rewardPointsBalance.toLocaleString("ar-IQ");
 
     if (Number(data.awarded || 0) > 0) {
-      if (status) status.textContent = "🎉 تم تسجيل حضورك! أُضيفت 25 نقطة إلى رصيدك بنجاح.";
+      if (status) status.textContent = "🎉 تم تسجيل حضورك! أُضيفت 10 نقاط إلى رصيدك بنجاح.";
     } else {
       if (status) status.textContent = "✅ لقد استلمت هدية اليوم بالفعل. يمكنك استلام الهدية التالية غدًا.";
     }
