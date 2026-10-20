@@ -4681,7 +4681,69 @@ header .live-visitors-badge {
       }
     }
 
-</style>
+
+    
+    /* ADAM AL NOOR — COLORFUL BOOK CARD ACTIONS */
+    .book-actions .btn {
+      border: 1px solid transparent;
+      font-weight: 800;
+      box-shadow: 0 3px 9px rgba(0,0,0,.10);
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .book-actions .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.16);
+      filter: saturate(1.08);
+    }
+    .book-actions .btn:active { transform: translateY(0); }
+    .book-actions .btn-cart {
+      background: linear-gradient(135deg, #1976d2, #42a5f5);
+      border-color: #1565c0;
+      color: #fff;
+    }
+    .book-actions .btn-buy {
+      background: linear-gradient(135deg, #16834a, #2fb66d);
+      border-color: #11713e;
+      color: #fff;
+    }
+    .book-sales {
+      color: #9a6a00;
+      background: linear-gradient(135deg, #fff6cf, #ffe9a0);
+      border: 1px solid rgba(193,138,0,.25);
+      border-radius: 7px;
+      padding: 1px 6px;
+    }
+    .book-views {
+      color: #087f8c;
+      background: linear-gradient(135deg, #dffaff, #c6f1f4);
+      border: 1px solid rgba(8,127,140,.16);
+      border-radius: 7px;
+      padding: 1px 6px;
+    }
+    .book-stats-separator { opacity: .5; }
+    .book-details-cart {
+      background: linear-gradient(135deg, #1976d2, #42a5f5);
+      color: #fff;
+    }
+    .book-details-buy {
+      background: linear-gradient(135deg, #16834a, #2fb66d);
+      color: #fff;
+    }
+    .book-details-actions button {
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .book-details-actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 17px rgba(0,0,0,.16);
+    }
+    @media (max-width: 520px) {
+      .book-actions .btn { box-shadow: none; }
+      .book-sales, .book-views { padding: 1px 4px; }
+    }
+    /* END COLORFUL BOOK CARD ACTIONS */
+
+  </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
