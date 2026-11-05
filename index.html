@@ -4681,6 +4681,19 @@ header .live-visitors-badge {
       }
     }
 
+ 
+/* Fruit Pop Adam game card — directly below the author rights note */
+.fruit-game-entry{display:flex;align-items:center;gap:14px;margin:18px 0 22px;padding:16px;border:1px solid rgba(216,178,75,.55);border-radius:18px;background:linear-gradient(125deg,#26113d 0%,#3c1b58 58%,#21102f 100%);box-shadow:0 8px 22px rgba(34,14,53,.16);color:#fff;text-align:start;overflow:hidden}
+.fruit-game-icon{flex:0 0 82px;width:82px;height:82px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,#fff6d9,#e8c66d);border:1px solid #f4d98c;box-shadow:0 4px 14px rgba(0,0,0,.2);overflow:hidden}
+.fruit-game-icon img{width:100%;height:100%;object-fit:cover}
+.fruit-game-copy{min-width:0;flex:1}
+.fruit-game-kicker{font-size:10px;font-weight:800;color:#f0d58b;margin-bottom:3px}
+.fruit-game-copy h3{font-size:18px;line-height:1.4;color:#fff;margin:0 0 3px;font-weight:900}
+.fruit-game-copy p{font-size:12px;line-height:1.7;color:#f3eaf8;margin:0 0 9px}
+.fruit-game-play{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,#f8df91,#d6a83e);color:#291638!important;text-decoration:none!important;font-size:12px;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.fruit-game-copy small{display:block;margin-top:9px;color:#e7dced;font-size:10px;line-height:1.7}
+@media(max-width:520px){.fruit-game-entry{gap:10px;padding:12px;border-radius:15px}.fruit-game-icon{flex-basis:66px;width:66px;height:66px;border-radius:14px}.fruit-game-copy h3{font-size:15px}.fruit-game-copy p{font-size:11px}.fruit-game-play{padding:7px 13px;font-size:11px}.fruit-game-copy small{font-size:9px}}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -4908,6 +4921,16 @@ header .live-visitors-badge {
             <p>مؤلفات أصلية وحصرية من إبداع آدم النور، لا نُسخ لها في أي مكان آخر، محفوظة الحقوق الفكرية والأدبية لمؤلفها.</p>
             <span>© جميع الحقوق محفوظة — آدم النور</span>
           </div>
+          <section class="fruit-game-entry" aria-label="لعبة الفواكه">
+            <div class="fruit-game-icon"><img src="https://99bb067d.fruit-pop-puzzle.pages.dev/icon.svg" alt="Fruit Pop Adam"></div>
+            <div class="fruit-game-copy">
+              <div class="fruit-game-kicker" id="fruitGameKicker">مساحة الترفيه من آدم النور</div>
+              <h3 id="fruitGameTitle">🎮 العب لعبة الفواكه</h3>
+              <p id="fruitGameDescription">طابق الفواكه، اجتز المراحل، واستمتع بمغامرة مليئة بالتحدي!</p>
+              <a class="fruit-game-play" href="https://99bb067d.fruit-pop-puzzle.pages.dev/" target="_blank" rel="noopener noreferrer" id="fruitGamePlay">العب الآن <span aria-hidden="true">←</span></a>
+              <small id="fruitGameInstall">لإضافتها إلى هاتفك: افتح قائمة Chrome ⋮ ثم اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق» إذا ظهر الخيار.</small>
+            </div>
+          </section>
         </div>
 
       </div>
@@ -6052,8 +6075,18 @@ function applyFullInterfaceLanguage(){
   if(title) title.textContent=currentLanguage==="en"?"Adam Al Noor E-Book Store":currentLanguage==="ku"?"فرۆشگای کتێبی ئەلیکترۆنی ئادەم ئەلنور":"آدم النور للكتب الإلكترونية";
 }
 
+function updateFruitGameCardLanguage(){
+  const labels={
+    ar:["مساحة الترفيه من آدم النور","🎮 العب لعبة الفواكه","طابق الفواكه، اجتز المراحل، واستمتع بمغامرة مليئة بالتحدي!","العب الآن","لإضافتها إلى هاتفك: افتح قائمة Chrome ⋮ ثم اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق» إذا ظهر الخيار."],
+    en:["Adam Al Noor Entertainment","🎮 Play Fruit Pop","Match fruits, clear levels, and enjoy a colorful challenge!","Play now","To add it to your phone: open Chrome ⋮ and choose “Add to Home screen” or “Install app” if available."],
+    ku:["یاری و خۆشی لە ئادەم ئەلنور","🎮 یاریی میوەکان بکە","میوەکان هاوتا بکە، قۆناغەکان ببڕە و چێژ لە یارییەکە وەربگرە!","ئێستا یاری بکە","بۆ زیادکردنی بۆ مۆبایل: لیستی Chrome ⋮ بکەرەوە و «زیادکردن بۆ شاشەی سەرەکی» یان «دامەزراندنی ئەپ» هەڵبژێرە ئەگەر دەرکەوت." ]
+  };
+  const t=labels[currentLanguage]||labels.ar;
+  ["fruitGameKicker","fruitGameTitle","fruitGameDescription","fruitGamePlay","fruitGameInstall"].forEach((id,i)=>{const el=document.getElementById(id);if(el){if(id==="fruitGamePlay")el.innerHTML=t[i]+' <span aria-hidden="true">←</span>';else el.textContent=t[i];}});
+}
+
 function setLanguage(language){if(!["ar","en","ku"].includes(language))return;currentLanguage=language;localStorage.setItem("adamAlNoorLanguage",language);document.documentElement.lang=language;document.documentElement.dir=language==="en"?"ltr":"rtl";const t=UI_TRANSLATIONS[language],nav=document.querySelectorAll("nav .nav-btn");if(nav[0])nav[0].textContent=t.home;if(nav[1])nav[1].textContent=t.library;if(nav[2]){nav[2].innerHTML=`${t.cart} <span id="cartCount" class="cart-badge">${cart.length||0}</span>`;} if(nav[3])nav[3].textContent=t.account;if(nav[4])nav[4].textContent=t.rewards||"🎁 نقاطي";const m=document.getElementById("managerNavBtn");if(m)m.textContent=t.manager;const l=document.querySelector(".hero-label");if(l)l.textContent=t.heroLabel||"📚 متجر ༺ آدَم النــور ༻ للكتب الإلكترونية";const h=document.querySelector(".hero h1");if(h)h.innerHTML=(t.heroTitle1||"اكتشف كتابك")+" <span>"+(t.heroTitle2||"القادم")+"</span>";const hs=document.getElementById("heroSearch");if(hs)hs.placeholder=language==="ar"?"ابحث عن كتاب أو مؤلف...":t.searchPlaceholder;const hb=document.querySelector(".hero-search button");if(hb)hb.textContent=t.search||"🔎 بحث";const bb=document.querySelector(".hero-browse-btn");if(bb)bb.textContent=t.browse||"📚 تصفح الكتب";const st=document.querySelector(".section-title h2");if(st)st.textContent=t.books||"اكتشف الكتب";const sp=document.querySelector(".section-title p");if(sp)sp.textContent=t.booksSub||"مجموعة مختارة من الكتب المتاحة للشراء";const s=document.getElementById("search");if(s)s.placeholder=language==="ar"?"🔎 ابحث باسم الكتاب أو المؤلف...":t.searchPlaceholder;const lc=document.getElementById("languageCurrent");if(lc)lc.textContent=t.language;document.querySelectorAll("[data-language]").forEach(b=>b.classList.toggle("active",b.dataset.language===language));document.getElementById("languageMenu")?.classList.remove("open");localizeBooks();renderBooks();updateCartCount();
-  setTimeout(applyFullInterfaceLanguage,0);}
+  setTimeout(applyFullInterfaceLanguage,0);updateFruitGameCardLanguage();}
   function initializeStorePreferences(){setCurrency(currentCurrency);setLanguage(currentLanguage);}
   /* =====================================================
    ANALYTICS
