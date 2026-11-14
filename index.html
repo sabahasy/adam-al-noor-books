@@ -4630,7 +4630,77 @@ header .live-visitors-badge {
       }
     }
 
-</style>
+
+/* PREMIUM BOOK CATALOG + BOOK DETAILS: visual-only, preserve all purchase/rating logic */
+#homePage .books{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:20px 18px}
+#homePage .book{display:flex;flex-direction:column;height:100%;min-width:0;border:1px solid rgba(142,105,25,.2)!important;border-radius:20px;background:linear-gradient(180deg,#fffdf8,#f4ecdc)!important;box-shadow:0 8px 24px rgba(38,29,13,.09)}
+#homePage .book-cover-wrap{height:270px;padding:13px;background:linear-gradient(145deg,#eee5d2,#fffdf8)}
+#homePage .book-cover{object-fit:contain;border-radius:13px;background:#fff;box-shadow:0 9px 22px rgba(0,0,0,.13)}
+#homePage .book-info{display:flex;flex:1;flex-direction:column;padding:15px 16px 16px;gap:3px}
+#homePage .book-category{font-size:12px;margin-bottom:3px}
+#homePage .book-title{min-height:3.1em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:16px;line-height:1.55;font-weight:900}
+#homePage .book-author{min-height:1.7em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+#homePage .rating{min-height:25px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;color:#6e5b32;font-size:11px}
+#homePage .rating span{color:#d5a51b;font-size:16px;letter-spacing:1px;white-space:nowrap;text-shadow:0 1px 0 rgba(125,82,0,.12)}
+#homePage .book-bottom{margin-top:auto;padding-top:13px;align-items:center;border-top:1px solid rgba(139,105,36,.16)}
+#homePage .price{color:#17140d;font-size:18px;font-weight:900}
+#homePage .book-actions{gap:8px}
+#homePage .book-actions .btn{min-height:39px;padding:9px 13px;border-radius:11px;font-size:12px;font-weight:900}
+#homePage .book-actions .btn-cart{background:linear-gradient(135deg,#eee8d9,#ded2b8);color:#302613;border:1px solid rgba(116,85,24,.18)}
+#homePage .book-actions .btn-cart:hover{background:#d7c69e;transform:translateY(-1px)}
+#homePage .book-actions .btn-buy{background:linear-gradient(135deg,#171717,#3b3426);color:#f8e7a6;border:1px solid rgba(201,162,39,.45);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+#homePage .book-actions .btn-buy:hover{background:linear-gradient(135deg,#a98216,#d0aa38);color:#17130a}
+.book-details-overlay{padding:16px}
+.book-details{width:min(960px,100%);padding:34px;border:1px solid rgba(201,162,39,.38);background:radial-gradient(circle at 95% 0%,rgba(201,162,39,.14),transparent 32%),linear-gradient(180deg,#fffdf8,#f2e8d5)!important}
+.book-details-grid{grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:34px;align-items:start}
+.book-details-cover{width:100%;max-height:420px;padding:7px;object-fit:contain;background:#fff;border:1px solid rgba(145,111,44,.18);border-radius:17px}
+.book-details-category{display:inline-flex;padding:5px 12px;border-radius:999px;background:rgba(201,162,39,.13);color:#80600e}
+.book-details h2{color:#211b10;font-size:clamp(24px,3vw,34px);font-weight:900;line-height:1.5}
+.book-details-author{color:#6e6250;font-size:15px}
+.book-details-rating{padding:11px 14px;border:1px solid rgba(201,162,39,.25);border-radius:13px;background:rgba(255,255,255,.62);color:#8a6712;font-size:14px}
+.rating-stars{display:flex;align-items:center;gap:8px;margin:12px 0 7px}
+.rating-stars button{width:42px;height:42px;border:1px solid rgba(201,162,39,.35);border-radius:12px;background:#fffaf0;color:#d5a51b;font-size:22px;box-shadow:0 3px 9px rgba(0,0,0,.05);transition:transform .18s,background .18s,box-shadow .18s}
+.rating-stars button:hover{transform:translateY(-2px);background:#f8edc9;box-shadow:0 7px 15px rgba(169,130,22,.15)}
+#ratingMessage{color:#806319;font-size:13px;font-weight:800;line-height:1.8}
+.book-details-description-title{margin-top:20px;color:#302719;font-size:19px}
+.book-details-description{color:#514838;font-size:16px;line-height:2.05}
+.book-details-bottom{flex-wrap:wrap;gap:16px;margin-top:10px;padding-top:22px;border-top:1px solid rgba(139,105,36,.22)}
+.book-details-price{color:#211b10;font-size:27px;font-weight:900}
+.book-details-actions{flex-wrap:wrap;gap:10px}
+.book-details-actions button{min-height:48px;padding:12px 22px;border-radius:13px;font-size:14px;font-weight:900;transition:transform .18s,box-shadow .18s,background .18s}
+.book-details-cart{background:linear-gradient(135deg,#eee8d9,#ded2b8);color:#302613;border:1px solid rgba(116,85,24,.2)!important}
+.book-details-buy{background:linear-gradient(135deg,#171717,#3b3426);color:#f8e7a6;border:1px solid rgba(201,162,39,.48)!important;box-shadow:0 7px 17px rgba(0,0,0,.14)}
+.book-details-actions button:hover{transform:translateY(-2px);box-shadow:0 9px 20px rgba(0,0,0,.13)}
+.book-details-buy:hover{background:linear-gradient(135deg,#a98216,#d0aa38);color:#17130a}
+.book-details-close{width:42px;height:42px;background:#f1e6d1;color:#352a18;border:1px solid rgba(139,105,36,.25);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.book-details-close:hover{background:#171717;color:#f8e7a6}
+@media(max-width:760px){
+ #homePage .books{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
+ #homePage .book-cover-wrap{height:215px;padding:9px}
+ #homePage .book-info{padding:11px 10px 12px}
+ #homePage .book-title{font-size:14px;min-height:2.9em}
+ #homePage .book-actions .btn{min-height:36px;padding:7px 8px;font-size:11px}
+ .book-details{padding:25px 19px}
+ .book-details-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+ .book-details-cover{display:block;width:min(250px,80%);max-height:320px;margin:0 auto}
+ .book-details h2{font-size:25px}
+ .book-details-bottom{align-items:stretch}
+ .book-details-actions{width:100%}
+ .book-details-actions button{flex:1}
+}
+@media(max-width:380px){
+ #homePage .books{gap:10px 8px}
+ #homePage .book-cover-wrap{height:180px;padding:7px}
+ #homePage .book-info{padding:9px 8px 10px}
+ #homePage .book-title{font-size:12px}
+ #homePage .book-author{font-size:11px}
+ #homePage .rating span{font-size:13px;letter-spacing:0}
+ #homePage .book-actions .btn{font-size:10px;padding-inline:5px}
+ .rating-stars{gap:5px}
+ .rating-stars button{width:38px;height:38px}
+}
+
+  </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -6773,8 +6843,8 @@ const ratingCount =
 
 const stars =
   rating > 0
-    ? "⭐".repeat(Math.min(5, Math.round(rating)))
-    : "☆";
+    ? "⭐".repeat(Math.min(5, Math.round(rating))) + "☆".repeat(Math.max(0, 5 - Math.round(rating)))
+    : "☆☆☆☆☆";
 
       return `
 
@@ -6886,7 +6956,7 @@ const stars =
 
         </article>
 
-        ${(bookPosition + 1) % 3 === 0 && bookPosition < visibleList.length - 1
+        ${(bookPosition + 1) % 6 === 0 && bookPosition < visibleList.length - 1
           ? '<div class="book-row-divider" aria-hidden="true"><span>✦ 𓂃 📚 𓂃 ✦</span></div>'
           : ""}
 
