@@ -4755,6 +4755,17 @@ header .live-visitors-badge {
  #homePage .book-actions .btn{font-size:7px!important;min-height:25px!important}
 }
 
+/* تحسين وضوح زري السلة والشراء داخل بطاقات الكتب */
+#homePage .book-actions .btn{font-size:13.5px!important;min-height:41px!important;padding:9px 8px!important}
+#homePage .book-actions .btn-cart{background:linear-gradient(135deg,#f7dc78,#e9bd3f)!important;color:#382707!important;border:1px solid #d4a62d!important}
+#homePage .book-actions .btn-cart:hover{background:linear-gradient(135deg,#e7bd43,#d6a322)!important;transform:translateY(-1px)}
+@media(max-width:760px){
+ #homePage .book-actions .btn{font-size:11px!important;min-height:32px!important;padding:5px 2px!important}
+}
+@media(max-width:360px){
+ #homePage .book-actions .btn{font-size:10px!important;min-height:30px!important;padding:4px 1px!important}
+}
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -6989,10 +7000,10 @@ const stars =
               <div class="book-actions">
 
                 <button
-                  class="btn btn-view"
-                  onclick="event.stopPropagation(); openBookDetails(${realIndex})"
+                  class="btn btn-cart"
+                  onclick="event.stopPropagation(); addToCart(${realIndex})"
                 >
-                  👁 مشاهدة
+                  🛒 أضف للسلة
                 </button>
 
                 <button
