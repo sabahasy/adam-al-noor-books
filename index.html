@@ -4257,101 +4257,129 @@ footer ul li:hover {
 }
 
 
-    /* Compact store header requested by user */
+    /* Refined compact header: one brand/tools row + one navigation row */
     header .header-inner {
-      min-height: 58px;
-      gap: 10px;
+      display:flex;
+      flex-direction:row !important;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      min-height:0;
+      gap:4px 7px;
+      padding:5px 0;
     }
     header .brand {
-      gap: 6px;
-      min-width: 0;
+      order:1;
+      display:flex;
+      flex:1 1 190px;
+      width:auto;
+      min-width:0;
+      justify-content:center;
+      gap:5px;
     }
     header .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      font-size: 17px;
-      flex: 0 0 32px;
+      width:25px;
+      height:25px;
+      flex:0 0 25px;
+      border-radius:8px;
+      font-size:14px;
+      box-shadow:0 3px 10px rgba(201,162,39,.2);
     }
     header .brand-name-logo {
-      width: 128px;
-      max-width: 34vw;
-      height: 34px;
-      font-size: 29px;
+      width:108px;
+      max-width:29vw;
+      height:29px;
+      font-size:25px;
+      line-height:1;
     }
     header .brand-text span {
-      font-size: 12px;
-      line-height: 1.1;
-      margin-top: 0;
-      transform: none;
+      font-size:10px;
+      line-height:1;
+      margin-top:0;
+      transform:none;
     }
-    header nav {
-      gap: 2px;
-    }
-    header .nav-btn {
-      padding: 6px 7px;
-      border-radius: 7px;
-      font-size: 11px;
-      line-height: 1.15;
-    }
-    header .cart-badge {
-      min-width: 15px;
-      height: 15px;
-      font-size: 9px;
-    }
-    header .header-slogan {
-      font-size: 12px;
-      margin-inline-start: 1px;
+    header .brand-text .brand-pdf {
+      font-size:9px;
+      line-height:1;
+      margin-top:1px;
     }
     header .header-tools {
-      gap: 4px;
+      order:2;
+      display:flex;
+      flex:0 0 auto;
+      align-items:center;
+      gap:4px;
+      margin:0;
     }
     header .header-tool-btn {
-      min-height: 29px;
-      padding: 4px 6px;
-      border-radius: 8px;
-      gap: 3px;
-      font-size: 10px;
+      min-height:27px;
+      padding:4px 6px;
+      border-radius:8px;
+      gap:3px;
+      font-size:10px;
+      line-height:1;
     }
-    @media (max-width: 900px) {
-      header .header-inner {
-        gap: 6px;
-        padding: 5px 0;
-      }
-      header nav {
-        gap: 2px;
-      }
+    header nav {
+      order:3;
+      display:flex;
+      flex:1 0 100%;
+      width:100%;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:nowrap;
+      gap:2px;
+      margin:0;
+      padding:1px 0 2px;
     }
-    @media (max-width: 520px) {
+    header .nav-btn {
+      flex:0 1 auto;
+      min-width:0;
+      padding:5px 5px;
+      border:1px solid rgba(201,162,39,.28);
+      border-radius:8px;
+      font-size:10px;
+      line-height:1.15;
+      white-space:nowrap;
+    }
+    header .cart-badge {
+      min-width:14px;
+      height:14px;
+      font-size:9px;
+      line-height:14px;
+    }
+    header .header-slogan { display:none; }
+    header .live-visitors-badge {
+      min-height:27px;
+      padding:4px 6px;
+      gap:4px;
+      border-radius:8px;
+    }
+    header .live-visitors-icon { font-size:12px; }
+    header .live-visitors-label { display:none; }
+    header .live-visitors-badge strong { font-size:15px; min-width:12px; }
+    @media (max-width:520px) {
+      header .header-inner { gap:4px 5px; padding:4px 0; }
+      header .brand { flex-basis:165px; gap:4px; }
       header .brand-name-logo {
-        width: 105px;
-        max-width: 30vw;
-        height: 30px;
-        font-size: 25px;
+        width:94px;
+        max-width:27vw;
+        height:27px;
+        font-size:22px;
       }
       header .brand-icon {
-        width: 27px;
-        height: 27px;
-        flex-basis: 27px;
-        font-size: 15px;
+        width:23px;
+        height:23px;
+        flex-basis:23px;
+        font-size:13px;
       }
-      header .brand-text span {
-        font-size: 10px;
-      }
-      header .nav-btn {
-        padding: 5px 5px;
-        font-size: 10px;
-      }
-      header .header-tool-btn {
-        min-height: 26px;
-        padding: 3px 5px;
-        font-size: 9px;
-      }
-      header .header-slogan {
-        display: none;
-      }
+      header .brand-text span { font-size:9px; }
+      header .brand-text .brand-pdf { font-size:8px; }
+      header .header-tools { gap:3px; }
+      header .header-tool-btn { min-height:25px; padding:3px 5px; font-size:9px; }
+      header nav { gap:1px; }
+      header .nav-btn { padding:5px 3px; font-size:9px; letter-spacing:-.15px; }
+      header .live-visitors-badge { min-height:25px; padding:3px 4px; }
     }
-
 
     /* Compact footer columns requested by user */
     footer .footer-inner > div:not(:first-child) {
