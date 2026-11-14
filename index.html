@@ -4700,7 +4700,63 @@ header .live-visitors-badge {
  .rating-stars button{width:38px;height:38px}
 }
 
-  </style>
+  
+/* ROYAL COMPACT CATALOG — 3 cards per row on phones and desktop */
+#homePage .books{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:13px 12px!important;align-items:stretch}
+#homePage .book{min-width:0!important;overflow:hidden;border-radius:15px!important;border:1px solid rgba(184,145,51,.32)!important;background:linear-gradient(160deg,#fffefa 0%,#f5eedf 100%)!important;box-shadow:0 4px 13px rgba(34,27,13,.09)!important}
+#homePage .book-cover-wrap{height:clamp(112px,19vw,190px)!important;padding:7px!important;background:linear-gradient(145deg,#eee4ce,#fffdf7)!important}
+#homePage .book-cover{width:100%;height:100%;object-fit:contain!important;border-radius:9px!important;box-shadow:0 3px 9px rgba(0,0,0,.12)!important}
+#homePage .book-info{min-width:0;padding:8px 8px 9px!important;gap:2px!important}
+#homePage .book-category{font-size:10px!important;line-height:1.35!important}
+#homePage .book-title{font-size:clamp(10px,1.25vw,14px)!important;line-height:1.45!important;min-height:2.9em!important;font-weight:900!important}
+#homePage .book-author{font-size:10px!important;min-height:1.4em!important}
+#homePage .rating{min-height:17px!important;margin-top:3px!important;gap:2px!important;font-size:9px!important}
+#homePage .rating span{font-size:11px!important;letter-spacing:0!important}
+#homePage .book-stats{font-size:9px!important;line-height:1.2!important;margin-top:2px!important}
+#homePage .book-bottom{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;margin-top:auto!important;padding-top:7px!important}
+#homePage .price{font-size:12px!important;text-align:center!important;line-height:1.4!important}
+#homePage .book-actions{display:flex!important;width:100%!important;gap:5px!important}
+#homePage .book-actions .btn{flex:1 1 0!important;min-width:0!important;min-height:29px!important;padding:5px 2px!important;border-radius:7px!important;font-size:clamp(8px,1vw,10px)!important;font-weight:900!important;line-height:1.2!important;white-space:nowrap!important;box-shadow:0 2px 6px rgba(0,0,0,.10)!important}
+#homePage .book-actions .btn-view{background:linear-gradient(135deg,#f7dc78,#e9bd3f)!important;color:#382707!important;border:1px solid #d4a62d!important}
+#homePage .book-actions .btn-view:hover{background:linear-gradient(135deg,#e7bd43,#d6a322)!important;transform:translateY(-1px)}
+#homePage .book-actions .btn-buy{background:linear-gradient(135deg,#1976d2,#0754a6)!important;color:#fff!important;border:1px solid #064a91!important;box-shadow:0 3px 8px rgba(7,84,166,.22)!important}
+#homePage .book-actions .btn-buy:hover{background:linear-gradient(135deg,#2589e8,#06458d)!important;color:#fff!important;transform:translateY(-1px)}
+/* Royal blue purchase / checkout controls */
+#cartPage .checkout-btn,.checkout-btn{background:linear-gradient(135deg,#176fc1,#073f83)!important;color:#fff!important;border:1px solid #0a4d94!important;border-radius:12px!important;box-shadow:0 6px 16px rgba(7,73,139,.22)!important;font-weight:900!important}
+#cartPage .checkout-btn:hover,.checkout-btn:hover{background:linear-gradient(135deg,#2788dc,#07529e)!important;transform:translateY(-1px)}
+#cartPage .panel{border:1px solid rgba(190,151,57,.3)!important;border-radius:18px!important;background:linear-gradient(160deg,#fffefa,#f7f0e1)!important;box-shadow:0 8px 24px rgba(36,28,12,.07)!important}
+#cartPage .cart-item{border:1px solid rgba(184,145,51,.22)!important;border-radius:12px!important;background:#fffdf7!important}
+#cartPage .cart-total{color:#173d69!important;font-weight:900!important}
+#cartPage input,#cartPage select,#cartPage textarea,#cartPage .payment-method input{border:1px solid #d7c69f!important;border-radius:10px!important;background:#fffefa!important;color:#272014!important;min-height:42px}
+#cartPage input:focus,#cartPage select:focus,#cartPage textarea:focus{outline:none!important;border-color:#2478bd!important;box-shadow:0 0 0 3px rgba(36,120,189,.13)!important}
+#cartPage .remove-btn{background:linear-gradient(135deg,#fff0e8,#f5d2c5)!important;color:#9b321f!important;border:1px solid #e9b9a9!important;border-radius:8px!important;font-weight:800!important}
+.book-details-actions .book-details-cart{background:linear-gradient(135deg,#f7dc78,#e9bd3f)!important;color:#382707!important;border:1px solid #d4a62d!important;box-shadow:0 4px 11px rgba(184,139,25,.18)!important}
+.book-details-actions .book-details-buy{background:linear-gradient(135deg,#1976d2,#0754a6)!important;color:#fff!important;border:1px solid #064a91!important;box-shadow:0 5px 13px rgba(7,84,166,.23)!important}
+.book-details-actions .book-details-buy:hover{background:linear-gradient(135deg,#2589e8,#06458d)!important;color:#fff!important}
+@media(max-width:760px){
+ #homePage .books{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px 8px!important}
+ #homePage .book-cover-wrap{height:clamp(105px,27vw,145px)!important;padding:5px!important}
+ #homePage .book-info{padding:7px 6px 8px!important}
+ #homePage .book-title{font-size:clamp(9px,2.7vw,12px)!important;min-height:2.8em!important}
+ #homePage .book-author{font-size:9px!important}
+ #homePage .book-stats{display:none!important}
+ #homePage .book-actions .btn{min-height:27px!important;font-size:clamp(7px,2.15vw,9px)!important;padding:4px 1px!important}
+ #homePage .price{font-size:11px!important}
+ .book-details-actions button{min-height:43px!important}
+}
+@media(max-width:360px){
+ #homePage .books{gap:8px 6px!important}
+ #homePage .book-cover-wrap{height:105px!important}
+ #homePage .book-info{padding:6px 4px 7px!important}
+ #homePage .book-category{font-size:8px!important}
+ #homePage .book-title{font-size:9px!important}
+ #homePage .book-author{font-size:8px!important}
+ #homePage .rating span{font-size:9px!important}
+ #homePage .book-actions{gap:3px!important}
+ #homePage .book-actions .btn{font-size:7px!important;min-height:25px!important}
+}
+
+</style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -6935,17 +6991,17 @@ const stars =
               <div class="book-actions">
 
                 <button
-                  class="btn btn-cart"
-                  onclick="event.stopPropagation(); addToCart(${realIndex})"
+                  class="btn btn-view"
+                  onclick="event.stopPropagation(); openBookDetails(${realIndex})"
                 >
-                  🛒
+                  👁 مشاهدة
                 </button>
 
                 <button
                   class="btn btn-buy"
                   onclick="event.stopPropagation(); buyNow(${realIndex})"
                 >
-                  شراء
+                  🛍 شراء
                 </button>
 
               </div>
