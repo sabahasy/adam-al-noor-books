@@ -5185,6 +5185,46 @@ header .live-visitors-badge {
       }
     }
 
+
+/* Keep the clock and complete storefront header pinned together while scrolling */
+.store-clock-bar{
+  position:sticky!important;
+  top:0!important;
+  z-index:1102!important;
+  box-sizing:border-box!important;
+  height:36px!important;
+  min-height:36px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0 8px!important;
+}
+.store-clock{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  white-space:nowrap!important;
+}
+header{
+  position:sticky!important;
+  top:36px!important;
+  z-index:1101!important;
+  isolation:isolate!important;
+}
+@media(max-width:520px){
+  .store-clock-bar{
+    height:36px!important;
+    min-height:36px!important;
+    padding:0 5px!important;
+  }
+  .store-clock{gap:5px!important}
+  .store-clock-time{font-size:12px!important;min-width:0!important}
+  .store-clock-date{font-size:9px!important}
+  header{top:36px!important}
+}
+
 /* Final compact header layout: logo, navigation, visitors, locale */
 @media (max-width:520px){
   header{padding:0!important;margin:0!important}
