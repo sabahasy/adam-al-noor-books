@@ -4830,6 +4830,153 @@ header .live-visitors-badge {
     nav .nav-btn{font-size:9px!important;padding-inline:1px!important}
     .hero{min-height:245px!important;padding:22px 12px!important}
   }
+
+    /* تحسين الهاتف: رأس مختصر ومنظم دون تغيير وظائف المتجر */
+    @media (max-width: 520px) {
+      .store-clock-bar { padding: 4px 8px; }
+      .store-clock {
+        flex-wrap: nowrap;
+        gap: 7px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .store-clock > span:first-child { font-size: 11px; }
+      .store-clock-time { min-width: 0; font-size: 13px; }
+      .store-clock-date { font-size: 10px; }
+
+      header { position: relative; }
+      .header-inner {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 0 9px;
+      }
+      .brand {
+        min-width: 0;
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+        order: 1;
+      }
+      .brand > .brand-icon:last-child { display: none; }
+      .brand > .brand-icon:first-child {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        border-radius: 11px;
+        font-size: 19px;
+      }
+      .brand-name-logo {
+        width: auto;
+        max-width: none;
+        height: 39px;
+        font-size: 30px;
+      }
+      .brand-text span {
+        font-size: 14px;
+        transform: none;
+        margin-top: 0;
+        line-height: 1.05;
+      }
+      .brand-pdf { font-size: 12px !important; }
+
+      nav {
+        order: 2;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 5px;
+      }
+      nav .nav-btn {
+        min-width: 0;
+        min-height: 39px;
+        padding: 6px 3px;
+        border: 1px solid rgba(201,162,39,.25);
+        border-radius: 10px;
+        background: rgba(255,255,255,.035);
+        font-size: 11px;
+        line-height: 1.25;
+        white-space: nowrap;
+      }
+      nav .header-slogan { display: none; }
+      nav .live-visitors-badge {
+        grid-column: 1 / -1;
+        justify-self: center;
+        margin: 0;
+        min-height: 31px;
+        padding: 3px 12px;
+        font-size: 11px;
+      }
+      nav #managerNavBtn {
+        grid-column: 1 / -1;
+        justify-self: center;
+        min-height: 34px;
+        padding: 4px 16px;
+      }
+
+      .header-tools {
+        order: 3;
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+        gap: 7px;
+      }
+      .header-tool-btn {
+        min-height: 32px;
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 9px;
+      }
+
+      .hero-wrap { padding-bottom: 5px; }
+      .store-banner {
+        margin-bottom: 9px;
+        border-radius: 15px;
+      }
+      .store-banner img {
+        width: 100%;
+        height: 112px;
+        object-fit: cover;
+        object-position: center;
+      }
+      .store-banner-title {
+        top: 8px;
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+      .hero {
+        min-height: 205px;
+        padding: 22px 15px;
+        border-radius: 19px;
+      }
+      .hero-label {
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        font-size: 11px;
+      }
+      .hero h1 {
+        font-size: clamp(27px, 7vw, 36px);
+        line-height: 1.25;
+        margin-bottom: 0;
+      }
+      .hero-books {
+        left: 12px;
+        bottom: -24px;
+        font-size: 105px;
+      }
+    }
+
+    @media (min-width: 521px) and (max-width: 900px) {
+      .brand { min-width: 0; }
+      .header-inner { gap: 10px; }
+      .header-slogan { display: none; }
+    }
+
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
