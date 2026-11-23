@@ -5324,14 +5324,99 @@ header{
   }
 }
 
-/* Slightly narrower main navigation buttons on mobile */
+
+/* Four compact navigation buttons framing the centered store name */
 @media(max-width:520px){
-  header nav .nav-btn:not(#managerNavBtn){
-    width:86%!important;
-    max-width:260px!important;
-    justify-self:center!important;
-    align-self:center!important;
+  header .container.header-inner{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:32px auto 32px 29px!important;
+    align-items:center!important;justify-items:center!important;
+    column-gap:6px!important;row-gap:4px!important;
+    width:calc(100% - 22px)!important;
+    padding:5px 0 6px!important;margin:0 auto!important;
+    min-height:0!important;height:auto!important;
   }
+  header nav{display:contents!important}
+  header .brand{
+    grid-column:1/-1!important;grid-row:2!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    justify-self:center!important;align-self:center!important;
+    width:auto!important;min-width:0!important;height:auto!important;min-height:0!important;
+    margin:0!important;padding:0!important;gap:0!important;
+  }
+  header .brand .brand-icon{display:none!important}
+  header .brand .brand-text{
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;gap:0!important;width:auto!important;height:auto!important;
+    margin:0!important;padding:0!important;line-height:1!important;
+  }
+  header .brand .brand-name-logo{
+    display:block!important;width:auto!important;max-width:none!important;
+    height:30px!important;font-size:27px!important;line-height:1!important;
+    margin:0!important;padding:0!important;
+  }
+  header .brand .brand-text span{
+    display:block!important;font-size:10px!important;line-height:1!important;
+    margin:0!important;padding:0!important;transform:none!important;
+  }
+  header .brand .brand-text .brand-pdf{font-size:9px!important;margin:0!important}
+
+  header nav .header-slogan{display:none!important}
+  header nav .nav-btn:not(#managerNavBtn){
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    justify-self:center!important;align-self:center!important;
+    width:74%!important;max-width:175px!important;min-width:0!important;
+    height:30px!important;min-height:30px!important;
+    margin:0!important;padding:2px 4px!important;
+    border-radius:8px!important;font-size:10px!important;line-height:1!important;
+    white-space:nowrap!important;
+  }
+  header nav > button:nth-of-type(1){grid-column:1!important;grid-row:1!important}
+  header nav > button:nth-of-type(2){grid-column:2!important;grid-row:1!important}
+  header nav > button:nth-of-type(3){grid-column:1!important;grid-row:3!important}
+  header nav > button:nth-of-type(4){grid-column:2!important;grid-row:3!important}
+
+  header nav #liveVisitorsBadge{
+    grid-column:1!important;grid-row:4!important;
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    justify-self:center!important;align-self:center!important;
+    width:auto!important;min-width:0!important;height:27px!important;min-height:27px!important;
+    margin:0!important;padding:2px 8px!important;gap:4px!important;border-radius:999px!important;
+  }
+  header nav #liveVisitorsBadge .live-visitors-label{display:none!important}
+  header nav #liveVisitorsBadge strong{font-size:12px!important}
+
+  header .header-tools{
+    grid-column:2!important;grid-row:4!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    justify-self:center!important;align-self:center!important;
+    width:auto!important;height:28px!important;min-height:0!important;
+    margin:0!important;padding:0!important;gap:4px!important;flex-wrap:nowrap!important;
+  }
+  header .header-tool{margin:0!important;padding:0!important;min-width:0!important}
+  header .header-tool-btn{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    min-width:0!important;width:auto!important;height:27px!important;min-height:27px!important;
+    margin:0!important;padding:2px 6px!important;border-radius:8px!important;
+    font-size:9px!important;line-height:1!important;white-space:nowrap!important;
+  }
+
+  /* Keep the administrator entry available when the account script enables it */
+  header nav #managerNavBtn{
+    grid-column:1/-1!important;grid-row:5!important;
+    justify-self:center!important;align-self:center!important;
+    width:auto!important;max-width:150px!important;height:28px!important;min-height:28px!important;
+    margin:0!important;padding:2px 12px!important;font-size:10px!important;
+  }
+  header nav #managerNavBtn[style*="display: block"],
+  header nav #managerNavBtn[style*="display:block"],
+  header nav #managerNavBtn[style*="display: inline-block"],
+  header nav #managerNavBtn[style*="display:inline-block"],
+  header nav #managerNavBtn[style*="display: flex"],
+  header nav #managerNavBtn[style*="display:flex"],
+  header nav #managerNavBtn[style*="display: inline-flex"],
+  header nav #managerNavBtn[style*="display:inline-flex"]{display:flex!important}
 }
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
