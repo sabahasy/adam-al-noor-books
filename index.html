@@ -5443,6 +5443,18 @@ header{
   header nav #managerNavBtn[style*="display: inline-flex"],
   header nav #managerNavBtn[style*="display:inline-flex"]{display:flex!important}
 }
+/* Final mobile visibility rule: the manager button appears only after verified admin access. */
+@media(max-width:520px){
+  header nav #managerNavBtn.is-visible{
+    display:inline-flex!important;
+    grid-column:1/-1!important;
+    grid-row:5!important;
+    justify-self:center!important;
+    align-self:center!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+}
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -10343,7 +10355,9 @@ function syncManagerUI() {
   const page = document.getElementById("managerPage");
   const dailyNewsButton = document.getElementById("managerDailyNewsButton");
   if (button) {
+    button.classList.toggle("is-visible", !!isManager);
     button.style.display = isManager ? "inline-flex" : "none";
+    button.setAttribute("aria-hidden", isManager ? "false" : "true");
   }
   if (dailyNewsButton) {
     dailyNewsButton.style.display = isManager ? "flex" : "none";
