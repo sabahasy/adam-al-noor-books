@@ -4978,6 +4978,71 @@ header .live-visitors-badge {
     }
 
 
+
+    /* Tighten the old-store header and keep the manager control hidden unless authorized */
+    @media (max-width: 520px) {
+      header { padding:0 !important; }
+      header .header-inner {
+        display:grid !important;
+        grid-template-columns:minmax(0,1fr) !important;
+        grid-template-rows:auto auto auto !important;
+        align-content:start !important;
+        justify-items:stretch !important;
+        gap:5px !important;
+        min-height:0 !important;
+        height:auto !important;
+        padding:5px 0 7px !important;
+        margin:0 auto !important;
+      }
+      header .brand {
+        grid-row:1 !important;
+        height:auto !important;
+        min-height:0 !important;
+        padding:0 !important;
+        margin:0 !important;
+        transform:none !important;
+      }
+      header .brand-text {
+        display:flex !important;
+        flex-direction:column !important;
+        align-items:center !important;
+        justify-content:center !important;
+        gap:0 !important;
+        margin:0 !important;
+        padding:0 !important;
+        line-height:1 !important;
+      }
+      header .brand .brand-name-logo {
+        height:34px !important;
+        line-height:1 !important;
+        margin:0 auto !important;
+      }
+      header .brand .brand-text span {
+        margin:0 !important;
+        padding:0 !important;
+        line-height:1.05 !important;
+        transform:none !important;
+      }
+      header nav {
+        grid-row:2 !important;
+        margin:0 !important;
+        padding:0 !important;
+        align-self:start !important;
+        gap:4px !important;
+      }
+      header nav #managerNavBtn {
+        grid-column:1 / -1 !important;
+        /* Preserve its inline display:none until the manager is authenticated. */
+        min-height:32px !important;
+        height:32px !important;
+      }
+      header .header-tools {
+        grid-row:3 !important;
+        margin:0 !important;
+        padding:0 !important;
+      }
+      .store-clock-bar { margin:0 !important; }
+    }
     /* Final mobile layout correction: target the actual storefront elements */
     @media (max-width: 520px) {
       header .header-inner {
@@ -5022,7 +5087,7 @@ header .live-visitors-badge {
         width:100% !important;
         margin:0 !important;
       }
-      header nav .nav-btn {
+      header nav .nav-btn:not(#managerNavBtn) {
         display:flex !important;
         align-items:center !important;
         justify-content:center !important;
