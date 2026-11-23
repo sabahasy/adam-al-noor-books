@@ -5323,6 +5323,16 @@ header{
     font-size:10px!important;line-height:1!important;white-space:nowrap!important;
   }
 }
+
+/* Slightly narrower main navigation buttons on mobile */
+@media(max-width:520px){
+  header nav .nav-btn:not(#managerNavBtn){
+    width:86%!important;
+    max-width:260px!important;
+    justify-self:center!important;
+    align-self:center!important;
+  }
+}
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
