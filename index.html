@@ -4766,6 +4766,70 @@ header .live-visitors-badge {
  #homePage .book-actions .btn{font-size:10px!important;min-height:30px!important;padding:4px 1px!important}
 }
 
+
+</style>
+<style id="old-store-header-home-refresh">
+  /* Old store: compact, balanced mobile header and homepage */
+  @media(max-width:700px){
+    .store-clock-bar{padding:6px 9px!important}
+    .store-clock{display:flex!important;align-items:center!important;justify-content:center!important;
+      flex-wrap:nowrap!important;gap:8px!important;text-align:center!important;line-height:1.25}
+    .store-clock>span:first-child{font-size:11px!important;white-space:nowrap}
+    .store-clock-time{font-size:13px!important;font-weight:900;white-space:nowrap}
+    .store-clock-date{font-size:10px!important;white-space:nowrap}
+    .header-inner{display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+      justify-content:center!important;gap:7px!important;padding:8px 0 9px!important}
+    .brand{order:1!important;width:100%!important;min-width:0!important;justify-content:center!important;
+      gap:9px!important;margin:0!important}
+    .brand .brand-icon{width:38px!important;height:38px!important;flex:0 0 38px!important;
+      border-radius:11px!important;font-size:19px!important}
+    .brand .brand-icon:last-child{display:none!important}
+    .brand-name-logo{width:auto!important;max-width:none!important;height:auto!important;
+      font-size:30px!important;line-height:1.05!important}
+    .brand-text span{font-size:11px!important;transform:none!important;margin-top:1px!important;line-height:1.15!important}
+    .brand-text .brand-pdf{font-size:9px!important;letter-spacing:1px}
+    nav{order:2!important;width:100%!important;display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:center!important;
+      justify-content:stretch!important;gap:4px!important}
+    nav .nav-btn{min-width:0!important;width:100%!important;min-height:35px!important;
+      padding:5px 2px!important;border:1px solid rgba(201,162,39,.28)!important;
+      border-radius:9px!important;background:rgba(255,255,255,.035)!important;
+      font-size:clamp(10px,2.7vw,12px)!important;line-height:1.15!important;
+      white-space:nowrap!important}
+    nav .header-slogan{display:none!important}
+    nav .live-visitors-badge{grid-column:1/-1!important;justify-self:center!important;
+      min-height:26px!important;padding:3px 10px!important;gap:5px!important;border-radius:999px!important}
+    nav .live-visitors-icon{font-size:12px!important}
+    nav .live-visitors-dot{width:7px!important;height:7px!important}
+    nav .live-visitors-badge strong{font-size:13px!important;min-width:12px!important}
+    nav #managerNavBtn{grid-column:auto!important}
+    .header-tools{order:3!important;width:100%!important;display:flex!important;
+      justify-content:center!important;align-items:center!important;gap:6px!important;margin:0!important}
+    .header-tool-btn{min-height:29px!important;padding:4px 9px!important;border-radius:9px!important;
+      font-size:10px!important;gap:4px!important}
+    .header-tool-menu{top:calc(100% + 5px)!important}
+    .hero-wrap{padding-top:8px!important;padding-bottom:6px!important}
+    .store-banner{margin-bottom:10px!important;border-radius:15px!important}
+    .store-banner img{height:clamp(118px,29vw,160px)!important;object-fit:cover!important;object-position:center!important}
+    .store-banner-title{top:8px!important;padding:5px 9px!important;font-size:10px!important}
+    .hero{min-height:270px!important;padding:25px 15px!important;border-radius:19px!important}
+    .hero-content{max-width:100%!important}
+    .hero-label{font-size:11px!important;padding:6px 10px!important;margin-bottom:13px!important}
+    .hero h1{font-size:clamp(29px,8vw,37px)!important;line-height:1.25!important;margin:0!important}
+    .hero-books{left:12px!important;bottom:-40px!important;font-size:115px!important;opacity:.055!important}
+  }
+  @media(max-width:380px){
+    .store-clock{gap:5px!important}
+    .store-clock>span:first-child{font-size:10px!important}
+    .store-clock-date{font-size:9px!important}
+    .brand{gap:6px!important}
+    .brand .brand-icon{width:34px!important;height:34px!important;flex-basis:34px!important;font-size:17px!important}
+    .brand-name-logo{font-size:27px!important}
+    .brand-text span{font-size:10px!important}
+    nav{gap:3px!important}
+    nav .nav-btn{font-size:9px!important;padding-inline:1px!important}
+    .hero{min-height:245px!important;padding:22px 12px!important}
+  }
 </style>
 <script id="supabaseRealtimeClient" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -6209,16 +6273,14 @@ return true;
         timeZone: "Asia/Baghdad",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit",
         hour12: true
       }).format(now);
 
     const date =
       new Intl.DateTimeFormat("ar-IQ", {
         timeZone: "Asia/Baghdad",
-        weekday: "long",
         day: "numeric",
-        month: "long",
+        month: "short",
         year: "numeric"
       }).format(now);
 
