@@ -4767,6 +4767,30 @@ header .live-visitors-badge {
 }
 
 
+
+/* Reserve a real fifth row for the authenticated manager control */
+@media(max-width:520px){
+  header nav #managerNavBtn{
+    grid-column:1/-1!important;
+    grid-row:5!important;
+    justify-self:center!important;
+    align-self:center!important;
+    width:auto!important;
+    min-width:112px!important;
+    max-width:150px!important;
+    height:28px!important;
+    min-height:28px!important;
+    margin:0!important;
+    padding:2px 12px!important;
+    font-size:10px!important;
+  }
+  header nav #managerNavBtn[style*="inline-flex"],
+  header nav #managerNavBtn[style*="inline-block"],
+  header nav #managerNavBtn[style*="display: block"],
+  header nav #managerNavBtn[style*="display:block"]{
+    display:flex!important;
+  }
+}
 </style>
 <style id="old-store-header-home-refresh">
   /* Old store: compact, balanced mobile header and homepage */
@@ -5330,7 +5354,7 @@ header{
   header .container.header-inner{
     display:grid!important;
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-template-rows:32px auto 32px 29px!important;
+    grid-template-rows:32px auto 32px 29px 30px!important;
     align-items:center!important;justify-items:center!important;
     column-gap:6px!important;row-gap:4px!important;
     width:calc(100% - 22px)!important;
